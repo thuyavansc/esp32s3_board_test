@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <strings.h>
 #include "esp_log.h"
@@ -22,20 +23,84 @@ static void _bytes_to_hex(const uint8_t *bytes, size_t len, char *out, size_t ou
     out[pos] = '\0';
 }
 
+// ── Event-handler-driven download context ──────────────────────────
+// Same shape as ota_client.c's _ota_write_ctx_t/_ota_download_event_handler
+// (writes each chunk into the destination AS IT ARRIVES, from inside the
+// event callback), except the destination here is a PSRAM buffer instead
+// of a flash OTA partition. This deliberately replaces the manual
+// esp_http_client_open()+fetch_headers()+read() approach — that one is
+// the ONE thing about this module that differed from every other proven-
+// working HTTPS call in this codebase (trips_api.c's real download,
+// ota_client.c's real download both use esp_http_client_perform() + an
+// event handler; this was the only module using the manual read() API).
+typedef struct {
+    uint8_t *buf;            // allocated lazily, once Content-Length is known (ON_HEADER)
+    int      capacity;       // = the real, live Content-Length — never guessed/hardcoded
+    int      bytes_written;
+    bool     alloc_failed;
+    bool     over_ceiling;
+    bool     write_overflow; // server sent more than its own declared Content-Length
+} _dl_ctx_t;
+
+static esp_err_t _dl_event_handler(esp_http_client_event_t *evt) {
+    _dl_ctx_t *ctx = (_dl_ctx_t *)evt->user_data;
+
+    if (evt->event_id == HTTP_EVENT_ON_HEADER) {
+        // Capture Content-Length the same moment esp_http_client itself
+        // parses it off the wire — this is the "live, real, never-hardcoded"
+        // size this project's whole config.h philosophy insists on. Headers
+        // always complete before any HTTP_EVENT_ON_DATA fires, so the buffer
+        // is guaranteed ready before the first byte of body arrives.
+        if (strcasecmp(evt->header_key, "Content-Length") == 0 && !ctx->buf) {
+            long len = atol(evt->header_value);
+            ESP_LOGI(TAG, "  Server-reported size (live Content-Length header): %ld bytes", len);
+            if (len <= 0) {
+                return ESP_OK; // leave ctx->buf NULL; caught after perform() returns
+            }
+            if ((size_t)len > PSRAM_DL_TEST_MAX_BYTES) {
+                ESP_LOGE(TAG, "  FAIL — reported size %ld bytes exceeds the %u byte safety ceiling "
+                              "(PSRAM_DL_TEST_MAX_BYTES, config.h) — refusing to allocate",
+                         len, (unsigned)PSRAM_DL_TEST_MAX_BYTES);
+                ctx->over_ceiling = true;
+                return ESP_OK;
+            }
+            ctx->buf = (uint8_t *)heap_caps_malloc((size_t)len, MALLOC_CAP_SPIRAM);
+            if (!ctx->buf) {
+                ESP_LOGE(TAG, "  FAIL — heap_caps_malloc(%ld, MALLOC_CAP_SPIRAM) returned NULL", len);
+                ctx->alloc_failed = true;
+                return ESP_OK;
+            }
+            ctx->capacity = (int)len;
+        }
+    } else if (evt->event_id == HTTP_EVENT_ON_DATA && evt->data_len > 0) {
+        if (!ctx->buf || ctx->bytes_written + evt->data_len > ctx->capacity) {
+            ctx->write_overflow = true;
+            return ESP_FAIL;
+        }
+        memcpy(ctx->buf + ctx->bytes_written, evt->data, evt->data_len);
+        ctx->bytes_written += evt->data_len;
+    }
+    return ESP_OK;
+}
+
 void psram_download_test_run(void) {
     ESP_LOGI(TAG, "══════════════════════════════════════");
     ESP_LOGI(TAG, "PSRAM DOWNLOAD TEST — real HTTPS download, buffered whole in PSRAM");
     ESP_LOGI(TAG, "  URL: %s", PSRAM_DL_TEST_URL);
     ram_test_log_snapshot("before download");
 
+    _dl_ctx_t ctx = {0};
+
     esp_http_client_config_t http_cfg = {
         .url               = PSRAM_DL_TEST_URL,
         .method            = HTTP_METHOD_GET,
         .timeout_ms        = PSRAM_DL_TEST_HTTP_TIMEOUT_MS,
         .crt_bundle_attach = esp_crt_bundle_attach,
-        .buffer_size       = 4096,   // HTTP layer's own internal read-chunk size — unrelated to
-                                     // the PSRAM destination buffer sized below from Content-Length
+        .buffer_size       = 4096,
         .keep_alive_enable = false,
+        .user_agent        = "ESP32-PSRAM-DL-Test/1.0",
+        .event_handler     = _dl_event_handler,
+        .user_data         = &ctx,
     };
 
     esp_http_client_handle_t client = esp_http_client_init(&http_cfg);
@@ -44,86 +109,48 @@ void psram_download_test_run(void) {
         return;
     }
 
-    esp_err_t err = esp_http_client_open(client, 0);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "  FAIL — esp_http_client_open(): %s", esp_err_to_name(err));
-        esp_http_client_cleanup(client);
-        return;
-    }
+    // esp_http_client_perform() drives the ENTIRE request/response cycle in
+    // one blocking call (connect -> send -> headers -> body), invoking
+    // _dl_event_handler() for each header line and each body chunk as they
+    // arrive — the exact same proven mechanism trips_api.c's and
+    // ota_client.c's own real downloads already use successfully in this
+    // codebase, instead of this module's previous manual open()+
+    // fetch_headers()+read() approach.
+    esp_err_t perform_err = esp_http_client_perform(client);
+    int status = esp_http_client_get_status_code(client);
 
-    // The CORRECT way to size the destination buffer: read the real,
-    // live Content-Length the server actually reports — never trust a
-    // hardcoded "sizeBytes" from a manifest, and never guess. This also
-    // means a bigger real file (mentioned: up to ~3MB) is handled
-    // automatically with no code change — only the safety ceiling below
-    // is fixed.
-    int content_length = esp_http_client_fetch_headers(client);
-    if (content_length <= 0) {
-        ESP_LOGE(TAG, "  FAIL — server did not report a usable Content-Length (got %d)", content_length);
-        esp_http_client_close(client);
-        esp_http_client_cleanup(client);
-        return;
-    }
-    ESP_LOGI(TAG, "  Server-reported size (live Content-Length): %d bytes", content_length);
-
-    if ((size_t)content_length > PSRAM_DL_TEST_MAX_BYTES) {
-        ESP_LOGE(TAG, "  FAIL — reported size %d bytes exceeds the %u byte safety ceiling "
-                      "(PSRAM_DL_TEST_MAX_BYTES, config.h) — refusing to allocate",
-                 content_length, (unsigned)PSRAM_DL_TEST_MAX_BYTES);
-        esp_http_client_close(client);
-        esp_http_client_cleanup(client);
-        return;
-    }
-
-    uint8_t *buf = (uint8_t *)heap_caps_malloc((size_t)content_length, MALLOC_CAP_SPIRAM);
-    if (!buf) {
-        ESP_LOGE(TAG, "  FAIL — heap_caps_malloc(%d, MALLOC_CAP_SPIRAM) returned NULL", content_length);
+    if (ctx.over_ceiling || ctx.alloc_failed) {
         ram_test_log_snapshot("after failed allocation");
-        esp_http_client_close(client);
+        if (ctx.buf) heap_caps_free(ctx.buf);
         esp_http_client_cleanup(client);
         return;
     }
 
-    // Read in small, fixed-size chunks (matching http_cfg.buffer_size above)
-    // instead of requesting the entire remaining length in one call.
-    //
-    // Confirmed on real hardware (twice, reproducibly, same exact byte
-    // offset both times — ruling out a random network glitch): requesting
-    // "everything left" in a single esp_http_client_read() call collided
-    // with bytes esp_http_client already buffers internally during
-    // fetch_headers() (headers + the start of the body often arrive in the
-    // same underlying read), producing esp-tls-mbedtls "-0x7100" (invalid
-    // MAC) right at the transition from serving that already-buffered data
-    // to pulling fresh bytes off the real connection.
-    //
-    // trips_api.c/ota_client.c never hit this because esp_http_client_perform()
-    // + an event handler already reads in exactly this same small-chunk
-    // shape internally — this loop just reproduces that proven-working
-    // shape explicitly, instead of asking for the whole remainder at once.
-    const int read_chunk = 4096; // matches http_cfg.buffer_size above
-    int total_read = 0;
-    while (total_read < content_length) {
-        int want = content_length - total_read;
-        if (want > read_chunk) want = read_chunk;
-        int r = esp_http_client_read(client, (char *)(buf + total_read), want);
-        if (r <= 0) {
-            ESP_LOGE(TAG, "  FAIL — esp_http_client_read() returned %d after %d/%d bytes (connection dropped early?)",
-                     r, total_read, content_length);
-            heap_caps_free(buf);
-            esp_http_client_close(client);
-            esp_http_client_cleanup(client);
-            return;
-        }
-        total_read += r;
+    if (perform_err != ESP_OK || status != 200 || ctx.write_overflow || !ctx.buf) {
+        ESP_LOGE(TAG, "  FAIL — esp_http_client_perform(): %s | HTTP status %d | bytes received %d%s",
+                 esp_err_to_name(perform_err), status, ctx.bytes_written,
+                 ctx.write_overflow ? " | server sent MORE than its own declared Content-Length" : "");
+        if (ctx.buf) heap_caps_free(ctx.buf);
+        esp_http_client_cleanup(client);
+        return;
     }
-    ESP_LOGI(TAG, "  Download complete: %d/%d bytes received", total_read, content_length);
+
+    if (ctx.bytes_written != ctx.capacity) {
+        ESP_LOGE(TAG, "  FAIL — incomplete download: got %d/%d bytes (connection dropped early?)",
+                 ctx.bytes_written, ctx.capacity);
+        heap_caps_free(ctx.buf);
+        esp_http_client_cleanup(client);
+        return;
+    }
+
+    ESP_LOGI(TAG, "  Download complete: %d/%d bytes received", ctx.bytes_written, ctx.capacity);
     ram_test_log_snapshot("after download, before verify");
 
-    // ── Verification — size (already implicit: total_read == content_length
+    // ── Verification — size (already implicit: bytes_written == capacity
     // above) and SHA-256 integrity, against the known-good hash from the
     // real manifest response (config.h's PSRAM_DL_TEST_SHA256). ──
     uint8_t digest[32];
-    mbedtls_sha256(buf, (size_t)content_length, digest, 0 /* 0 = SHA-256, not SHA-224 */);
+    mbedtls_sha256(ctx.buf, (size_t)ctx.capacity, digest, 0 /* 0 = SHA-256, not SHA-224 */);
     char digest_hex[65];
     _bytes_to_hex(digest, sizeof(digest), digest_hex, sizeof(digest_hex));
 
@@ -131,15 +158,14 @@ void psram_download_test_run(void) {
     ESP_LOGI(TAG, "  Expected SHA-256: %s", PSRAM_DL_TEST_SHA256);
     ESP_LOGI(TAG, "  Actual   SHA-256: %s", digest_hex);
     if (sha_ok) {
-        ESP_LOGI(TAG, "  Integrity: PASS — size AND SHA-256 both match, %d real bytes held in one PSRAM buffer", content_length);
+        ESP_LOGI(TAG, "  Integrity: PASS — size AND SHA-256 both match, %d real bytes held in one PSRAM buffer", ctx.capacity);
     } else {
         ESP_LOGE(TAG, "  Integrity: FAIL — SHA-256 mismatch (downloaded data is not what was expected)");
     }
 
-    heap_caps_free(buf);
+    heap_caps_free(ctx.buf);
     ram_test_log_snapshot("after free");
 
-    esp_http_client_close(client);
     esp_http_client_cleanup(client);
     ESP_LOGI(TAG, "══════════════════════════════════════");
 }

@@ -1,0 +1,67 @@
+I (6691) additional_work: Additional work module ready (try: "sms reboot")
+I (6698) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+
+Type 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all' | 'api help' | 'sms <command>' | 'factory reset' | 'nvs status'
+> I (6717) main_task: Returned from app_main()
+I (9704) ram_test: ══════════════════════════════════════
+I (9704) ram_test: PSRAM periodic health-check
+I (9709) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (9715) ram_test:   Before: free=8385980 bytes | largest free block=8257536 bytes
+I (9862) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (9862) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337400 bytes
+I (9867) ram_test:   After free: free=8385980 bytes | largest free block=8257536 bytes
+I (9874) ram_test: ══════════════════════════════════════
+ram test downloadI (30474) psram_dl: ══════════════════════════════════════
+I (30475) psram_dl: PSRAM DOWNLOAD TEST — real HTTPS download, buffered whole in PSRAM
+I (30482) psram_dl:   URL: https://ota-update-server-rem6xgeeb-mark0.vercel.app/Resources/Esp32Ota/30/esp32_chip_info_test/test_2mb.bin
+I (30494) ram_test: -- RAM snapshot: before download --
+I (30499) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=378719 free=267667 min-free=258163 largest-block=163840
+I (30509) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 free=8385980 min-free=7337400 largest-block=8257536
+I (30712) esp-x509-crt-bundle: Certificate validated
+I (36533) psram_dl:   Server-reported size (live Content-Length): 2097152 bytes
+E (36542) esp-tls-mbedtls: read error :-0x7100
+E (36544) transport_base: esp_tls_conn_read error, errno=Success
+E (36544) HTTP_CLIENT: transport_read: error - -1 | ESP_FAIL
+E (36548) esp-tls-mbedtls: read error :-0x7100
+E (36552) transport_base: esp_tls_conn_read error, errno=Success
+E (36558) HTTP_CLIENT: transport_read: error - -1 | ESP_FAIL
+E (36563) psram_dl:   FAIL — esp_http_client_read() returned -1 after 4049/2097152 bytes (connection dropped early?)
+> ram testram info                 I (112576) ram_test: ======================================
+I (112576) ram_test: RAM INFO (live — no allocation)
+I (112576) ram_test: --------------------------------------
+I (112580) ram_test:   PSRAM initialized: YES
+I (112584) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (112591) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=378719 free=266955 min-free=213203 largest-block=139264
+I (112601) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 free=8385980 min-free=6288624 largest-block=8257536
+> api litsW (118012) trips_api: Unknown api command 'lits' — try 'api help'
+> api listI (122362) trips_api:   [ 1] trips_1.json                  82 bytes
+I (122365) trips_api:   [ 2] trips_12279.json           26144 bytes
+I (122497) trips_api:   Total: 2 file(s) | 26226 bytes
+> ram test downloadI (147947) psram_dl: ══════════════════════════════════════
+I (147948) psram_dl: PSRAM DOWNLOAD TEST — real HTTPS download, buffered whole in PSRAM
+I (147956) psram_dl:   URL: https://ota-update-server-rem6xgeeb-mark0.vercel.app/Resources/Esp32Ota/30/esp32_chip_info_test/test_2mb.bin
+I (147968) ram_test: -- RAM snapshot: before download --
+I (147973) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=378719 free=266975 min-free=213203 largest-block=139264
+I (147983) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 free=8385980 min-free=6288624 largest-block=8257536
+I (148173) esp-x509-crt-bundle: Certificate validated
+I (153274) psram_dl:   Server-reported size (live Content-Length): 2097152 bytes
+E (153283) esp-tls-mbedtls: read error :-0x7100
+E (153284) transport_base: esp_tls_conn_read error, errno=Success
+E (153284) HTTP_CLIENT: transport_read: error - -1 | ESP_FAIL
+E (153290) esp-tls-mbedtls: read error :-0x7100
+E (153292) transport_base: esp_tls_conn_read error, errno=Success
+E (153298) HTTP_CLIENT: transport_read: error - -1 | ESP_FAIL
+E (153304) psram_dl:   FAIL — esp_http_client_read() returned -1 after 4049/2097152 bytes (connection dropped early?)
+> ram info                 I (163467) ram_test: ======================================
+I (163467) ram_test: RAM INFO (live — no allocation)
+I (163467) ram_test: --------------------------------------
+I (163471) ram_test:   PSRAM initialized: YES
+I (163475) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (163482) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=378719 free=266975 min-free=213203 largest-block=139264
+I (163492) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 free=8385980 min-free=6288624 largest-block=8257536
+> ram test psramI (185503) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (185503) ram_test:   Before: free=8385980 bytes | largest free block=8257536 bytes
+I (185646) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (185646) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337400 bytes
+I (185651) ram_test:   After free: free=8385980 bytes | largest free block=8257536 bytes
+> 
