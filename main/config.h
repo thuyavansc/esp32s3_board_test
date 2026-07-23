@@ -218,3 +218,54 @@
 // caught, unattended, in the serial log.
 #define RAM_TEST_PSRAM_TASK_FIRST_RUN_DELAY_S   3
 #define RAM_TEST_PSRAM_TASK_INTERVAL_S          300   // 5 minutes
+
+// ================================================================
+// DISPLAY — Waveshare 3.5" Capacitive Touch LCD (ST7796S + FT6336U),
+// 320x480, ported from esp32_display_taxi_3 (which targets classic
+// ESP32 WROOM). ESP32-S3-ONLY pins below — no WROOM block at all
+// (per instruction: remove, don't just disable/comment).
+//
+// Pin values are NOT esp32_display_taxi_3's own commented-out S3 block
+// (that one was never actually tested — that project only ever builds
+// for WROOM). These are the values already confirmed on a REAL
+// ESP32-S3-N16R8V board with this exact display in this repo's sibling
+// project esp32_wave_board_test — proven hardware over an untested
+// guess. That's also why TOUCH_INT/TOUCH_RST are 18/8, not 17/16 as
+// some docs suggest — 17/16 are free on THIS project (no GPS module),
+// but 18/8 are what's actually wired/working on the real board.
+// ================================================================
+#define LCD_SPI_HOST    SPI3_HOST
+#define LCD_MOSI        42
+#define LCD_MISO        -1
+#define LCD_SCLK        41
+#define LCD_SD_CS       38   // TF-card slot CS, shares the SPI bus — MUST be held HIGH (display_driver.c does this)
+#define LCD_CS          39
+#define LCD_DC          40
+#define LCD_RST         45   // strapping pin (VDD_SPI) — safe as GPIO after boot
+#define LCD_BL          6
+
+#define LCD_PIXEL_CLOCK_HZ  (40 * 1000 * 1000)  // 40 MHz SPI clock
+#define LCD_BK_LIGHT_ON     1
+#define LCD_BK_LIGHT_OFF    0
+
+// ── FT6336U Touch (I2C) ────────────────────────────────────────
+#define TOUCH_I2C_PORT    I2C_NUM_0
+#define TOUCH_I2C_SDA     15
+#define TOUCH_I2C_SCL     7
+#define TOUCH_I2C_ADDR    0x38   // FT6336U 7-bit I2C address
+#define TOUCH_INT         18
+#define TOUCH_RST         8
+
+// ── LVGL ────────────────────────────────────────────────────────
+// 5% of screen rows per draw buffer (not a full 320x480 framebuffer) —
+// same proven trade-off as the sibling display projects in this repo:
+// keeps the two DMA draw buffers (~15KB each, internal SRAM — see doc
+// 111/112 for why these can't be PSRAM) small, at the cost of slightly
+// more flush cycles per full-screen redraw (negligible on this size
+// display).
+#define LVGL_BUF_SIZE_PCT  5
+#define LVGL_TICK_PERIOD_MS 5
+
+// ── UI Defaults ─────────────────────────────────────────────────
+#define UI_DEFAULT_FARE_RATE   2.50   // $ per km
+#define UI_DEFAULT_FLAG_FALL   3.80   // Base fare

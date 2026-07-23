@@ -242,6 +242,86 @@ static void _delete(int trip_id, bool all) {
     }
 }
 
+// ── Code-callable API for the touchscreen UI (display/trip/*.c) ────
+// Reuses this same SPIFFS storage/naming ("trips_<id>.json" under
+// STORAGE_DIR) the serial "api ..." commands above already use — just
+// returns data to the caller instead of printing to the console.
+int trips_api_list(trip_file_info_t *out, int max_count) {
+    if (!s_mounted || !out || max_count <= 0) return 0;
+
+    char dir_path[64];
+    snprintf(dir_path, sizeof(dir_path), "/spiffs%s", STORAGE_DIR);
+
+    DIR *dir = opendir(dir_path);
+    if (!dir) return 0;
+
+    int count = 0;
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL && count < max_count) {
+        if (entry->d_type != DT_REG) continue;
+        if (strncmp(entry->d_name, "trips_", 6) != 0) continue;
+
+        int trip_id = 0;
+        if (sscanf(entry->d_name, "trips_%d.json", &trip_id) != 1) continue;
+
+        char full_path[400];
+        snprintf(full_path, sizeof(full_path), "%s/%s", dir_path, entry->d_name);
+        struct stat st;
+        if (stat(full_path, &st) != 0) continue;
+
+        out[count].trip_id    = trip_id;
+        out[count].size_bytes = (size_t)st.st_size;
+        out[count].mtime      = st.st_mtime;
+        count++;
+    }
+    closedir(dir);
+
+    // Newest-modified first (trip_screen.c's own documented expectation) —
+    // insertion sort, fine for the small counts this ever holds.
+    for (int i = 1; i < count; i++) {
+        trip_file_info_t key = out[i];
+        int j = i - 1;
+        while (j >= 0 && out[j].mtime < key.mtime) {
+            out[j + 1] = out[j];
+            j--;
+        }
+        out[j + 1] = key;
+    }
+    return count;
+}
+
+esp_err_t trips_api_read(int trip_id, char **out_buf, size_t *out_len) {
+    if (!out_buf || !out_len) return ESP_ERR_INVALID_ARG;
+    *out_buf = NULL;
+    *out_len = 0;
+
+    char path[256];
+    snprintf(path, sizeof(path), "/spiffs%s/trips_%d.json", STORAGE_DIR, trip_id);
+
+    struct stat st;
+    if (stat(path, &st) != 0) return ESP_ERR_NOT_FOUND;
+
+    FILE *fp = fopen(path, "r");
+    if (!fp) return ESP_ERR_NOT_FOUND;
+
+    char *buf = (char *)malloc((size_t)st.st_size + 1);
+    if (!buf) { fclose(fp); return ESP_ERR_NO_MEM; }
+
+    size_t bytes_read = fread(buf, 1, (size_t)st.st_size, fp);
+    fclose(fp);
+    buf[bytes_read] = '\0';
+
+    *out_buf = buf;
+    *out_len = bytes_read;
+    return ESP_OK;
+}
+
+esp_err_t trips_api_delete(int trip_id) {
+    char path[256];
+    snprintf(path, sizeof(path), "/spiffs%s/trips_%d.json", STORAGE_DIR, trip_id);
+    return (remove(path) == 0) ? ESP_OK : ESP_ERR_NOT_FOUND;
+}
+
 static void _show_info(void) {
     size_t total = 0, used = 0;
     esp_spiffs_info("storage", &total, &used);
@@ -306,5 +386,13 @@ esp_err_t trips_api_init(void) {
 }
 esp_err_t trips_api_fetch(int trip_id) { (void)trip_id; return ESP_ERR_NOT_SUPPORTED; }
 bool trips_api_process_command(const char *line) { (void)line; return false; }
+int trips_api_list(trip_file_info_t *out, int max_count) { (void)out; (void)max_count; return 0; }
+esp_err_t trips_api_read(int trip_id, char **out_buf, size_t *out_len) {
+    (void)trip_id;
+    if (out_buf) *out_buf = NULL;
+    if (out_len) *out_len = 0;
+    return ESP_ERR_NOT_SUPPORTED;
+}
+esp_err_t trips_api_delete(int trip_id) { (void)trip_id; return ESP_ERR_NOT_SUPPORTED; }
 
 #endif // ENABLE_TRIPS_API

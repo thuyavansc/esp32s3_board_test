@@ -20,6 +20,12 @@
  *   - OTA (ota_client.c) and Remote-Config (remote_config.c) are fully
  *     present, unchanged, just switched off via config.h (ENABLE_OTA=0,
  *     ENABLE_REMOTE_CONFIG=0).
+ *   - Display feature added (ported from esp32_display_taxi_3, ESP32-S3
+ *     pins only — see config.h and docs 111/112): bg_worker_init() early
+ *     (before WiFi touches the heap), display_init()/touch_init()/
+ *     ui_init() after WiFi connects, lv_tick_task + sim_task started,
+ *     and app_main()'s own final loop is now the LVGL handler loop —
+ *     app_main() intentionally no longer returns.
  *
  * ================================================================
  * SERIAL COMMANDS (available ones depend on which flags are ON)
@@ -41,6 +47,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <strings.h>
+#include <time.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include "freertos/FreeRTOS.h"
@@ -62,16 +69,21 @@
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_netif.h"
+#include "lvgl.h"
 #include "config.h"
 #include "version.h"
-#include "ota_client.h"
-#include "trips_api.h"
-#include "mini_command.h"
-#include "factory_reset.h"
-#include "nvs_state.h"
-#include "remote_config.h"
-#include "additional_work.h"
-#include "ram_test.h"
+#include "backend/ota_client.h"
+#include "backend/trips_api.h"
+#include "backend/mini_command.h"
+#include "backend/factory_reset.h"
+#include "backend/nvs_state.h"
+#include "backend/remote_config.h"
+#include "backend/additional_work.h"
+#include "backend/ram_test.h"
+#include "backend/bg_worker.h"
+#include "display/display_driver.h"
+#include "display/touch_driver.h"
+#include "display/ui_main.h"
 
 static const char *TAG = "chipinfo";
 
@@ -450,9 +462,43 @@ static void serial_cmd_task(void *arg) {
     }
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  LVGL TICK TIMER — provides lv_tick_inc() for animations
+// ═══════════════════════════════════════════════════════════════
+static void lv_tick_task(void *arg) {
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(LVGL_TICK_PERIOD_MS));
+        lv_tick_inc(LVGL_TICK_PERIOD_MS);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DASHBOARD DEMO VALUES — simulated speed/distance/fare, same as
+//  the source project (esp32_display_taxi_3): this project has no
+//  real speed sensor/odometer, so the Dashboard screen shows moving
+//  demo values to prove the display+UI actually works end-to-end.
+// ═══════════════════════════════════════════════════════════════
+static void sim_task(void *arg) {
+    double speed = 0.0, distance = 0.0, fare;
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        speed += 2.0;
+        if (speed > 55.0) speed = 0.0;
+        distance += speed / 3600.0;
+        fare = UI_DEFAULT_FLAG_FALL + distance * UI_DEFAULT_FARE_RATE;
+        ui_update_dashboard(speed, distance, fare);
+    }
+}
+
 void app_main(void) {
     ESP_ERROR_CHECK(nvs_flash_init());
     nvs_state_init();
+
+    // Background worker (Trip FETCH) — started FIRST, before anything
+    // else touches the heap, so its one-time 8KB stack allocation can't
+    // fail later once WiFi/display/SPIFFS have fragmented/consumed most
+    // of it (same reasoning as esp32_display_taxi_3's own app_main()).
+    bg_worker_init();
 
 #if NETWORK_NEEDED
     wifi_init_and_wait();
@@ -466,6 +512,16 @@ void app_main(void) {
     // Automatic report — ONCE, at boot (unchanged behaviour from the
     // original diagnostic tool).
     print_full_report();
+
+    // ── Display (ST7796S + LVGL) + Touch (FT6336U) + UI ─────────────
+    // ESP_ERROR_CHECK — each of these already logs its own failure
+    // reason; a hard failure here reboots rather than continuing into
+    // a half-initialized LVGL state (same style already used for the
+    // WiFi calls above).
+    ESP_ERROR_CHECK(display_init());
+    ESP_ERROR_CHECK(touch_init());
+    ESP_ERROR_CHECK(ui_init());
+    ESP_LOGI(TAG, "Tap the screen — all taps logged to Serial Monitor");
 
 #if ENABLE_OTA
     ota_client_init();
@@ -485,4 +541,17 @@ void app_main(void) {
     // additional_work all get a turn on this same stack) left too little
     // headroom at 4096 on this larger, more heavily-flagged codebase.
     xTaskCreate(serial_cmd_task, "serial_cmd", 8192, NULL, 2, NULL);
+
+    xTaskCreate(lv_tick_task, "lv_tick", 2048, NULL, 2, NULL);
+    xTaskCreate(sim_task, "sim", 3072, NULL, 1, NULL);
+
+    ESP_LOGI(TAG, "READY — Touch UI Active ✓");
+
+    // ── LVGL Handler Loop — app_main() intentionally no longer returns
+    // once the display is active (same as esp32_display_taxi_3's own
+    // app_main()) ──
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(LVGL_TICK_PERIOD_MS));
+        lv_timer_handler();
+    }
 }
