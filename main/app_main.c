@@ -23,9 +23,11 @@
  *   - Display feature added (ported from esp32_display_taxi_3, ESP32-S3
  *     pins only — see config.h and docs 111/112): bg_worker_init() early
  *     (before WiFi touches the heap), display_init()/touch_init()/
- *     ui_init() after WiFi connects, lv_tick_task + sim_task started,
- *     and app_main()'s own final loop is now the LVGL handler loop —
- *     app_main() intentionally no longer returns.
+ *     ui_init() after WiFi connects, lv_tick_task started (tick-only,
+ *     safe from any task) + an lv_timer for the Dashboard's simulated
+ *     values (NOT a separate task — see _sim_timer_cb's own comment,
+ *     doc 116), and app_main()'s own final loop is now the LVGL
+ *     handler loop — app_main() intentionally no longer returns.
  *
  * ================================================================
  * SERIAL COMMANDS (available ones depend on which flags are ON)
@@ -477,17 +479,30 @@ static void lv_tick_task(void *arg) {
 //  the source project (esp32_display_taxi_3): this project has no
 //  real speed sensor/odometer, so the Dashboard screen shows moving
 //  demo values to prove the display+UI actually works end-to-end.
+//
+//  Runs as an LVGL timer callback (lv_timer_create(), registered in
+//  app_main() after ui_init()) — NOT a separate FreeRTOS task calling
+//  LVGL functions directly. LVGL is not thread-safe: calling
+//  lv_label_set_text() (via ui_update_dashboard()) from a separate
+//  task while the "main" task concurrently runs lv_timer_handler() is
+//  a real, previously-documented class of bug — confirmed against a
+//  real report with this exact symptom (ESP32 IDLE0 watchdog reboot,
+//  fixed by moving label updates into an lv_timer callback):
+//  https://forum.lvgl.io/t/esp32-rebooting-on-watchdog-for-idle0/20173
+//  An lv_timer's callback runs INSIDE lv_timer_handler() itself, on
+//  the same task, which is what actually satisfies LVGL's
+//  single-thread-access requirement — see doc 116 for the full
+//  analysis (this was the real root cause of doc 114's crash; doc
+//  114's flush-area validation fix was still correct to keep — it
+//  prevents that specific consequence regardless of this fix).
 // ═══════════════════════════════════════════════════════════════
-static void sim_task(void *arg) {
-    double speed = 0.0, distance = 0.0, fare;
-    while (1) {
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        speed += 2.0;
-        if (speed > 55.0) speed = 0.0;
-        distance += speed / 3600.0;
-        fare = UI_DEFAULT_FLAG_FALL + distance * UI_DEFAULT_FARE_RATE;
-        ui_update_dashboard(speed, distance, fare);
-    }
+static void _sim_timer_cb(lv_timer_t *timer) {
+    static double speed = 0.0, distance = 0.0;
+    speed += 2.0;
+    if (speed > 55.0) speed = 0.0;
+    distance += speed / 3600.0;
+    double fare = UI_DEFAULT_FLAG_FALL + distance * UI_DEFAULT_FARE_RATE;
+    ui_update_dashboard(speed, distance, fare);
 }
 
 void app_main(void) {
@@ -543,7 +558,10 @@ void app_main(void) {
     xTaskCreate(serial_cmd_task, "serial_cmd", 8192, NULL, 2, NULL);
 
     xTaskCreate(lv_tick_task, "lv_tick", 2048, NULL, 2, NULL);
-    xTaskCreate(sim_task, "sim", 3072, NULL, 1, NULL);
+
+    // lv_timer_create(), NOT xTaskCreate() — see _sim_timer_cb's own
+    // comment above for why this matters (LVGL thread-safety).
+    lv_timer_create(_sim_timer_cb, 1000, NULL);
 
     ESP_LOGI(TAG, "READY — Touch UI Active ✓");
 
