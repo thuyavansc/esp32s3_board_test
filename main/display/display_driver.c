@@ -61,7 +61,37 @@ static lv_disp_draw_buf_t s_draw_buf;
 static lv_color_t *s_buf1 = NULL, *s_buf2 = NULL;
 
 // ── LVGL flush callback ─────────────────────────────────────────
+// Validates the area BEFORE calling esp_lcd_panel_draw_bitmap() — this
+// exact crash (an inverted/zero-size area reaching the flush callback,
+// rejected by esp_lcd's own "start position must be smaller than end
+// position" check, then a task-watchdog trigger because the resulting
+// repeated ESP_LOGE() calls saturate the 115200-baud UART faster than
+// it can drain) was already deeply root-caused in this repo — see
+// docs/TestFunctionalities/esps-wave/101_2026-07-22_new_draw_bitmap_bug_deep_dive_and_revised_theory.md
+// (found on a sibling project using this same ported UI code, "Option
+// A", documented there but never actually applied until now).
+//
+// This does NOT fix whatever computes the bad area in the first place
+// (doc 101 left that as a genuinely open question) — it fixes the
+// actual crash: a malformed area is now silently skipped (still
+// signaling lv_disp_flush_ready() so LVGL never stalls waiting on it),
+// with a THROTTLED diagnostic (at most once per second) so a recurring
+// bad-area condition stays visible without ever being able to flood the
+// UART again — the second half of doc 101's "two problems, layered"
+// finding, closed off directly at the source instead of relying on
+// callers to log responsibly.
 static void _flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *cmap) {
+    if (area->x2 < area->x1 || area->y2 < area->y1) {
+        static uint32_t s_last_warn_ms = 0;
+        uint32_t now_ms = xTaskGetTickCount() * portTICK_PERIOD_MS;
+        if (now_ms - s_last_warn_ms > 1000) {
+            s_last_warn_ms = now_ms;
+            ESP_LOGW(TAG, "Skipped invalid flush area (%d,%d)-(%d,%d) — draw would have been rejected",
+                     area->x1, area->y1, area->x2, area->y2);
+        }
+        lv_disp_flush_ready(drv);
+        return;
+    }
     esp_lcd_panel_draw_bitmap(s_panel,
         area->x1, area->y1, area->x2 + 1, area->y2 + 1, cmap);
     lv_disp_flush_ready(drv);
