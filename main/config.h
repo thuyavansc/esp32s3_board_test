@@ -1,0 +1,220 @@
+#pragma once
+// ================================================================
+// config.h — esp32s3_board: ESP32-S3 N16R8V board bring-up firmware
+//
+// Ported from esp32_chip_info_test/main/config.h. Same one-codebase,
+// feature-flagged pattern — OTA and Remote-Config modules are fully
+// present (not deleted) but switched OFF here, so this build stays a
+// focused chip/flash/SRAM/PSRAM diagnostic tool. Flip either flag back
+// to 1 later with no code changes needed elsewhere.
+//
+// Real hardware this targets: ESP32-S3R8, 16MB flash, 8MB Octal PSRAM
+// (boards/esp32-s3-devkitc-1-n16r8v.json) — NOT the Waveshare
+// ESP32-S3-A7670E-4G taxi-meter board (docs/TestFunctionalities/
+// 0_2026-07-04_project_master_context.md, 5_.../6_...) — that board has
+// an A7670E 4G modem + DIP switches this devkit does not have.
+// ================================================================
+#include "version.h" // FW_PROJECT_NAME, used by OTA_DEFAULT_PRODUCT_NAME below
+
+// ── Feature flags ────────────────────────────────────────────────
+#define ENABLE_OTA             0   // OTA check-in + esp_https_ota download — CODE KEPT, switched OFF
+#define ENABLE_TRIPS_API       1   // HTTPS trip fetch + SPIFFS JSON storage
+#define ENABLE_MINI_COMMAND    0   // extra serial "game" command (v4 demo) — unused here
+#define ENABLE_REMOTE_CONFIG   0   // taxiNumber/smsNumber/emergencyContactNumber/serverUrl — CODE KEPT, switched OFF
+#define ENABLE_ADDITIONAL_WORK 1   // catch-all for small standalone requirements — see additional_work.c
+
+// ── WiFi — independent of every other feature flag above ────────
+// WiFi must connect regardless of whether OTA/Trips/Remote-Config are on
+// or off (previously WiFi only connected when one of those needed it —
+// changed here on purpose so toggling any of them can never silently
+// take WiFi down too).
+#define ENABLE_WIFI     1
+#define NETWORK_NEEDED  ENABLE_WIFI
+
+#define WIFI_SSID   "TWHSP"
+#define WIFI_PASS   "TollWirelessWPA2"
+
+// ── Factory reset safety passcode ──────────────────────────────
+// Type "factory reset" then this passcode on the very next line in the
+// Serial Monitor to force the boot partition back to `factory` and
+// reboot immediately — see factory_reset.c. Always compiled in
+// regardless of ENABLE_OTA/ENABLE_TRIPS_API/ENABLE_MINI_COMMAND — this
+// is the recovery path FOR when one of them breaks something.
+#define FACTORY_RESET_PASSCODE  "1010"
+
+// ================================================================
+// OTA — only compiled/used when ENABLE_OTA=1. Kept fully intact
+// (unchanged from esp32_chip_info_test) so flipping ENABLE_OTA back to
+// 1 later works immediately — nothing here needed to be deleted or
+// rewritten to "disable" OTA; the ENABLE_OTA flag above is the only
+// switch that matters.
+// ================================================================
+#define OTA_SERVER_MODE   0
+
+#if OTA_SERVER_MODE == 1
+  // REAL remote company server — HTTPS, standard port 443.
+  #define OTA_SERVER_HOST   "mydevices.myweb.net.au"
+  #define OTA_SERVER_PORT   443
+  #define OTA_USE_HTTPS     1
+  #define OTA_INSECURE_SKIP_CERT_VERIFY   0
+#elif OTA_SERVER_MODE == 2
+  #define OTA_SERVER_HOST   "192.168.8.168"
+  #define OTA_SERVER_PORT   5273
+  #define OTA_USE_HTTPS     0
+  #define OTA_INSECURE_SKIP_CERT_VERIFY   0
+#elif OTA_SERVER_MODE == 3
+  #define OTA_SERVER_HOST   "192.168.8.168"
+  #define OTA_SERVER_PORT   7273
+  #define OTA_USE_HTTPS     1
+  #define OTA_INSECURE_SKIP_CERT_VERIFY   1
+#elif OTA_SERVER_MODE == 4
+  #define OTA_SERVER_HOST   "ota-update-server-rem6xgeeb-mark0.vercel.app"
+  #define OTA_SERVER_PORT   443
+  #define OTA_USE_HTTPS     1
+  #define OTA_INSECURE_SKIP_CERT_VERIFY   0
+#else
+  // LOCAL SvelteKit mirror (mode 0, default/fallback) — plain HTTP.
+  #define OTA_SERVER_HOST   "192.168.8.168"
+  #define OTA_SERVER_PORT   3000
+  #define OTA_USE_HTTPS     0
+  #define OTA_INSECURE_SKIP_CERT_VERIFY   0
+#endif
+
+#define OTA_FALLBACK_LOCAL_TEST_ENABLED   0
+#define OTA_FALLBACK_LOCAL_HOST           "192.168.8.168"
+#define OTA_FALLBACK_LOCAL_PORT           3000
+#define OTA_FALLBACK_LOCAL_USE_HTTPS      0
+
+#define OTA_MANIFEST_PATH   "/api/Esp32Ota/Manifest"
+#define OTA_REPORT_PATH     "/api/Esp32Ota/Report"
+#define OTA_HTTP_TIMEOUT_MS 15000
+
+#define OTA_HTTP_BUFFER_SIZE   4096
+#define OTA_HTTP_USER_AGENT    "ESP32-OTA-Client/1.0"
+
+#define OTA_MANIFEST_SEND_FULL_PARAMS   0
+#define OTA_CHECK_INTERVAL_S   30
+
+#define OTA_MIN_SUPPORTED_MAJOR  1
+#define OTA_MIN_SUPPORTED_MINOR  0
+
+#define OTA_MAX_RETRIES_PER_VERSION   3
+
+#define OTA_MANIFEST_RETRY_COUNT   3
+#define OTA_DOWNLOAD_RETRY_COUNT   3
+#define OTA_RETRY_DELAY_MS         1500
+
+#define OTA_CHECK_BACKOFF_MAX_MULTIPLIER  8
+#define OTA_CHECK_JITTER_PERCENT      20
+
+#define VERSION_DISPLAY_LEGACY_SIXFIELD   0
+
+#define OTA_DEFAULT_COMPANY_ID     "default-company"
+#define OTA_DEFAULT_PRODUCT_NAME   FW_PROJECT_NAME
+
+// ================================================================
+// REMOTE CONFIGURATION — only compiled/used when ENABLE_REMOTE_CONFIG=1.
+// Kept fully intact, same reasoning as the OTA block above.
+// ================================================================
+#define REMOTE_CONFIG_PATH                "/api/Esp32Config/RemoteConfig"
+#define REMOTE_CONFIG_HTTP_TIMEOUT_MS      15000
+#define REMOTE_CONFIG_RETRY_COUNT          3
+
+#define REMOTE_CONFIG_CHECK_INTERVAL_S      60
+
+#define REMOTE_CONFIG_DEFAULT_TAXI_NUMBER       ""
+#define REMOTE_CONFIG_DEFAULT_SMS_NUMBER        ""
+#define REMOTE_CONFIG_DEFAULT_EMERGENCY_NUMBER  ""
+
+#define ENABLE_SERVER_URL_OVERRIDE   1
+
+// ================================================================
+// TRIPS API — only compiled/used when ENABLE_TRIPS_API=1.
+// ================================================================
+#define TRIPS_API_HOST         "mytaxis.softclient.com.au"
+#define TRIPS_API_PATH         "/taxis-api/api/Trips"
+#define TRIPS_DEFAULT_ID       12772
+#define TRIPS_HTTP_TIMEOUT_MS  30000
+#define TRIPS_BUFFER_SIZE      4096
+#define STORAGE_DIR            "/store"
+#define STORAGE_MAX_FILES      100
+
+// ── Trips-API-specific auth (added for esp32s3_board) ───────────
+// Deliberately named TRIPS_API_* (not a generic "AUTH_TOKEN") — this
+// token is scoped to ONLY this one GET endpoint (TRIPS_API_HOST +
+// TRIPS_API_PATH). It is NOT a general/shared credential: OTA's
+// Manifest/Report calls and remote-config's own endpoint send no auth
+// at all today, and any future API module that needs its own token
+// should define its own <MODULE>_AUTH_ENABLED / <MODULE>_AUTH_TOKEN
+// pair here rather than reusing this one. Stored in config.h (compiled
+// in), NOT NVS — this is a build-time credential, not a per-device
+// runtime value.
+//
+// ⚠ The token below is the same one already used in this repo
+// (esp32_wave_board_test/main/config.h) — decoded, it is a JWT valid
+// ONLY 2026-07-08 12:09:30 UTC through 2026-07-09 12:09:30 UTC (a
+// 24-hour window). It is therefore ALREADY EXPIRED as of this build
+// (2026-07-23). Left here as a wired-up placeholder with
+// TRIPS_API_AUTH_ENABLED=0 — replace the token string and flip this to
+// 1 once you have a fresh one. Sending an expired token behaves
+// identically to sending none (401 / "Job id not found in trips."), so
+// leaving it at 0 for now costs nothing.
+#define TRIPS_API_AUTH_ENABLED  0        // 0 = OFF (no Authorization header), 1 = ON
+#define TRIPS_API_AUTH_TOKEN \
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMTEwMDEiLCJqdGkiOiI2YzQ5ZTI4OS01Y2MxLTQyYWQtYWY1Zi0yZDY3ZTk2Mjg4ZjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjVlZDBiZDU3LWFkOTktNDNkMS04ZDk3LWYzZjRkMTAwZTE2YyIsIk5ldHdvcmsiOiIyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJuYmYiOjE3ODM1MTI1NzAsImV4cCI6MTc4MzU5ODk3MCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDgzIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MDgzIn0.X6z8mZ1piSwQjA7XDFeCh4cj8Z0eB_O2gBpqb1iD5NA"
+
+// ================================================================
+// PSRAM DOWNLOAD TEST — real network download, buffered ENTIRELY in
+// PSRAM (not streamed to flash/SPIFFS like trips_api.c/ota_client.c
+// do), then verified by size + SHA-256 — psram_download_test.c/h, new
+// for esp32s3_board. This is the "large, real, network-driven PSRAM
+// allocation" test, as opposed to ram_test.c's synthetic pattern-fill
+// test.
+//
+// URL/SHA-256 below are copied VERBATIM from a real manifest response
+// already returned by this project's own existing OTA test
+// infrastructure (the Vercel target ota_client.c already knows how to
+// reach via OTA_SERVER_MODE=4) — GET
+// https://ota-update-server-rem6xgeeb-mark0.vercel.app/api/Esp32Ota/Manifest?companyId=30
+// returned this exact "url"/"sha256"/"sizeBytes" — nothing here was
+// invented; it's an existing, already-reachable test asset.
+// ================================================================
+#define PSRAM_DL_TEST_URL     "https://ota-update-server-rem6xgeeb-mark0.vercel.app/Resources/Esp32Ota/30/esp32_chip_info_test/test_2mb.bin"
+#define PSRAM_DL_TEST_SHA256  "5647f05ec18958947d32874eeb788fa396a05d0bab7c1b71f112ceb7e9b31eee"
+#define PSRAM_DL_TEST_HTTP_TIMEOUT_MS  30000
+
+// The manifest reports sizeBytes=2097152 (2MB) for the CURRENT file,
+// but the underlying test asset may be swapped for a bigger one later
+// (mentioned: up to ~3MB). This ceiling is a SAFETY LIMIT ONLY — the
+// real buffer size actually allocated is always read LIVE from the
+// HTTP response's own Content-Length header (never hardcoded to
+// 2097152), so a bigger real file is handled automatically. This
+// ceiling exists purely to refuse the allocation (cleanly, with a clear
+// log message) if a response ever claims something unexpectedly huge —
+// protects PSRAM from a runaway or malformed Content-Length instead of
+// blindly trying to allocate whatever a server claims.
+#define PSRAM_DL_TEST_MAX_BYTES  (4 * 1024 * 1024)   // 4MB safety ceiling
+
+// ================================================================
+// RAM TEST — SRAM + PSRAM confirmation (ram_test.c/h, new for
+// esp32s3_board). See ram_test.h for the full behavior description.
+// ================================================================
+// SRAM (internal) is exercised on-demand only ("ram test sram") — this
+// is the RAM that already "works as expected" per prior testing, so it
+// doesn't need its own repeating background task. 32KB is a safe
+// default test size: large enough to be a meaningful integrity check,
+// small enough not to itself starve internal SRAM (~320KB total, shared
+// with WiFi/TLS) when run after WiFi has already connected.
+#define RAM_TEST_SRAM_SIZE_BYTES        (32 * 1024)
+
+// PSRAM is the RAM actually being confirmed here — 1MB is a meaningful
+// exercise of an 8MB pool without taking long to fill/verify.
+#define RAM_TEST_PSRAM_SIZE_BYTES       (1 * 1024 * 1024)
+
+// The dedicated PSRAM health-check task (ram_test_init()) runs once
+// shortly after boot (proves PSRAM at startup, once the heap has
+// settled from WiFi/NVS/SPIFFS init), then repeats periodically so a
+// PSRAM fault occurring later during long-running operation is also
+// caught, unattended, in the serial log.
+#define RAM_TEST_PSRAM_TASK_FIRST_RUN_DELAY_S   3
+#define RAM_TEST_PSRAM_TASK_INTERVAL_S          300   // 5 minutes

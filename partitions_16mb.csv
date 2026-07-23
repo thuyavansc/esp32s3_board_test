@@ -1,0 +1,34 @@
+# Name,      Type, SubType,  Offset,   Size
+# ============================================================
+# OTA-capable layout — factory + ota_0 + ota_1 + storage(SPIFFS), on a
+# real 16MB chip. Same 3-app-slot pattern as esp32_chip_info_test's own
+# partitions.csv, scaled up. Kept OTA-capable even though ENABLE_OTA=0
+# in config.h (main/ota_client.c is compiled in, just inactive) so:
+#   1. Flipping ENABLE_OTA back to 1 later needs zero partition migration.
+#   2. factory_reset.c's always-on "factory reset" safety-net command has
+#      a real `factory` partition to revert to (it calls
+#      esp_ota_set_boot_partition() unconditionally, regardless of
+#      ENABLE_OTA).
+#
+# All app partitions start on a 0x10000 (64KB) boundary, as ESP-IDF's
+# partition tool requires. 3MB per app slot is generous headroom over
+# this diagnostic firmware's real size (no display/LVGL in this build).
+#
+# Sums to EXACTLY 16MB (0x1000000), no wasted gap:
+#   0x9000(nvs) + 0x6000... see below for the running total.
+#   nvs      0x9000   -> 0x6000
+#   otadata  0xf000   -> 0x2000
+#   phy_init 0x11000  -> 0x1000
+#   factory  0x20000  -> 0x300000
+#   ota_0    0x320000 -> 0x300000
+#   ota_1    0x620000 -> 0x300000
+#   storage  0x920000 -> 0x6E0000
+#   0x920000 + 0x6E0000 = 0x1000000 = 16,777,216 bytes exactly.
+# ============================================================
+nvs,       data, nvs,     0x9000,   0x6000
+otadata,   data, ota,     0xf000,   0x2000
+phy_init,  data, phy,     0x11000,  0x1000
+factory,   app,  factory, 0x20000,  0x300000
+ota_0,     app,  ota_0,   0x320000, 0x300000
+ota_1,     app,  ota_1,   0x620000, 0x300000
+storage,   data, spiffs,  0x920000, 0x6E0000

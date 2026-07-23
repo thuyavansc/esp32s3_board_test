@@ -1,0 +1,422 @@
+ll *  Executing task: C:\Users\user\.platformio\penv\Scripts\platformio.exe run --target upload --target monitor --environment esp32s3_board 
+
+Processing esp32s3_board (platform: espressif32@6.10.0; board: esp32-s3-devkitc-1-n16r8v; framework: espidf)
+-----------------------------------------------------------------
+Verbose mode can be enabled via `-v, --verbose` option
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32-s3-devkitc-1-n16r8v.html
+PLATFORM: Espressif 32 (6.10.0) > Espressif ESP32-S3-DevKitC-1-N16R8V (16 MB QD, 8MB PSRAM)
+HARDWARE: ESP32S3 240MHz, 320KB RAM, 16MB Flash
+DEBUG: Current (esp-builtin) On-board (esp-builtin) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-espidf @ 3.50400.0 (5.4.0) 
+ - tool-cmake @ 3.16.4 
+ - tool-esptoolpy @ 1.40501.0 (4.5.1) 
+ - tool-idf @ 1.0.1 
+ - tool-mconf @ 1.4060000.20190628 (406.0.0) 
+ - tool-mkfatfs @ 2.0.1 
+ - tool-mklittlefs @ 1.203.210628 (2.3) 
+ - tool-mkspiffs @ 2.230.0 (2.30) 
+ - tool-ninja @ 1.9.0 
+ - tool-riscv32-esp-elf-gdb @ 11.2.0+20220823 
+ - tool-xtensa-esp-elf-gdb @ 11.2.0+20230208 
+ - toolchain-esp32ulp @ 1.23800.240113 (2.38.0) 
+ - toolchain-riscv32-esp @ 14.2.0+20241119 
+ - toolchain-xtensa-esp-elf @ 14.2.0+20241119
+Reading CMake configuration...
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 0 compatible libraries
+Scanning dependencies...
+No dependencies
+Building in release mode
+Retrieving maximum program size .pio\build\esp32s3_board\firmware.elf
+Checking size .pio\build\esp32s3_board\firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]  11.5% (used 37788 bytes from 327680 bytes)
+Flash: [===       ]  31.9% (used 1004448 bytes from 3145728 bytes)
+Configuring upload protocol...
+AVAILABLE: cmsis-dap, esp-bridge, esp-builtin, esp-prog, espota, esptool, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa
+CURRENT: upload_protocol = esptool
+Looking for upload port...
+Auto-detected: COM8
+Uploading .pio\build\esp32s3_board\firmware.bin
+esptool.py v4.5.1
+Serial port COM8
+Connecting....
+Chip is ESP32-S3 (revision v0.2)
+Features: WiFi, BLE
+Crystal is 40MHz
+MAC: a4:cb:8f:d6:98:f8
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 921600
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00000000 to 0x00005fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Flash will be erased from 0x0000f000 to 0x00010fff...
+Flash will be erased from 0x00020000 to 0x00115fff...
+Compressed 21088 bytes to 13441...
+Writing at 0x00000000... (100 %)
+Wrote 21088 bytes (13441 compressed) at 0x00000000 in 0.6 seconds (effective 284.3 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 158...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (158 compressed) at 0x00008000 in 0.1 seconds (effective 333.8 kbit/s)...
+Hash of data verified.
+Compressed 8192 bytes to 31...
+Writing at 0x0000f000... (100 %)
+Wrote 8192 bytes (31 compressed) at 0x0000f000 in 0.1 seconds (effective 558.2 kbit/s)...
+Hash of data verified.
+Compressed 1004848 bytes to 635064...
+Writing at 0x00020000... (2 %)
+Writing at 0x0002c1af... (5 %)
+Writing at 0x000382e8... (7 %)
+Writing at 0x0003ccc9... (10 %)
+Writing at 0x00041b7c... (12 %)
+Writing at 0x00046fae... (15 %)
+Writing at 0x0004df31... (17 %)
+Writing at 0x000597e5... (20 %)
+Writing at 0x0005f4c4... (23 %)
+Writing at 0x0006598e... (25 %)
+Writing at 0x0006b653... (28 %)
+Writing at 0x00071490... (30 %)
+Writing at 0x00077541... (33 %)
+Writing at 0x0007d72f... (35 %)
+Writing at 0x0008319e... (38 %)
+Writing at 0x00088e25... (41 %)
+Writing at 0x0008ec9f... (43 %)
+Writing at 0x000949f4... (46 %)
+Writing at 0x0009a97e... (48 %)
+Writing at 0x000a0759... (51 %)
+Writing at 0x000a622c... (53 %)
+Writing at 0x000ac302... (56 %)
+Writing at 0x000b243a... (58 %)
+Writing at 0x000b7ff8... (61 %)
+Writing at 0x000bdb67... (64 %)
+Writing at 0x000c2b48... (66 %)
+Writing at 0x000c7ab7... (69 %)
+Writing at 0x000cce24... (71 %)
+Writing at 0x000d22d5... (74 %)
+Writing at 0x000d73d7... (76 %)
+Writing at 0x000dc688... (79 %)
+Writing at 0x000e2297... (82 %)
+Writing at 0x000ebfee... (84 %)
+Writing at 0x000f2906... (87 %)
+Writing at 0x000f8283... (89 %)
+Writing at 0x000fed82... (92 %)
+Writing at 0x00104e33... (94 %)
+Writing at 0x0010b27f... (97 %)
+Writing at 0x00110f4f... (100 %)
+Wrote 1004848 bytes (635064 compressed) at 0x00020000 in 9.5 seconds (effective 848.4 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+
+Please build project in debug configuration to get more details about an exception.
+See https://docs.platformio.org/page/projectconf/build_configurations.html
+
+
+--- Terminal on COM8 | 115200 8-N-1
+--- Available filters and text transformations: debug, default, direct, esp32_exception_decoder, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at https://bit.ly/pio-monitor-filters
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x18 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f3c
+entry 0x403c8920
+I (27) boot: ESP-IDF 5.4.0 2nd stage bootloader
+I (27) boot: compile time Jul 23 2026 20:41:58
+I (27) boot: Multicore bootloader
+I (27) boot: chip revision: v0.2
+I (30) boot: efuse block revision: v1.4
+I (33) boot.esp32s3: Boot SPI Speed : 80MHz
+I (37) boot.esp32s3: SPI Mode       : DIO
+I (41) boot.esp32s3: SPI Flash Size : 16MB
+I (45) boot: Enabling RNG early entropy source...
+I (49) boot: Partition Table:
+I (52) boot: ## Label            Usage          Type ST Offset   Length
+I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (65) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (71) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (78) boot:  3 factory          factory app      00 00 00020000 00300000
+I (84) boot:  4 ota_0            OTA app          00 10 00320000 00300000
+I (91) boot:  5 ota_1            OTA app          00 11 00620000 00300000
+I (97) boot:  6 storage          Unknown data     01 82 00920000 006e0000
+I (104) boot: End of partition table
+I (107) boot: Defaulting to factory image
+I (111) esp_image: segment 0: paddr=00020020 vaddr=3c0b0020 size=331ach (209324) map
+I (155) esp_image: segment 1: paddr=000531d4 vaddr=3fc9b200 size=05034h ( 20532) load
+I (160) esp_image: segment 2: paddr=00058210 vaddr=40374000 size=07e08h ( 32264) load
+I (167) esp_image: segment 3: paddr=00060020 vaddr=42000020 size=a61a4h (680356) map
+I (287) esp_image: segment 4: paddr=001061cc vaddr=4037be08 size=0f318h ( 62232) load
+I (301) esp_image: segment 5: paddr=001154ec vaddr=600fe100 size=0001ch (    28) load
+I (310) boot: Loaded app from partition at offset 0x20000
+I (311) boot: Disabling RNG early entropy source...
+I (321) octal_psram: vendor id    : 0x0d (AP)
+I (321) octal_psram: dev id       : 0x02 (generation 3)
+I (321) octal_psram: density      : 0x03 (64 Mbit)
+I (323) octal_psram: good-die     : 0x01 (Pass)
+I (327) octal_psram: Latency      : 0x01 (Fixed)
+I (332) octal_psram: VCC          : 0x01 (3V)
+I (336) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (341) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (346) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (350) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (355) octal_psram: DriveStrength: 0x00 (1/1)
+I (360) MSPI Timing: PSRAM timing tuning index: 10
+I (364) esp_psram: Found 8MB PSRAM device
+I (368) esp_psram: Speed: 80MHz
+I (371) cpu_start: Multicore app
+I (800) esp_psram: SPI SRAM memory test OK
+I (809) cpu_start: Pro cpu start user code
+I (809) cpu_start: cpu freq: 240000000 Hz
+I (809) app_init: Application information:
+I (809) app_init: Project name:     esp32s3_board
+I (813) app_init: App version:      5456c0f
+I (817) app_init: Compile time:     Jul 23 2026 20:39:23
+I (822) app_init: ELF file SHA256:  3e221ddf2...
+I (826) app_init: ESP-IDF:          5.4.0
+I (830) efuse_init: Min chip rev:     v0.0
+I (834) efuse_init: Max chip rev:     v0.99 
+I (838) efuse_init: Chip rev:         v0.2
+I (842) heap_init: Initializing. RAM available for dynamic allocation:
+I (848) heap_init: At 3FCA45A0 len 00045170 (276 KiB): RAM
+I (853) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (858) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (864) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (869) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (876) spi_flash: detected chip: generic
+I (879) spi_flash: flash io: dio
+I (882) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (889) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (895) main_task: Started on CPU0
+I (919) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (920) main_task: Calling app_main()
+I (938) nvs_state: OTA state namespace 'ota_state' ready
+I (940) pp: pp rom version: e7ae62f
+I (941) net80211: net80211 rom version: e7ae62f
+I (942) wifi:wifi driver task: 3fcb79f4, prio:23, stack:6656, core=0
+I (956) wifi:wifi firmware version: 48ea317a7
+I (956) wifi:wifi certification version: v7.0
+I (957) wifi:config NVS flash: enabled
+I (958) wifi:config nano formatting: disabled
+I (962) wifi:Init data frame dynamic rx buffer num: 16
+I (967) wifi:Init static rx mgmt buffer num: 5
+I (971) wifi:Init management short buffer num: 32
+I (975) wifi:Init dynamic tx buffer num: 32
+I (979) wifi:Init static tx FG buffer num: 2
+I (983) wifi:Init static rx buffer size: 1600
+I (987) wifi:Init static rx buffer num: 6
+I (991) wifi:Init dynamic rx buffer num: 16
+I (995) wifi_init: rx ba win: 6
+I (998) wifi_init: accept mbox: 6
+I (1001) wifi_init: tcpip mbox: 32
+I (1004) wifi_init: udp mbox: 6
+I (1007) wifi_init: tcp mbox: 6
+I (1009) wifi_init: tcp tx win: 5760
+I (1013) wifi_init: tcp rx win: 5760
+I (1016) wifi_init: tcp mss: 1440
+I (1019) wifi_init: WiFi IRAM OP enabled
+I (1023) wifi_init: WiFi RX IRAM OP enabled
+W (1027) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1036) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10
+I (1073) wifi:mode : sta (a4:cb:8f:d6:98:f8)
+I (1074) wifi:enable tsf
+I (1075) chipinfo: WiFi connecting to 'TWHSP' ...
+I (1150) wifi:new:<12,0>, old:<1,0>, ap:<255,255>, sta:<12,0>, prof:6, snd_ch_cfg:0x0
+I (1151) wifi:state: init -> auth (0xb0)
+I (1158) wifi:state: auth -> assoc (0x0)
+I (1163) wifi:Association refused temporarily time 1000, comeback time 1100 (TUs)
+I (2290) wifi:state: assoc -> assoc (0x0)
+E (2294) wifi:Association refused too many times, max allowed 1
+I (2295) wifi:state: assoc -> init (0xd010)
+I (2298) wifi:new:<12,0>, old:<12,0>, ap:<255,255>, sta:<12,0>, prof:6, snd_ch_cfg:0x0
+W (2302) chipinfo: WiFi disconnected — reconnecting...
+W (4715) chipinfo: WiFi disconnected — reconnecting...
+I (4734) wifi:new:<12,0>, old:<12,0>, ap:<255,255>, sta:<12,0>, prof:6, snd_ch_cfg:0x0
+I (4734) wifi:state: init -> auth (0xb0)
+I (4738) wifi:state: auth -> assoc (0x0)
+I (4745) wifi:state: assoc -> run (0x10)
+I (4773) wifi:connected with TWHSP, aid = 2, channel 12, BW20, bssid = 20:b0:01:be:14:63
+I (4774) wifi:security: WPA2-PSK, phy: bgn, rssi: -60
+I (4777) wifi:pm start, type: 1
+
+I (4778) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (4786) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (4801) wifi:<ba-add>idx:0 (ifx:0, 20:b0:01:be:14:63), tid:0, ssn:0, winSize:64
+I (4803) wifi:<ba-add>idx:1 (ifx:0, 20:b0:01:be:14:63), tid:6, ssn:0, winSize:64
+I (4834) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (5812) esp_netif_handlers: sta ip: 192.168.0.62, mask: 255.255.255.0, gw: 192.168.0.1
+I (5812) chipinfo: WiFi connected — IP: 192.168.0.62
+I (6240) trips_api: Trips API READY — SPIFFS: 6463 KB total | 0 KB used | 6463 KB free
+
+
+I (6240) chipinfo: ########################################
+I (6242) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (6248) chipinfo: ########################################
+I (6254) version: ======================================
+I (6258) version: FIRMWARE VERSION
+I (6262) version: --------------------------------------
+I (6267) version:   Project:   esp32s3_board
+I (6271) version:   Version:   26.07.23 (code 1)
+I (6275) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (6288) version:   Running from partition: factory
+I (6292) chipinfo: ======================================
+I (6297) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (6304) chipinfo: --------------------------------------
+I (6309) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (6314) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (6319) chipinfo:   Crystal is 40 MHz
+I (6323) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (6326) chipinfo: ======================================
+I (6332) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (6338) chipinfo: --------------------------------------
+I (6343) chipinfo:   Model:       ESP32-S3
+I (6347) chipinfo:   Cores:       2
+I (6350) chipinfo:   Revision:    v0.2
+I (6353) chipinfo:   Features:    WiFi BLE External-Flash
+I (6359) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (6363) chipinfo:   IDF version: 5.4.0
+I (6367) chipinfo: ======================================
+I (6372) chipinfo: FLASH INFO  (live-probed)
+I (6376) chipinfo: --------------------------------------
+I (6381) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (6388) chipinfo:   JEDEC ID:        0x852018
+I (6392) chipinfo: ======================================
+I (6397) chipinfo: RAM / HEAP INFO  (live)
+I (6401) chipinfo: --------------------------------------
+I (6406) chipinfo:   Free heap now (all capabilities): 8625432 bytes | 8423.3 KB (8.23 MB)
+I (6414) chipinfo:   Minimum ever free:                8623612 bytes | 8421.5 KB (8.22 MB)
+I (6422) chipinfo:   --------------------------------------
+I (6427) chipinfo:   PSRAM initialized: YES
+I (6431) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (6439) chipinfo:   SRAM  total:          378719 bytes | 369.8 KB (0.36 MB)
+I (6446) chipinfo:   SRAM  free now:       271483 bytes | 265.1 KB (0.26 MB)
+I (6453) chipinfo:   SRAM  min free ever:  269663 bytes | 263.3 KB (0.26 MB)
+I (6460) chipinfo:   SRAM  largest block:  176128 bytes | 172.0 KB (0.17 MB)
+I (6466) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (6474) chipinfo:   PSRAM free now:          8385980 bytes | 8189.4 KB (8.00 MB)
+I (6481) chipinfo:   PSRAM min free ever:     8385980 bytes | 8189.4 KB (8.00 MB)
+I (6488) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (6495) chipinfo: ======================================
+I (6500) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (6507) chipinfo: --------------------------------------
+I (6512) chipinfo:   Name       Type   SubType   Offset     Size
+I (6518) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (6526) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (6534) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (6542) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6551) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6559) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6567) chipinfo:   storage    data   0x82      0x920000   7208960 bytes | 7040.0 KB (6.88 MB)
+I (6576) chipinfo: ======================================
+I (6581) chipinfo: NVS INFO  (live)
+I (6584) chipinfo: --------------------------------------
+I (6589) chipinfo:   Used entries:  167
+I (6593) chipinfo:   Free entries:  589
+I (6596) chipinfo:   Total entries: 756
+I (6600) chipinfo: ======================================
+I (6605) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (6611) chipinfo: --------------------------------------
+I (6616) chipinfo:   Total: 6619121 bytes | 6464.0 KB (6.31 MB)
+I (6622) chipinfo:   Used:  0 bytes | 0.0 KB (0.00 MB)
+I (6626) chipinfo:   Free:  6619121 bytes | 6464.0 KB (6.31 MB)
+I (6632) chipinfo: ########################################
+
+I (6637) additional_work: Additional work module ready (try: "sms reboot")
+I (6644) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+
+Type 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all' | 'api help' | 'sms <command>' | 'factory reset' | 'nvs status'
+> I (6663) main_task: Returned from app_main()
+I (9650) ram_test: ══════════════════════════════════════
+I (9650) ram_test: PSRAM periodic health-check
+I (9655) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (9661) ram_test:   Before: free=8385980 bytes | largest free block=8257536 bytes
+I (9806) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (9807) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337400 bytes
+I (9811) ram_test:   After free: free=8385980 bytes | largest free block=8257536 bytes
+I (9819) ram_test: ══════════════════════════════════════
+ram info I (234419) ram_test: ======================================
+I (234419) ram_test: RAM INFO (live — no allocation)
+I (234419) ram_test: --------------------------------------
+I (234423) ram_test:   PSRAM initialized: YES
+I (234427) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (234435) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=378719 free=267475 min-free=258203 largest-block=163840
+I (234444) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 free=8385980 min-free=7337400 largest-block=8257536
+> ram test sramI (246855) ram_test: ── SRAM test: requesting 32768 bytes ──
+I (246855) ram_test:   Before: free=267471 bytes | largest free block=163840 bytes
+I (246861) ram_test:   Integrity: PASS — 32768 bytes written and read back correctly
+I (246865) ram_test:   During: used_by_test=32772 bytes | free_after_alloc=234699 bytes
+I (246873) ram_test:   After free: free=267471 bytes | largest free block=163840 bytes
+> ram test psramI (259580) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (259580) ram_test:   Before: free=8385980 bytes | largest free block=8257536 bytes
+I (259721) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (259722) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337400 bytes
+I (259726) ram_test:   After free: free=8385980 bytes | largest free block=8257536 bytes
+> ram test download I (272784) psram_dl: ══════════════════════════════════════
+I (272785) psram_dl: PSRAM DOWNLOAD TEST — real HTTPS download, buffered whole in PSRAM
+I (272793) psram_dl:   URL: https://ota-update-server-rem6xgeeb-mark0.vercel.app/Resources/Esp32Ota/30/esp32_chip_info_test/test_2mb.bin
+I (272805) ram_test: -- RAM snapshot: before download --
+I (272810) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=378719 free=267471 min-free=234699 largest-block=163840
+I (272820) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 free=8385980 min-free=7337400 largest-block=8257536
+I (273063) esp-x509-crt-bundle: Certificate validated
+I (278989) psram_dl:   Server-reported size (live Content-Length): 2097152 bytes
+E (279001) esp-tls-mbedtls: read error :-0x7100
+E (279002) transport_base: esp_tls_conn_read error, errno=Success
+E (279002) HTTP_CLIENT: transport_read: error - -1 | ESP_FAIL
+E (279007) esp-tls-mbedtls: read error :-0x7100
+E (279010) transport_base: esp_tls_conn_read error, errno=Success
+E (279016) HTTP_CLIENT: transport_read: error - -1 | ESP_FAIL
+E (279022) psram_dl:   FAIL — esp_http_client_read() returned -1 after 4049/2097152 bytes (connection dropped early?)
+> api get 12I (309830) ram_test: ══════════════════════════════════════
+I (309831) ram_test: PSRAM periodic health-check
+I (309835) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (309841) ram_test:   Before: free=8385980 bytes | largest free block=8257536 bytes
+I (309990) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (309991) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337400 bytes
+I (309995) ram_test:   After free: free=8385980 bytes | largest free block=8257536 bytes
+I (310003) ram_test: ══════════════════════════════════════
+776I (318985) trips_api: ══════════════════════════════════════
+I (318986) trips_api: FETCH #1 -> Trip ID: 1
+I (318990) trips_api:   URL: https://mytaxis.softclient.com.au/taxis-api/api/Trips/1
+I (318997) trips_api:   Heap before HTTP init   free=8418 KB | largest free block=8064 KB
+I (319275) trips_api:   Heap right before perform() free=8412 KB | largest free block=8064 KB
+I (320168) esp-x509-crt-bundle: Certificate validated
+I (321374) trips_api:   Heap right after perform() free=8395 KB | largest free block=8064 KB
+I (321376) trips_api: OK HTTP 200 | 82 bytes -> /spiffs/store/trips_1.json
+I (321379) trips_api: Stats: 1 fetches | 1 OK | 0 failed
+I (321384) trips_api: ══════════════════════════════════════
+> aapiapi get 12279I (350798) trips_api: ══════════════════════════════════════
+I (350799) trips_api: FETCH #2 -> Trip ID: 12279
+I (350803) trips_api:   URL: https://mytaxis.softclient.com.au/taxis-api/api/Trips/12279
+I (350811) trips_api:   Heap before HTTP init   free=8418 KB | largest free block=8064 KB
+I (351089) trips_api:   Heap right before perform() free=8412 KB | largest free block=8064 KB
+I (352023) esp-x509-crt-bundle: Certificate validated
+I (354267) trips_api:   Heap right after perform() free=8395 KB | largest free block=8064 KB
+I (354271) trips_api: OK HTTP 200 | 26144 bytes -> /spiffs/store/trips_12279.json
+I (354272) trips_api: Stats: 2 fetches | 2 OK | 0 failed
+I (354277) trips_api: ══════════════════════════════════════
+> api listI (360892) trips_api:   [ 1] trips_1.json                  82 bytes
+I (360894) trips_api:   [ 2] trips_12279.json           26144 bytes
+I (361028) trips_api:   Total: 2 file(s) | 26226 bytes
+> api read 12779E (374512) trips_api: Not found: /spiffs/store/trips_12779.json (use 'api get 12779' first)
+> api read 122779E (388898) trips_api: Not found: /spiffs/store/trips_122779.json (use 'api get 122779' first)
+> api read 12279I (400498) trips_api: /spiffs/store/trips_12279.json (26144 bytes):
+{"success":true,"message":null,"data":{"tripId":9209,"requestedPickup":"2025-10-25T06:11:40.802","company":"SoftClient","customerName":"","phoneNo":"","pickupLocation":"Sydney Airport (SYD), Mascot NSW 2020, Australia","dropOffLocation":"Military Rd opp Prince St, Mosman NSW 2088, Australia","pickup_lat":-33.9361597,"pickup_lng":151.1629458,"dropOff_lat":-33.8261592,"dropOff_lng":151.232588,"extras":0.0,"tariffId":5,"tariffName":"Maxi Day Rate(06:00-21:59)","flagFall":750.0,"distanceRate":378.0,"timeRate":163.79999999999998,"distance":21403.93467400414,"duration":0.0,"totalFare":0.0,"minChargeInCents":0,"maxChargeInCents":0,"summary":"","geometry":"","deviceAppVersion":"25.10.15.2.R1","meterStatus":5,"isFixedFareAutomatic":false,"fixedRateAutomatic":null,"googleMapTollDetectionIsUsed":null,"googleMapTollDetectionDescription":null,"googleMapTollDetectionDuration":null,"googleMapTollDetectionDistanceMeters":null,"googleMapTollDetectionTotalTollCost":null,"paths":[{"timeFrameLocationId":9824208,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.920889306854185,"longitude":151.21151688242426,"time":"2025-10-25T17:13:27.064","speed":"100.98727","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824209,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.94596631036837,"longitude":151.1740957488897,"time":"2025-10-25T17:12:29.601","speed":"97.1859","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824210,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.8528063336428,"longitude":151.21332768574578,"time":"2025-10-25T17:14:47.58","speed":"95.992004","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824211,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82774626529536,"longitude":151.2307431560023,"time":"2025-10-25T17:16:10.84","speed":"42.82032","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824212,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.94601877411302,"longitude":151.17220288534392,"time":"2025-10-25T17:12:27.693","speed":"97.279655","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824213,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.875626512231236,"longitude":151.21743413342116,"time":"2025-10-25T17:14:20.944","speed":"96.48753","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824214,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93707257768443,"longitude":151.19742801679166,"time":"2025-10-25T17:12:56.738","speed":"107.817314","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824215,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.94051090242172,"longitude":151.15638576725925,"time":"2025-10-25T17:12:08.34","speed":"89.737816","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824216,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93739522283758,"longitude":151.1540689187299,"time":"2025-10-25T17:12:02.565","speed":"85.772156","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824217,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82878728840382,"longitude":151.21538626901267,"time":"2025-10-25T17:15:32.513","speed":"30.599873","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824218,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.83135079089044,"longitude":151.22242599982926,"time":"2025-10-25T17:15:50.488","speed":"45.061638","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824219,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.829833918961675,"longitude":151.21799924657705,"time":"2025-10-25T17:15:40.754","speed":"40.648403","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824220,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.89316868792664,"longitude":151.216574497665,"time":"2025-10-25T17:13:59.731","speed":"96.1384","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824221,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.91939148475184,"longitude":151.21147529208207,"time":"2025-10-25T17:13:28.893","speed":"99.29448","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824222,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.83077457874835,"longitude":151.22505127101806,"time":"2025-10-25T17:15:56.664","speed":"45.111496","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824223,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.907464865400804,"longitude":151.21343179381813,"time":"2025-10-25T17:13:42.454","speed":"96.60693","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824224,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93794846092351,"longitude":151.19544551129306,"time":"2025-10-25T17:12:54.637","speed":"102.726906","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824225,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.87083288301018,"longitude":151.21816695857376,"time":"2025-10-25T17:14:26.617","speed":"97.832695","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824226,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.92372643623843,"longitude":151.21291262883022,"time":"2025-10-25T17:13:23.332","speed":"102.02993","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824227,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.84022042408467,"longitude":151.21033974315137,"time":"2025-10-25T17:15:02.864","speed":"97.3583","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824228,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93660705210082,"longitude":151.1547588967654,"time":"2025-10-25T17:12:00.484","speed":"59.508717","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824229,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.84318109852439,"longitude":151.2109149786058,"time":"2025-10-25T17:14:59.162","speed":"99.700294","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824230,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.9425276666146,"longitude":151.15931349228546,"time":"2025-10-25T17:12:12.588","speed":"100.138756","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824231,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.924933842623325,"longitude":151.21397498238224,"time":"2025-10-25T17:13:21.489","speed":"123.54489","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824232,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82661798792824,"longitude":151.23207755684015,"time":"2025-10-25T17:16:14.762","speed":"44.90293","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824233,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.89649392176341,"longitude":151.2159229256763,"time":"2025-10-25T17:13:55.715","speed":"96.02735","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824234,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.86067119172854,"longitude":151.21369835261206,"time":"2025-10-25T17:14:41.59","speed":"95.99944","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824235,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93645788539135,"longitude":151.1993487449848,"time":"2025-10-25T17:12:58.61","speed":"102.62405","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824236,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.88511442944043,"longitude":151.21743584296482,"time":"2025-10-25T17:14:09.538","speed":"96.94463","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824237,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.83519264050258,"longitude":151.21105909265336,"time":"2025-10-25T17:15:08.837","speed":"95.09801","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824238,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.91064711883134,"longitude":151.21289771788454,"time":"2025-10-25T17:13:38.813","speed":"101.77184","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824239,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.88035415860601,"longitude":151.21696989035922,"time":"2025-10-25T17:14:15.235","speed":"96.28492","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824240,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93418714676918,"longitude":151.16032182473597,"time":"2025-10-25T17:11:49.914","speed":"58.182716","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824241,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.888358222467566,"longitude":151.2176094752579,"time":"2025-10-25T17:14:05.564","speed":"96.275215","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824242,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.85608167391122,"longitude":151.2135123785697,"time":"2025-10-25T17:14:47.156","speed":"95.9405","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824243,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.935529907912596,"longitude":151.20749185564316,"time":"2025-10-25T17:13:06.411","speed":"100.22262","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824244,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.828073563985875,"longitude":151.21357438917067,"time":"2025-10-25T17:15:20.566","speed":"30.679256","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824245,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.914275602989605,"longitude":151.21238986286298,"time":"2025-10-25T17:13:34.686","speed":"102.43356","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824246,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.94279906598279,"longitude":151.1912756736102,"time":"2025-10-25T17:12:47.228","speed":"105.5288","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824247,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82776921570029,"longitude":151.21389634809506,"time":"2025-10-25T17:15:22.364","speed":"30.102247","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824248,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.944842540942666,"longitude":151.1862172351896,"time":"2025-10-25T17:12:41.47","speed":"95.3701","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824249,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.829723980340354,"longitude":151.21339803884047,"time":"2025-10-25T17:15:16.665","speed":"39.74427","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824250,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.84781955633403,"longitude":151.21257784256846,"time":"2025-10-25T17:14:53.357","speed":"95.62569","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824251,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93227667604608,"longitude":151.21164219295756,"time":"2025-10-25T17:13:12.113","speed":"112.14628","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824252,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.943799118094596,"longitude":151.18998623232434,"time":"2025-10-25T17:12:45.409","speed":"94.80648","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824253,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.94629020349678,"longitude":151.16868560566718,"time":"2025-10-25T17:12:23.89","speed":"88.6982","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824254,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93087487590267,"longitude":151.21272638126825,"time":"2025-10-25T17:13:14.01","speed":"101.410904","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824255,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82821570714388,"longitude":151.22995732896143,"time":"2025-10-25T17:16:08.84","speed":"42.64001","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824256,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.86222641310893,"longitude":151.2136926852975,"time":"2025-10-25T17:14:39.662","speed":"96.13655","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824257,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.83071876775367,"longitude":151.21297737103447,"time":"2025-10-25T17:15:14.517","speed":"97.835365","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824258,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.9400620827044,"longitude":151.19272570038245,"time":"2025-10-25T17:12:50.898","speed":"99.76385","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824259,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93944476740632,"longitude":151.15530974793666,"time":"2025-10-25T17:12:06.413","speed":"91.92506","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824260,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93597470483994,"longitude":151.20354986960794,"time":"2025-10-25T17:13:02.713","speed":"101.635376","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824261,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82770878295037,"longitude":151.2150407771547,"time":"2025-10-25T17:15:26.541","speed":"30.54958","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824262,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93413840991651,"longitude":151.16135983392763,"time":"2025-10-25T17:11:47.979","speed":"57.709423","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824263,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.943426429897585,"longitude":151.16080232515353,"time":"2025-10-25T17:12:14.654","speed":"81.62266","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824264,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82913217204929,"longitude":151.22820844357602,"time":"2025-10-25T17:16:04.835","speed":"37.607807","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824265,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.9452368787908,"longitude":151.1843718451427,"time":"2025-10-25T17:12:39.658","speed":"101.99216","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824266,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.945896895571444,"longitude":151.1798930246489,"time":"2025-10-25T17:12:35.189","speed":"97.15151","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824267,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.91595823752493,"longitude":151.2120253334648,"time":"2025-10-25T17:13:32.813","speed":"103.17193","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824268,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.838356764124626,"longitude":151.21047732725586,"time":"2025-10-25T17:15:05.137","speed":"97.99828","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824269,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93471487372668,"longitude":151.20921098561638,"time":"2025-10-25T17:13:08.363","speed":"100.78401","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824270,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.90290152610588,"longitude":151.21450130333022,"time":"2025-10-25T17:13:47.941","speed":"96.27759","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824271,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.83049475955601,"longitude":151.21970951519927,"time":"2025-10-25T17:15:44.759","speed":"42.01903","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824272,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.83125474972758,"longitude":151.22336346239615,"time":"2025-10-25T17:15:52.64","speed":"44.500523","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824273,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.878846653693635,"longitude":151.21708386077086,"time":"2025-10-25T17:14:17.04","speed":"96.12122","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824274,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.94519808005563,"longitude":151.16392439976394,"time":"2025-10-25T17:12:18.414","speed":"90.42895","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824275,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93477107084162,"longitude":151.15810502244045,"time":"2025-10-25T17:11:53.912","speed":"57.733353","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824276,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.89977569008325,"longitude":151.21522119689908,"time":"2025-10-25T17:13:51.713","speed":"95.950195","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824277,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.92793615599611,"longitude":151.21452416455725,"time":"2025-10-25T17:13:17.71","speed":"104.04145","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824278,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.88991629974437,"longitude":151.21730164851598,"time":"2025-10-25T17:14:03.713","speed":"96.23466","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824279,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.9459061617617,"longitude":151.16545380649362,"time":"2025-10-25T17:12:20.246","speed":"95.70495","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824280,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.86809860151969,"longitude":151.21720362355452,"time":"2025-10-25T17:14:30.334","speed":"95.90072","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824281,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.829539871645586,"longitude":151.21719600133693,"time":"2025-10-25T17:15:38.714","speed":"45.883457","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824282,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82906148087571,"longitude":151.21572003636854,"time":"2025-10-25T17:15:34.584","speed":"44.71956","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824283,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.83044704092493,"longitude":151.2259178350589,"time":"2025-10-25T17:15:58.809","speed":"39.758698","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824284,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.83082835389708,"longitude":151.22059582344892,"time":"2025-10-25T17:15:46.772","speed":"40.95146","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824285,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.84616635670449,"longitude":151.2120187262113,"time":"2025-10-25T17:14:55.442","speed":"96.98886","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824286,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.851114094248956,"longitude":151.21325120063653,"time":"2025-10-25T17:14:49.417","speed":"96.14532","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824287,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.94591549281068,"longitude":151.17797110639836,"time":"2025-10-25T17:12:33.312","speed":"97.19289","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824288,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.87406704451522,"longitude":151.21759423458877,"time":"2025-10-25T17:14:22.785","speed":"96.18457","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824289,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.8337318169637,"longitude":151.21160938391552,"time":"2025-10-25T17:15:10.676","speed":"93.173676","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824290,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.865050685958074,"longitude":151.21366589243587,"time":"2025-10-25T17:14:35.901","speed":"96.33764","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824291,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82794578954742,"longitude":151.2153441875425,"time":"2025-10-25T17:15:28.698","speed":"27.507984","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824292,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.90595054705369,"longitude":151.21371839502277,"time":"2025-10-25T17:13:44.263","speed":"96.129814","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824293,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.898126549559386,"longitude":151.21557058401237,"time":"2025-10-25T17:13:53.734","speed":"96.53934","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824294,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.86723954664077,"longitude":151.21590307625664,"time":"2025-10-25T17:14:32.161","speed":"93.45944","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824295,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.82955448080286,"longitude":151.22755878817355,"time":"2025-10-25T17:16:02.819","speed":"38.92702","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824296,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.93540733140816,"longitude":151.15684706539153,"time":"2025-10-25T17:11:56.464","speed":"58.270287","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824297,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.883523621386225,"longitude":151.2171577280898,"time":"2025-10-25T17:14:11.413","speed":"96.439575","batteryStatus":null,"accuracy":5.0,"satelliteCount":0},{"timeFrameLocationId":9824298,"timeFrameId":39967,"tripTimeFrameId":null,"tripId":null,"latitude":-33.857620285516944,"longitude":151.21359151260924,"time":"2025-10-25T17:14:45.313","speed":"96.13242","batteryStatus":null,"accuracy":5.0,"satelliteCount":0}],"specialFares":[{"tripSpecialFareId":21740,"tripId":12279,"specialFareId":0,"name":"Levy Fare","fare":132.0,"selectionMethod":0,"motorwayRef":null,"motorwayName":null,"type":null,"gantry":null,"exitGantry":null,"exitGantryName":null,"timeFrame":null,"address":null,"latitude":0.0,"longitude":0.0,"isRemoved":false},{"tripSpecialFareId":21741,"tripId":12279,"specialFareId":0,"name":"International M5J Mascot","fare":545.0,"selectionMethod":3,"motorwayRef":null,"motorwayName":null,"type":null,"gantry":null,"exitGantry":null,"exitGantryName":null,"timeFrame":null,"address":"M5J Mascot","latitude":-33.9357783,"longitude":151.1628906,"isRemoved":false}],"visitedTolls":[],"timeFrames":[{"tripTimeFrameId":39967,"tripId":9209,"startTime":"2025-10-25T17:11:42.714","endTime":"2025-10-25T17:16:16.441","polyline":"~ccnEm_sy[}FXuCbHHnErBxL~BzFnF`L|ChCvKwFtEwErKgQrDiH`JoRlCqHjAgSu@}TI{JIeWC_KcC_[oAqJoEqVgEaGcPaHeL_PoDkKyB_KaBgYwAsWcDwIeNeNyGyEiQeJyQlBoFrEwPtGkHFmTmBoIgAuUeB}RiBmHy@aR{CoRoCiIeAgIeAwSaCiSqCwH}@iS`@}Hv@yRd@kHUcSeAwH_@gSsBaP`EkDbGuL|LsPCwHAaRTsHNmSb@sINqSdCiInBuQ|EoQpBsJ[yRsBcHmByQqGgEsAiIa@{@aAKcFn@{@fDIt@aA~AgHx@_DbCuIbAqDfBmJSyD_BqI_AmDsDgIsAaCuD}I}A{CaFkG","status":2,"distanceInMeter":21403.93467400414,"startOdometerMeters":0.0,"totalDistanceMeters":21403.93467400414,"distanceInMeterAtThreshold":12243.846052777239,"timeInSec":0,"tempTimeInSec":0,"tempTimeInSecLog":0,"ratePerKm":415.8000090122223,"rate2PerKm":378.4000082015991,"thresholdDistanceInMeters":12000.0,"ratePerMinute":180.1800039052963,"tempRatePerMinute":393.12001562118525,"totalFare":8000.0,"distanceFare":8557.168908488673,"timeFare":0.0,"incrementSeconds":0,"incrementDistance":0.0,"decrementGpsInactiveSeconds":0,"totalGpsInactiveTimeTravelled":0}]},"errors":null}
+> ram infoI (414179) ram_test: ======================================
+I (414179) ram_test: RAM INFO (live — no allocation)
+I (414179) ram_test: --------------------------------------
+I (414183) ram_test:   PSRAM initialized: YES
+I (414187) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (414194) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=378719 free=266367 min-free=213527 largest-block=139264
+I (414204) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 free=8385980 min-free=6288624 largest-block=8257536
+

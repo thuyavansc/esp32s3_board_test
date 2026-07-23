@@ -1,0 +1,14 @@
+> I (386770) ram_test: ══════════════════════════════════════
+I (386771) ram_test: PSRAM periodic health-check
+I (386775) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (386781) ram_test:   Before: free=8385980 bytes | largest free block=8257536 bytes
+I (386929) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (386929) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337400 bytes
+I (386934) ram_test:   After free: free=8385980 bytes | largest free block=8257536 bytes
+I (386942) ram_test: ══════════════════════════════════════
+ram test psramI (408160) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (408160) ram_test:   Before: free=8385980 bytes | largest free block=8257536 bytes
+I (408302) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (408302) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337400 bytes
+I (408307) ram_test:   After free: free=8385980 bytes | largest free block=8257536 bytes
+> 

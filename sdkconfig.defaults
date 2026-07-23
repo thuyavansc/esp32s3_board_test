@@ -1,0 +1,57 @@
+# sdkconfig.defaults — esp32s3_board
+#
+# Only OVERRIDES from ESP-IDF's own factory defaults live here (doc 92 §2.2)
+# — never a full generated sdkconfig. If you add/change anything below,
+# delete sdkconfig.esp32s3_board and run `pio run -t clean -e esp32s3_board`
+# before `pio run` again — the generated file is CACHED and silently
+# ignores sdkconfig.defaults edits otherwise (doc 92 §5 — this exact trap
+# already cost 2+ days on esp32_display_taxi and esp32_chip_info_test).
+
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_ESP_WIFI_STA_SUPPORT=y
+CONFIG_ESP_WIFI_SSID_CONFIG=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+CONFIG_FREERTOS_HZ=1000
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+
+# ── TLS ──────────────────────────────────────────────────────────────
+# CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN = max size of a single INCOMING TLS
+# record mbedTLS can buffer. ESP-IDF's own factory default is 16384 (16KB,
+# the full TLS-standard max). A prior project (esp32_chip_info_test)
+# copied a WROOM-only RAM-saving hack (4096) into this same setting and
+# it caused a 2+ day HTTPS binary-download failure against every real
+# internet server tried (certificate validated, then a raw TLS read
+# error mid-transfer) — see
+# docs/TestFunctionalities/ota-updates/73_2026-07-14_postmortem_ota_download_fix_complete.md.
+# This board has 8MB PSRAM — there is no RAM pressure reason to shrink
+# this here, so it stays at the real ESP-IDF default.
+CONFIG_MBEDTLS_SSL_PROTO_TLS1_2=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_DEFAULT_FULL=y
+CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN=16384
+CONFIG_MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH=y
+CONFIG_MBEDTLS_HARDWARE_MPI=n
+CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM=6
+CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM=16
+
+# ── Flash — 16MB, confirmed via esptool flash_id on this board family ──
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="16MB"
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ=240
+
+# ── PSRAM — 8MB embedded Octal, confirmed on this board family ────────
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+
+# ── App rollback — required for the always-on "factory reset" safety
+# net (factory_reset.c) even while ENABLE_OTA=0 in config.h; it still
+# calls esp_ota_set_boot_partition()/esp_restart() against a real
+# factory/ota_0/ota_1 partition layout (partitions_16mb.csv).
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+
+# ── Storage — SPIFFS "storage" partition (trips_api.c) ────────────────
+CONFIG_VFS_SUPPORT_TERMIOS=y
+CONFIG_SPIFFS_USE_MTIME=y
+CONFIG_SPIFFS_OBJ_NAME_LEN=128
