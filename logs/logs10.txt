@@ -1,0 +1,55 @@
+> ram infoI (31480) ram_test: ======================================
+I (31480) ram_test: RAM INFO (live — no allocation)
+I (31480) ram_test: --------------------------------------
+I (31484) ram_test:   PSRAM initialized: YES
+I (31488) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (31495) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=230031 (224.6 KB) free=63039 (61.6 KB) min-free=59727 (58.3 KB) largest-block=30720 (30.0 KB)
+I (31508) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 (8.00 MB) free=8385720 (8.00 MB) min-free=7337140 (7.00 MB) largest-block=8257536 (7.88 MB)
+> llmllm run The little cat wasI (48872) llm: Loading model (first use) — /llm/stories260K.bin
+I (48890) LLM: Vocab size if 512
+I (48929) LLM: File size: 1056540 bytes (1.01 MB)
+I (48930) LLM: Free ram available: 8424696 bytes (8.03 MB)
+I (49659) LLM: Successfully read LLM into memory
+I (49660) LLM: Free ram available: 7343480 bytes (7.00 MB)
+I (49660) LLM: Successfully read checkpoint
+I (49681) LLM: Transformer successfully built
+I (49681) LLM: Created FreeRTOS Tasks
+I (49681) LLM: Vocab size is 512
+
+I (49683) LLM: Opened Tokenizer File
+I (49706) LLM: Tokenizer successfully built
+I (49707) LLM: Sampler Successfully built
+I (49708) llm: Model ready — vocab_size=512 seq_len=512
+I (49709) llm: Generating (256 steps) — prompt: The little cat was ...
+The little cat was                                                                                                                                                                                                                                                           
+achieved tok/s: 20.910210
+I (61936) llm: Generation complete — 20.91 tok/s
+I (61937) LLM: Generate complete
+> ram infoI (86737) ram_test: ======================================
+I (86737) ram_test: RAM INFO (live — no allocation)
+I (86738) ram_test: --------------------------------------
+I (86741) ram_test:   PSRAM initialized: YES
+I (86745) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (86753) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=230031 (224.6 KB) free=20439 (20.0 KB) min-free=20019 (19.5 KB) largest-block=18432 (18.0 KB)
+I (86766) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 (8.00 MB) free=6644904 (6.34 MB) min-free=6643172 (6.34 MB) largest-block=6553600 (6.25 MB)
+> I (310664) ram_test: ══════════════════════════════════════
+I (310665) ram_test: PSRAM periodic health-check
+I (310669) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (310676) ram_test:   Before: free=6644904 bytes (6.34 MB) | largest free block=6553600 bytes (6.25 MB)
+I (310829) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (310830) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=5596324 bytes (5.34 MB)
+I (310837) ram_test:   After free: free=6644904 bytes (6.34 MB) | largest free block=6553600 bytes (6.25 MB)
+I (310846) ram_test: ══════════════════════════════════════
+llm run Once upon a timeI (343088) llm: Generating (256 steps) — prompt: Once upon a time ...
+Once upon a time                                                                                                                                                                                                                                                            
+achieved tok/s: 20.917070
+I (355304) llm: Generation complete — 20.92 tok/s
+I (355304) LLM: Generate complete
+> ram infoI (364055) ram_test: ======================================
+I (364056) ram_test: RAM INFO (live — no allocation)
+I (364056) ram_test: --------------------------------------
+I (364060) ram_test:   PSRAM initialized: YES
+I (364064) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (364071) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=230031 (224.6 KB) free=20423 (19.9 KB) min-free=20019 (19.5 KB) largest-block=18432 (18.0 KB)
+I (364084) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 (8.00 MB) free=6644904 (6.34 MB) min-free=5594592 (5.34 MB) largest-block=6553600 (6.25 MB)
+> 

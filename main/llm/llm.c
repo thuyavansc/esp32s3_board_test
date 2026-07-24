@@ -1122,6 +1122,13 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
 
         // print the token as string, decode it with the Tokenizer object
         char *piece = decode(tokenizer, token, next);
+        // TEMPORARY diagnostic — remove once the blank-output issue is
+        // understood. Prints the raw predicted token id plus the decoded
+        // piece's length and first byte (hex), so we can see whether the
+        // model is predicting the same token repeatedly, or different
+        // tokens that all happen to decode to something blank-looking.
+        ESP_LOGI(TAG, "[dbg] pos=%d next_token_id=%d piece_len=%d piece_byte0=0x%02X",
+                 pos, next, (int)strlen(piece), (unsigned)(unsigned char)piece[0]);
         safe_printf(piece); // same as printf("%s", piece), but skips "unsafe" bytes
         fflush(stdout);
         token = next;
