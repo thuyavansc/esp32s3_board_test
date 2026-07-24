@@ -329,13 +329,16 @@ void matmul_task(void *params)
     TaskHandle_t current_task = xTaskGetCurrentTaskHandle();
     char *tName = pcTaskGetName(current_task);
     // ESP_LOGI(TAG, "Created Task %s", tName);
-    // ESP32 port addition — defense-in-depth alongside generate()'s own
-    // per-token yield (see there for the full explanation/doc reference):
-    // this task is pinned to Core 1 at high priority and never otherwise
-    // yields, so if it's ever the one actively spinning when generate()'s
-    // own yield check isn't reached quickly enough, this is a second,
-    // independent safety net for the exact same watchdog problem.
-    TickType_t last_yield = xTaskGetTickCount();
+    // ESP32 port note — an earlier version of this fix added a periodic
+    // vTaskDelay() directly inside this loop as a second safety net
+    // alongside generate()'s own per-token yield. Removed: this loop is
+    // part of a tightly-timed handshake with the calling task (a semaphore
+    // hand-off + xEventGroupSync rendezvous, repeated ~36 times per
+    // token) — inserting an unpredictable pause here desynced the two
+    // sides' notion of "which round we're on" and caused a real hang on
+    // hardware. generate()'s own yield (outside this handshake entirely,
+    // only running once a full token's exchange has fully completed) is
+    // the safe place for this — see doc 130.
     for (;;)
     {
         if (xSemaphoreTake(semaDataReady, portMAX_DELAY) == pdTRUE)
@@ -351,13 +354,6 @@ void matmul_task(void *params)
             //    ESP_LOGI(TAG, "Completed task %s", tName);
             xSemaphoreGive(semaDataReady);
             xEventGroupSync(xEventGroup, p->task_num, ALL_SYNC_BITS, portMAX_DELAY);
-
-            TickType_t now = xTaskGetTickCount();
-            if ((now - last_yield) >= pdMS_TO_TICKS(500))
-            {
-                last_yield = now;
-                vTaskDelay(1);
-            }
         }
     }
 }
@@ -369,9 +365,10 @@ void forward_task(void *params)
     TaskHandle_t current_task = xTaskGetCurrentTaskHandle();
     char *tName = pcTaskGetName(current_task);
     // ESP_LOGI(TAG, "Created Task %s", tName);
-    // ESP32 port addition — same defense-in-depth reasoning as matmul_task's
-    // own copy of this, see there.
-    TickType_t last_yield = xTaskGetTickCount();
+    // ESP32 port note — see matmul_task's own identical comment: a periodic
+    // vTaskDelay() was tried here too and removed for the same reason (it
+    // sits inside a tightly-timed handshake with the calling task and
+    // caused a real hang). See doc 130.
     for (;;)
     {
         if (xSemaphoreTake(semaForwardDataReady, portMAX_DELAY) == pdTRUE)
@@ -423,13 +420,6 @@ void forward_task(void *params)
             //   ESP_LOGI(TAG, "Completed task %s", tName);
             xSemaphoreGive(semaForwardDataReady);
             xEventGroupSync(ForwardEventGroup, t_params->task_num, ALL_FORWARD_TASKS, portMAX_DELAY);
-
-            TickType_t now = xTaskGetTickCount();
-            if ((now - last_yield) >= pdMS_TO_TICKS(500))
-            {
-                last_yield = now;
-                vTaskDelay(1);
-            }
         }
     }
 }
