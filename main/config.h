@@ -22,6 +22,7 @@
 #define ENABLE_MINI_COMMAND    0   // extra serial "game" command (v4 demo) — unused here
 #define ENABLE_REMOTE_CONFIG   0   // taxiNumber/smsNumber/emergencyContactNumber/serverUrl — CODE KEPT, switched OFF
 #define ENABLE_ADDITIONAL_WORK 1   // catch-all for small standalone requirements — see additional_work.c
+#define ENABLE_LLM              0   // TinyLlama-260K local inference (serial console only) — see llm/llm_runner.c, doc 123/125
 
 // ── WiFi — independent of every other feature flag above ────────
 // WiFi must connect regardless of whether OTA/Trips/Remote-Config are on
@@ -218,6 +219,28 @@
 // caught, unattended, in the serial log.
 #define RAM_TEST_PSRAM_TASK_FIRST_RUN_DELAY_S   3
 #define RAM_TEST_PSRAM_TASK_INTERVAL_S          300   // 5 minutes
+
+// ================================================================
+// LLM — TinyLlama-260K local inference, ported from
+// https://github.com/DaveBben/esp32-llm (llm.c/llm.h only — that repo's
+// own main.c also drives a separate OLED via u8g2; NOT ported, not
+// needed, not wanted — see doc 125). Serial-console-only feature:
+// input/output both go through serial_cmd_task's existing UART path via
+// a new "llm run <prompt>" command. Zero coupling with this project's
+// own ST7796S/LVGL display code — see doc 123 §7a / doc 125.
+//
+// Model + tokenizer live in their OWN dedicated SPIFFS partition (`llm`,
+// partitions_16mb.csv) rather than the existing `storage` partition —
+// packaging a SPIFFS image wholesale-overwrites its target partition,
+// which would destroy any trip data `storage` has accumulated at
+// runtime if the two were combined.
+// ================================================================
+#define LLM_MOUNT_POINT      "/llm"
+#define LLM_MODEL_PATH       "/llm/stories260K.bin"
+#define LLM_TOKENIZER_PATH   "/llm/tok512.bin"
+#define LLM_DEFAULT_STEPS    256     // ~13-14s at ~19 tok/s (doc 123) — override with "llm run <n> <prompt>"
+#define LLM_TEMPERATURE      1.0f
+#define LLM_TOPP             0.9f
 
 // ================================================================
 // DISPLAY — Waveshare 3.5" Capacitive Touch LCD (ST7796S + FT6336U),

@@ -41,6 +41,7 @@
  *   game / guess <n>   [ENABLE_MINI_COMMAND, currently OFF]
  *   config status|check [ENABLE_REMOTE_CONFIG, currently OFF]
  *   sms <command>      [ENABLE_ADDITIONAL_WORK]
+ *   llm run <prompt>   [ENABLE_LLM]  TinyLlama-260K local inference, serial-only (doc 123/125)
  *   factory reset      always on   Two-step, passcode-gated revert to the
  *                                  `factory` partition + reboot.
  *   nvs status|company|product  always on
@@ -86,6 +87,7 @@
 #include "display/display_driver.h"
 #include "display/touch_driver.h"
 #include "display/ui_main.h"
+#include "llm/llm_runner.h"
 
 static const char *TAG = "chipinfo";
 
@@ -401,6 +403,9 @@ static void serial_cmd_task(void *arg) {
 #if ENABLE_ADDITIONAL_WORK
            " | 'sms <command>'"
 #endif
+#if ENABLE_LLM
+           " | 'llm run <prompt>'"
+#endif
            " | 'factory reset' | 'nvs status'"
            "\n> ");
 
@@ -445,6 +450,10 @@ static void serial_cmd_task(void *arg) {
 #endif
 #if ENABLE_ADDITIONAL_WORK
                 } else if (additional_work_process_command(line)) {
+                    // handled
+#endif
+#if ENABLE_LLM
+                } else if (llm_runner_process_command(line)) {
                     // handled
 #endif
                 } else if (nvs_state_process_command(line)) {
@@ -550,6 +559,12 @@ void app_main(void) {
 
     // Starts the periodic PSRAM health-check task — see ram_test.c.
     ram_test_init();
+
+#if ENABLE_LLM
+    // Mounts the dedicated `llm` SPIFFS partition only — the model itself
+    // is loaded lazily on the first "llm run" command, not here (doc 125).
+    llm_runner_init();
+#endif
 
     // Raised 4096 -> 8192: this task's own command buffer plus every
     // module's process_command() call chain (trips_api/ota/remote_config/

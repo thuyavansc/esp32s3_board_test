@@ -22,8 +22,17 @@
 #   factory  0x20000  -> 0x300000
 #   ota_0    0x320000 -> 0x300000
 #   ota_1    0x620000 -> 0x300000
-#   storage  0x920000 -> 0x6E0000
-#   0x920000 + 0x6E0000 = 0x1000000 = 16,777,216 bytes exactly.
+#   storage  0x920000 -> 0x4E0000   (shrunk 2MB, see llm below)
+#   llm      0xE00000 -> 0x200000   (NEW — dedicated, pre-flashed SPIFFS
+#                                    image for the LLM model+tokenizer,
+#                                    doc 123/125. Deliberately SEPARATE
+#                                    from `storage`: packaging a SPIFFS
+#                                    image wholesale-overwrites the target
+#                                    partition, which would destroy any
+#                                    trip data `storage` has accumulated
+#                                    at runtime if the LLM files were
+#                                    bundled into that same partition.)
+#   0x920000 + 0x4E0000 + 0x200000 = 0x1000000 = 16,777,216 bytes exactly.
 # ============================================================
 nvs,       data, nvs,     0x9000,   0x6000
 otadata,   data, ota,     0xf000,   0x2000
@@ -31,4 +40,5 @@ phy_init,  data, phy,     0x11000,  0x1000
 factory,   app,  factory, 0x20000,  0x300000
 ota_0,     app,  ota_0,   0x320000, 0x300000
 ota_1,     app,  ota_1,   0x620000, 0x300000
-storage,   data, spiffs,  0x920000, 0x6E0000
+storage,   data, spiffs,  0x920000, 0x4E0000
+llm,       data, spiffs,  0xE00000, 0x200000
