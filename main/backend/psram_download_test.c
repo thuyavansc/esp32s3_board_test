@@ -13,6 +13,22 @@
 
 static const char *TAG = "psram_dl";
 
+// Same helper/rotating-buffer approach as ram_test.c's own _fmt() — kept as
+// its own local copy (this module has no shared-utility header to pull it
+// from), formats a byte count as "X.X KB" (under 1MB) or "X.XX MB" (1MB+).
+static const char *_fmt(long bytes) {
+    static char buf[4][24];
+    static int  idx = 0;
+    idx = (idx + 1) % 4;
+    if (bytes < 0) bytes = 0;
+    if ((size_t)bytes < 1024u * 1024u) {
+        snprintf(buf[idx], sizeof(buf[idx]), "%.1f KB", bytes / 1024.0);
+    } else {
+        snprintf(buf[idx], sizeof(buf[idx]), "%.2f MB", bytes / (1024.0 * 1024.0));
+    }
+    return buf[idx];
+}
+
 // snprintf()'s two hex digits per byte, over a 32-byte SHA-256 digest,
 // plus the NUL terminator.
 static void _bytes_to_hex(const uint8_t *bytes, size_t len, char *out, size_t out_len) {
@@ -53,20 +69,20 @@ static esp_err_t _dl_event_handler(esp_http_client_event_t *evt) {
         // is guaranteed ready before the first byte of body arrives.
         if (strcasecmp(evt->header_key, "Content-Length") == 0 && !ctx->buf) {
             long len = atol(evt->header_value);
-            ESP_LOGI(TAG, "  Server-reported size (live Content-Length header): %ld bytes", len);
+            ESP_LOGI(TAG, "  Server-reported size (live Content-Length header): %ld bytes (%s)", len, _fmt(len));
             if (len <= 0) {
                 return ESP_OK; // leave ctx->buf NULL; caught after perform() returns
             }
             if ((size_t)len > PSRAM_DL_TEST_MAX_BYTES) {
-                ESP_LOGE(TAG, "  FAIL — reported size %ld bytes exceeds the %u byte safety ceiling "
+                ESP_LOGE(TAG, "  FAIL — reported size %ld bytes (%s) exceeds the %u byte (%s) safety ceiling "
                               "(PSRAM_DL_TEST_MAX_BYTES, config.h) — refusing to allocate",
-                         len, (unsigned)PSRAM_DL_TEST_MAX_BYTES);
+                         len, _fmt(len), (unsigned)PSRAM_DL_TEST_MAX_BYTES, _fmt(PSRAM_DL_TEST_MAX_BYTES));
                 ctx->over_ceiling = true;
                 return ESP_OK;
             }
             ctx->buf = (uint8_t *)heap_caps_malloc((size_t)len, MALLOC_CAP_SPIRAM);
             if (!ctx->buf) {
-                ESP_LOGE(TAG, "  FAIL — heap_caps_malloc(%ld, MALLOC_CAP_SPIRAM) returned NULL", len);
+                ESP_LOGE(TAG, "  FAIL — heap_caps_malloc(%ld bytes / %s, MALLOC_CAP_SPIRAM) returned NULL", len, _fmt(len));
                 ctx->alloc_failed = true;
                 return ESP_OK;
             }
@@ -127,8 +143,8 @@ void psram_download_test_run(void) {
     }
 
     if (perform_err != ESP_OK || status != 200 || ctx.write_overflow || !ctx.buf) {
-        ESP_LOGE(TAG, "  FAIL — esp_http_client_perform(): %s | HTTP status %d | bytes received %d%s",
-                 esp_err_to_name(perform_err), status, ctx.bytes_written,
+        ESP_LOGE(TAG, "  FAIL — esp_http_client_perform(): %s | HTTP status %d | bytes received %d (%s)%s",
+                 esp_err_to_name(perform_err), status, ctx.bytes_written, _fmt(ctx.bytes_written),
                  ctx.write_overflow ? " | server sent MORE than its own declared Content-Length" : "");
         if (ctx.buf) heap_caps_free(ctx.buf);
         esp_http_client_cleanup(client);
@@ -136,14 +152,15 @@ void psram_download_test_run(void) {
     }
 
     if (ctx.bytes_written != ctx.capacity) {
-        ESP_LOGE(TAG, "  FAIL — incomplete download: got %d/%d bytes (connection dropped early?)",
-                 ctx.bytes_written, ctx.capacity);
+        ESP_LOGE(TAG, "  FAIL — incomplete download: got %d bytes (%s) / %d bytes (%s) (connection dropped early?)",
+                 ctx.bytes_written, _fmt(ctx.bytes_written), ctx.capacity, _fmt(ctx.capacity));
         heap_caps_free(ctx.buf);
         esp_http_client_cleanup(client);
         return;
     }
 
-    ESP_LOGI(TAG, "  Download complete: %d/%d bytes received", ctx.bytes_written, ctx.capacity);
+    ESP_LOGI(TAG, "  Download complete: %d bytes (%s) / %d bytes (%s) received",
+             ctx.bytes_written, _fmt(ctx.bytes_written), ctx.capacity, _fmt(ctx.capacity));
     ram_test_log_snapshot("after download, before verify");
 
     // ── Verification — size (already implicit: bytes_written == capacity
@@ -158,7 +175,7 @@ void psram_download_test_run(void) {
     ESP_LOGI(TAG, "  Expected SHA-256: %s", PSRAM_DL_TEST_SHA256);
     ESP_LOGI(TAG, "  Actual   SHA-256: %s", digest_hex);
     if (sha_ok) {
-        ESP_LOGI(TAG, "  Integrity: PASS — size AND SHA-256 both match, %d real bytes held in one PSRAM buffer", ctx.capacity);
+        ESP_LOGI(TAG, "  Integrity: PASS — size AND SHA-256 both match, %d bytes (%s) held in one PSRAM buffer", ctx.capacity, _fmt(ctx.capacity));
     } else {
         ESP_LOGE(TAG, "  Integrity: FAIL — SHA-256 mismatch (downloaded data is not what was expected)");
     }

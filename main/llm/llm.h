@@ -10,11 +10,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <setjmp.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
+
+// ESP32-port addition — see llm.c's own comment next to its definition and
+// its `#define exit(code) longjmp(...)`. A caller (llm_runner.c) must
+// setjmp(g_llm_error_jmp) before calling ANY llm.c function that can fail
+// (build_transformer/build_tokenizer/build_sampler/generate all can, on a
+// missing file, a malloc failure, or bad input) — otherwise a failure deep
+// inside llm.c has nowhere safe to jump back to.
+extern jmp_buf g_llm_error_jmp;
 
 typedef float v4sf __attribute__((aligned(16)));
 

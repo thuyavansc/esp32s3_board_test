@@ -1,0 +1,449 @@
+ *  Executing task: C:\Users\user\.platformio\penv\Scripts\platformio.exe run --target upload --target monitor --environment esp32s3_board 
+
+Processing esp32s3_board (platform: espressif32@6.10.0; board: esp32-s3-devkitc-1-n16r8v; framework: espidf)
+-----------------------------------------------------------------
+Verbose mode can be enabled via `-v, --verbose` option
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32-s3-devkitc-1-n16r8v.html
+PLATFORM: Espressif 32 (6.10.0) > Espressif ESP32-S3-DevKitC-1-N16R8V (16 MB QD, 8MB PSRAM)
+HARDWARE: ESP32S3 240MHz, 320KB RAM, 16MB Flash
+DEBUG: Current (esp-builtin) On-board (esp-builtin) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-espidf @ 3.50400.0 (5.4.0) 
+ - tool-cmake @ 3.16.4 
+ - tool-esptoolpy @ 1.40501.0 (4.5.1) 
+ - tool-idf @ 1.0.1 
+ - tool-mconf @ 1.4060000.20190628 (406.0.0) 
+ - tool-mkfatfs @ 2.0.1 
+ - tool-mklittlefs @ 1.203.210628 (2.3) 
+ - tool-mkspiffs @ 2.230.0 (2.30) 
+ - tool-ninja @ 1.9.0 
+ - tool-riscv32-esp-elf-gdb @ 11.2.0+20220823 
+ - tool-xtensa-esp-elf-gdb @ 11.2.0+20230208 
+ - toolchain-esp32ulp @ 1.23800.240113 (2.38.0) 
+ - toolchain-riscv32-esp @ 14.2.0+20241119 
+ - toolchain-xtensa-esp-elf @ 14.2.0+20241119
+Reading CMake configuration...
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 0 compatible libraries
+Scanning dependencies...
+No dependencies
+Building in release mode
+Retrieving maximum program size .pio\build\esp32s3_board\firmware.elf
+Checking size .pio\build\esp32s3_board\firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=====     ]  52.6% (used 172396 bytes from 327680 bytes)
+Flash: [=====     ]  47.2% (used 1485892 bytes from 3145728 bytes)
+Configuring upload protocol...
+AVAILABLE: cmsis-dap, esp-bridge, esp-builtin, esp-prog, espota, esptool, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa
+CURRENT: upload_protocol = esptool
+Looking for upload port...
+Auto-detected: COM8
+Uploading .pio\build\esp32s3_board\firmware.bin
+esptool.py v4.5.1
+Serial port COM8
+Connecting....
+Chip is ESP32-S3 (revision v0.2)
+Features: WiFi, BLE
+Crystal is 40MHz
+MAC: a4:cb:8f:d6:98:f8
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 921600
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00000000 to 0x00005fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Flash will be erased from 0x0000f000 to 0x00010fff...
+Flash will be erased from 0x00020000 to 0x0018afff...
+Compressed 21088 bytes to 13443...
+Writing at 0x00000000... (100 %)
+Wrote 21088 bytes (13443 compressed) at 0x00000000 in 0.6 seconds (effective 292.9 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 166...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (166 compressed) at 0x00008000 in 0.1 seconds (effective 354.1 kbit/s)...
+Hash of data verified.
+Compressed 8192 bytes to 31...
+Writing at 0x0000f000... (100 %)
+Wrote 8192 bytes (31 compressed) at 0x0000f000 in 0.1 seconds (effective 567.3 kbit/s)...
+Hash of data verified.
+Compressed 1486288 bytes to 887016...
+Writing at 0x00020000... (1 %)
+Writing at 0x0002be14... (3 %)
+Writing at 0x00038d69... (5 %)
+Writing at 0x000404fe... (7 %)
+Writing at 0x0004986e... (9 %)
+Writing at 0x00056292... (10 %)
+Writing at 0x00067b79... (12 %)
+Writing at 0x0006ce7a... (14 %)
+Writing at 0x00071d4b... (16 %)
+Writing at 0x000771fa... (18 %)
+Writing at 0x0007da93... (20 %)
+Writing at 0x00089bed... (21 %)
+Writing at 0x0008f574... (23 %)
+Writing at 0x00095729... (25 %)
+Writing at 0x0009b8d2... (27 %)
+Writing at 0x000a1583... (29 %)
+Writing at 0x000a7af3... (30 %)
+Writing at 0x000ad6cb... (32 %)
+Writing at 0x000b34ca... (34 %)
+Writing at 0x000b9854... (36 %)
+Writing at 0x000bfb9a... (38 %)
+Writing at 0x000c58f4... (40 %)
+Writing at 0x000cb7cb... (41 %)
+Writing at 0x000d1d57... (43 %)
+Writing at 0x000d7c88... (45 %)
+Writing at 0x000de035... (47 %)
+Writing at 0x000e40d3... (49 %)
+Writing at 0x000e9b30... (50 %)
+Writing at 0x000ef83e... (52 %)
+Writing at 0x000f5714... (54 %)
+Writing at 0x000fb4f6... (56 %)
+Writing at 0x00101543... (58 %)
+Writing at 0x001072ad... (60 %)
+Writing at 0x0010cf3b... (61 %)
+Writing at 0x001130fa... (63 %)
+Writing at 0x0011915e... (65 %)
+Writing at 0x0011ec4a... (67 %)
+Writing at 0x001247dc... (69 %)
+Writing at 0x001296fe... (70 %)
+Writing at 0x0012e62c... (72 %)
+Writing at 0x001339d8... (74 %)
+Writing at 0x00138e64... (76 %)
+Writing at 0x0013dfc8... (78 %)
+Writing at 0x0014326a... (80 %)
+Writing at 0x00148f3a... (81 %)
+Writing at 0x0014fb4e... (83 %)
+Writing at 0x00158fee... (85 %)
+Writing at 0x0015f9ba... (87 %)
+Writing at 0x00164e39... (89 %)
+Writing at 0x0016b2e9... (90 %)
+Writing at 0x0017223f... (92 %)
+Writing at 0x001780c3... (94 %)
+Writing at 0x0017df89... (96 %)
+Writing at 0x001849d0... (98 %)
+Writing at 0x00189cbf... (100 %)
+Wrote 1486288 bytes (887016 compressed) at 0x00020000 in 13.8 seconds (effective 864.2 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+
+Please build project in debug configuration to get more details about an exception.
+See https://docs.platformio.org/page/projectconf/build_configurations.html
+
+
+--- Terminal on COM8 | 115200 8-N-1
+--- Available filters and text transformations: debug, default, direct, esp32_exception_decoder, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at https://bit.ly/pio-monitor-filters
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x18 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f3c
+entry 0x403c8920
+I (27) boot: ESP-IDF 5.4.0 2nd stage bootloader
+I (27) boot: compile time Jul 24 2026 19:15:46
+I (27) boot: Multicore bootloader
+I (27) boot: chip revision: v0.2
+I (30) boot: efuse block revision: v1.4
+I (33) boot.esp32s3: Boot SPI Speed : 80MHz
+I (37) boot.esp32s3: SPI Mode       : DIO
+I (41) boot.esp32s3: SPI Flash Size : 16MB
+I (45) boot: Enabling RNG early entropy source...
+I (49) boot: Partition Table:
+I (52) boot: ## Label            Usage          Type ST Offset   Length
+I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (65) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (71) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (78) boot:  3 factory          factory app      00 00 00020000 00300000
+I (84) boot:  4 ota_0            OTA app          00 10 00320000 00300000
+I (91) boot:  5 ota_1            OTA app          00 11 00620000 00300000
+I (97) boot:  6 storage          Unknown data     01 82 00920000 004e0000
+I (104) boot:  7 llm              Unknown data     01 82 00e00000 00200000
+I (111) boot: End of partition table
+I (114) boot: Defaulting to factory image
+I (118) esp_image: segment 0: paddr=00020020 vaddr=3c0f0020 size=643b8h (410552) map
+I (197) esp_image: segment 1: paddr=000843e0 vaddr=3fc9e700 size=05284h ( 21124) load
+I (202) esp_image: segment 2: paddr=0008966c vaddr=40374000 size=069ach ( 27052) load
+I (208) esp_image: segment 3: paddr=00090020 vaddr=42000020 size=e7020h (946208) map
+I (376) esp_image: segment 4: paddr=00177048 vaddr=4037a9ac size=13d40h ( 81216) load
+I (393) esp_image: segment 5: paddr=0018ad90 vaddr=600fe100 size=0001ch (    28) load
+I (404) boot: Loaded app from partition at offset 0x20000
+I (404) boot: Disabling RNG early entropy source...
+I (415) octal_psram: vendor id    : 0x0d (AP)
+I (415) octal_psram: dev id       : 0x02 (generation 3)
+I (415) octal_psram: density      : 0x03 (64 Mbit)
+I (417) octal_psram: good-die     : 0x01 (Pass)
+I (421) octal_psram: Latency      : 0x01 (Fixed)
+I (426) octal_psram: VCC          : 0x01 (3V)
+I (430) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (435) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (440) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (444) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (449) octal_psram: DriveStrength: 0x00 (1/1)
+I (454) MSPI Timing: PSRAM timing tuning index: 5
+I (458) esp_psram: Found 8MB PSRAM device
+I (462) esp_psram: Speed: 80MHz
+I (465) cpu_start: Multicore app
+I (900) esp_psram: SPI SRAM memory test OK
+I (909) cpu_start: Pro cpu start user code
+I (909) cpu_start: cpu freq: 240000000 Hz
+I (909) app_init: Application information:
+I (909) app_init: Project name:     esp32s3_board
+I (914) app_init: App version:      c43073c
+I (917) app_init: Compile time:     Jul 24 2026 19:10:00
+I (923) app_init: ELF file SHA256:  287d7eedd...
+I (927) app_init: ESP-IDF:          5.4.0
+I (931) efuse_init: Min chip rev:     v0.0
+I (934) efuse_init: Max chip rev:     v0.99 
+I (938) efuse_init: Chip rev:         v0.2
+I (942) heap_init: Initializing. RAM available for dynamic allocation:
+I (949) heap_init: At 3FCC8870 len 00020EA0 (131 KiB): RAM
+I (954) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (959) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (964) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (970) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (977) spi_flash: detected chip: generic
+I (980) spi_flash: flash io: dio
+W (983) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
+I (992) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (999) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1005) main_task: Started on CPU0
+I (1019) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1020) main_task: Calling app_main()
+I (1038) nvs_state: OTA state namespace 'ota_state' ready
+I (1038) bgworker: Background worker task started (persistent, one-time stack allocation)
+I (1042) pp: pp rom version: e7ae62f
+I (1044) net80211: net80211 rom version: e7ae62f
+I (1049) wifi:wifi driver task: 3fcddc3c, prio:23, stack:6656, core=0
+I (1064) wifi:wifi firmware version: 48ea317a7
+I (1065) wifi:wifi certification version: v7.0
+I (1065) wifi:config NVS flash: enabled
+I (1066) wifi:config nano formatting: disabled
+I (1070) wifi:Init data frame dynamic rx buffer num: 16
+I (1075) wifi:Init static rx mgmt buffer num: 5
+I (1079) wifi:Init management short buffer num: 32
+I (1084) wifi:Init dynamic tx buffer num: 32
+I (1088) wifi:Init static tx FG buffer num: 2
+I (1092) wifi:Init static rx buffer size: 1600
+I (1096) wifi:Init static rx buffer num: 6
+I (1100) wifi:Init dynamic rx buffer num: 16
+I (1104) wifi_init: rx ba win: 6
+I (1107) wifi_init: accept mbox: 6
+I (1110) wifi_init: tcpip mbox: 32
+I (1113) wifi_init: udp mbox: 6
+I (1116) wifi_init: tcp mbox: 6
+I (1119) wifi_init: tcp tx win: 5760
+I (1122) wifi_init: tcp rx win: 5760
+I (1125) wifi_init: tcp mss: 1440
+I (1128) wifi_init: WiFi IRAM OP enabled
+I (1132) wifi_init: WiFi RX IRAM OP enabled
+W (1137) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1146) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10
+I (1183) wifi:mode : sta (a4:cb:8f:d6:98:f8)
+I (1183) wifi:enable tsf
+I (1184) chipinfo: WiFi connecting to 'TWHSP' ...
+I (1233) wifi:new:<12,0>, old:<1,0>, ap:<255,255>, sta:<12,0>, prof:6, snd_ch_cfg:0x0
+I (1234) wifi:state: init -> auth (0xb0)
+I (1238) wifi:state: auth -> assoc (0x0)
+I (1243) wifi:Association refused temporarily time 1000, comeback time 1100 (TUs)
+I (2371) wifi:state: assoc -> assoc (0x0)
+E (2376) wifi:Association refused too many times, max allowed 1
+I (2376) wifi:state: assoc -> init (0xd010)
+I (2379) wifi:new:<12,0>, old:<12,0>, ap:<255,255>, sta:<12,0>, prof:6, snd_ch_cfg:0x0
+W (2383) chipinfo: WiFi disconnected — reconnecting...
+W (4797) chipinfo: WiFi disconnected — reconnecting...
+I (4817) wifi:new:<12,0>, old:<12,0>, ap:<255,255>, sta:<12,0>, prof:6, snd_ch_cfg:0x0
+I (4817) wifi:state: init -> auth (0xb0)
+I (4826) wifi:state: auth -> assoc (0x0)
+I (4832) wifi:state: assoc -> run (0x10)
+I (4856) wifi:connected with TWHSP, aid = 2, channel 12, BW20, bssid = 20:b0:01:be:14:63
+I (4856) wifi:security: WPA2-PSK, phy: bgn, rssi: -56
+I (4859) wifi:pm start, type: 1
+
+I (4861) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (4869) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (4883) wifi:<ba-add>idx:0 (ifx:0, 20:b0:01:be:14:63), tid:0, ssn:0, winSize:64
+I (4885) wifi:<ba-add>idx:1 (ifx:0, 20:b0:01:be:14:63), tid:6, ssn:0, winSize:64
+I (4920) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (5895) esp_netif_handlers: sta ip: 192.168.0.62, mask: 255.255.255.0, gw: 192.168.0.1
+I (5895) chipinfo: WiFi connected — IP: 192.168.0.62
+I (6196) trips_api: Trips API READY — SPIFFS: 4581 KB total | 0 KB used | 4581 KB free
+
+
+I (6196) chipinfo: ########################################
+I (6198) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (6204) chipinfo: ########################################
+I (6210) version: ======================================
+I (6215) version: FIRMWARE VERSION
+I (6218) version: --------------------------------------
+I (6223) version:   Project:   esp32s3_board
+I (6227) version:   Version:   26.07.23 (code 1)
+I (6231) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (6244) version:   Running from partition: factory
+I (6249) chipinfo: ======================================
+I (6254) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (6260) chipinfo: --------------------------------------
+I (6265) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (6270) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (6275) chipinfo:   Crystal is 40 MHz
+I (6279) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (6283) chipinfo: ======================================
+I (6288) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (6294) chipinfo: --------------------------------------
+I (6299) chipinfo:   Model:       ESP32-S3
+I (6303) chipinfo:   Cores:       2
+I (6306) chipinfo:   Revision:    v0.2
+I (6310) chipinfo:   Features:    WiFi BLE External-Flash
+I (6315) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (6319) chipinfo:   IDF version: 5.4.0
+I (6323) chipinfo: ======================================
+I (6328) chipinfo: FLASH INFO  (live-probed)
+I (6332) chipinfo: --------------------------------------
+I (6337) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (6344) chipinfo:   JEDEC ID:        0x852018
+I (6348) chipinfo: ======================================
+I (6353) chipinfo: RAM / HEAP INFO  (live)
+I (6357) chipinfo: --------------------------------------
+I (6362) chipinfo:   Free heap now (all capabilities): 8468920 bytes | 8270.4 KB (8.08 MB)
+I (6370) chipinfo:   Minimum ever free:                8467324 bytes | 8268.9 KB (8.08 MB)
+I (6378) chipinfo:   --------------------------------------
+I (6383) chipinfo:   PSRAM initialized: YES
+I (6387) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (6395) chipinfo:   SRAM  total:          230543 bytes | 225.1 KB (0.22 MB)
+I (6402) chipinfo:   SRAM  free now:       114971 bytes | 112.3 KB (0.11 MB)
+I (6409) chipinfo:   SRAM  min free ever:  113375 bytes | 110.7 KB (0.11 MB)
+I (6416) chipinfo:   SRAM  largest block:  31744 bytes | 31.0 KB (0.03 MB)
+I (6422) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (6430) chipinfo:   PSRAM free now:          8385980 bytes | 8189.4 KB (8.00 MB)
+I (6437) chipinfo:   PSRAM min free ever:     8385980 bytes | 8189.4 KB (8.00 MB)
+I (6444) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (6451) chipinfo: ======================================
+I (6456) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (6463) chipinfo: --------------------------------------
+I (6468) chipinfo:   Name       Type   SubType   Offset     Size
+I (6474) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (6482) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (6490) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (6498) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6507) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6515) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6523) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (6532) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (6540) chipinfo: ======================================
+I (6545) chipinfo: NVS INFO  (live)
+I (6548) chipinfo: --------------------------------------
+I (6554) chipinfo:   Used entries:  167
+I (6557) chipinfo:   Free entries:  589
+I (6561) chipinfo:   Total entries: 756
+I (6564) chipinfo: ======================================
+I (6569) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (6575) chipinfo: --------------------------------------
+I (6581) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (6586) chipinfo:   Used:  0 bytes | 0.0 KB (0.00 MB)
+I (6591) chipinfo:   Free:  4691441 bytes | 4581.5 KB (4.47 MB)
+I (6596) chipinfo: ########################################
+
+I (6602) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (6608) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (6616) display: SD_CS (TF slot) → GPIO38 HIGH (disabled)
+I (6622) display: Backlight PWM init — GPIO6, 5kHz, 10-bit
+I (6627) display: Backlight ON (GPIO6, PWM 100%)
+I (6632) display: SPI: MOSI=42 SCLK=41 CS=39 DC=40 RST=45
+I (6637) gpio: GPIO[40]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (6645) gpio: GPIO[45]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (6993) display: ST7796S init complete — 320x480 RGB565
+I (6993) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (6997) display: LVGL: 320x480 | Buf: 24 rows (15360 bytes) double-buf
+I (7000) display: DISPLAY — READY ✓
+I (7004) touch: TOUCH INIT — FT6336U via I2C
+I (7008) touch: I2C init: SDA=15 SCL=7
+I (7011) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7080) touch: FT6336U init — addr: 0x38
+I (7080) touch: Touch input registered with LVGL ✓
+W (7080) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (7084) touch: TOUCH — READY ✓
+I (7087) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (7452) ui: UI — READY (4 screens | teal palette | scroll fix | test menu)
+I (7453) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (7455) additional_work: Additional work module ready (try: "sms reboot")
+I (7461) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (7549) llm: LLM partition mounted — 0/1920401 bytes used
+
+Type 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all' | 'api help' | 'sms <command>' | 'llm run <prompt>' | 'factory reset' | 'nvs status'
+> I (7559) chipinfo: READY — Touch UI Active ✓
+I (10467) ram_test: ══════════════════════════════════════
+I (10467) ram_test: PSRAM periodic health-check
+I (10472) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (10478) ram_test:   Before: free=8385720 bytes | largest free block=8257536 bytes
+I (10632) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (10632) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337140 bytes
+I (10637) ram_test:   After free: free=8385720 bytes | largest free block=8257536 bytes
+I (10645) ram_test: ══════════════════════════════════════
+ram infoI (21609) ram_test: ======================================
+I (21609) ram_test: RAM INFO (live — no allocation)
+I (21609) ram_test: --------------------------------------
+I (21613) ram_test:   PSRAM initialized: YES
+I (21617) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (21624) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=230543 free=63815 min-free=62031 largest-block=31744
+I (21634) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 free=8385720 min-free=7337140 largest-block=8257536
+> api get 12276I (32844) trips_api: ══════════════════════════════════════
+I (32845) trips_api: FETCH #1 -> Trip ID: 12276
+I (32849) trips_api:   URL: https://mytaxis.softclient.com.au/taxis-api/api/Trips/12276
+I (32857) trips_api:   Heap before HTTP init   free=8228 KB | largest free block=8064 KB
+I (33055) trips_api:   Heap right before perform() free=8222 KB | largest free block=8064 KB
+I (34088) esp-x509-crt-bundle: Certificate validated
+I (35468) trips_api:   Heap right after perform() free=8209 KB | largest free block=8064 KB
+I (35471) trips_api: OK HTTP 200 | 3120 bytes -> /spiffs/store/trips_12276.json
+I (35473) trips_api: Stats: 1 fetches | 1 OK | 0 failed
+I (35478) trips_api: ══════════════════════════════════════
+> api listI (44742) trips_api:   [ 1] trips_12276.json            3120 bytes
+I (44837) trips_api:   Total: 1 file(s) | 3120 bytes
+> ram test psramI (57138) ram_test: ── PSRAM test: requesting 1048576 bytes ──
+I (57138) ram_test:   Before: free=8385720 bytes | largest free block=8257536 bytes
+I (57280) ram_test:   Integrity: PASS — 1048576 bytes written and read back correctly
+I (57281) ram_test:   During: used_by_test=1048580 bytes | free_after_alloc=7337140 bytes
+I (57285) ram_test:   After free: free=8385720 bytes | largest free block=8257536 bytes
+> llm infohelpUnknown 'llm' subcommand. Try 'llm help'.
+> llm help
+  llm run <prompt text>   Generate text continuing from <prompt text>
+                          (first call loads the model — takes a few seconds)
+  llm steps <n>           Set tokens-to-generate for future 'llm run' (default 256)
+  llm help                This message
+
+> llm run card is redI (109756) llm: Loading model (first use) — /llm/stories260K.bin
+E (109796) LLM: Couldn't open file /llm/stories260K.bin
+
+abort() was called at PC 0x42067316 on core 0
+
+
+Backtrace: 0x4037854d:0x3fcd0430 0x40380349:0x3fcd0450 0x4038914d:0x3fcd0470 0x42067316:0x3fcd04e0 0x420b819a:0x3fcd0500 0x4200810f:0x3fcd0520 0x420082bb:0x3fcd0550 0x42009351:0x3fcd0580 0x420094eb:0x3fcd05b0 0x42002d0a:0x3fcd05e0 0x4038113d:0x3fcd0660
+  #0  0x4037854d in panic_abort at C:\Users\user\.platformio\packages\framework-espidf@3.50400.0\components\esp_system/panic.c:454
+  #1  0x40380349 in esp_system_abort at C:\Users\user\.platformio\packages\framework-espidf@3.50400.0\components\esp_system\port/esp_system_chip.c:92
+  #2  0x4038914d in abort at C:\Users\user\.platformio\packages\framework-espidf@3.50400.0\components\newlib/abort.c:38
+  #3  0x42067316 in syscall_not_implemented_aborts at C:\Users\user\.platformio\packages\framework-espidf@3.50400.0\components\newlib/syscalls.c:27
+  #4  0x420b819a in exit at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdlib/exit.c:65
+  #5  0x4200810f in read_checkpoint at main/llm/llm.c:168
+  #6  0x420082bb in build_transformer at main/llm/llm.c:211
+  #7  0x42009351 in _ensure_model_loaded at main/llm/llm_runner.c:45
+  #8  0x420094eb in llm_runner_process_command at main/llm/llm_runner.c:102
+  #9  0x42002d0a in serial_cmd_task at main/app_main.c:456
+  #10 0x4038113d in vPortTaskWrapper at C:\Users\user\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa/port.c:139
+
+
+
+
+
+ELF file SHA256: 287d7eedd
+
+Rebooting...
+���ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021

@@ -14,6 +14,7 @@
 #include <math.h>
 #include <string.h>
 #include <fcntl.h>
+#include <setjmp.h>
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_dsp.h"
@@ -22,6 +23,19 @@
 #define MAP_FAILED NULL
 #define munmap(ptr, length) custom_munmap(ptr)
 #define close(fd) custom_close(fd)
+
+// ── ESP32 port addition — exit() is fatal on ESP-IDF, not a normal process
+// exit like on the desktop this was originally written for ──
+// Upstream (github.com/karpathy/llama2.c) calls plain exit(EXIT_FAILURE) on
+// any file-not-found/malloc-failure/bad-input error, which is safe on a
+// desktop OS (it just ends the process). On ESP-IDF there is no "process" to
+// end — exit() triggers abort() -> a full system panic -> the whole board
+// reboots, for something as simple as a missing model file. Redefined here,
+// same pattern this file already uses for close()/munmap() above, so a
+// caller (llm_runner.c) can setjmp() once around a risky call and safely
+// recover instead of losing the whole device.
+jmp_buf g_llm_error_jmp;
+#define exit(code) longjmp(g_llm_error_jmp, 1)
 
 #define TASK_0_BIT (1 << 0)
 #define TASK_1_BIT (1 << 1)

@@ -6,6 +6,7 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <time.h>
+#include <setjmp.h>
 #include "esp_log.h"
 #include "esp_spiffs.h"
 #include "config.h"
@@ -98,13 +99,33 @@ bool llm_runner_process_command(const char *line) {
     if (strncasecmp(p, "run", 3) == 0) {
         p += 3;
         while (*p == ' ') p++;
+        // Computed BEFORE setjmp() on purpose — 'prompt' is only ever read
+        // AFTER the risky calls below, and GCC warns ("might be clobbered by
+        // longjmp") about any local read across a setjmp() boundary even
+        // when it's never actually modified in between. Resolving it here
+        // sidesteps the warning cleanly instead of needing `volatile`.
+        const char *prompt = (*p == '\0') ? NULL : p;
+
+        // setjmp() here, not inside _ensure_model_loaded() — llm.c's
+        // exit()-turned-longjmp() (llm.h/llm.c's own comment) can fire from
+        // EITHER _ensure_model_loaded()'s build_transformer()/build_tokenizer()
+        // call OR from generate() itself (e.g. a malformed prompt), and both
+        // must land back at a setjmp() that is still on the call stack —
+        // this line, covering both, is the only place that's true for the
+        // whole duration. Without this, a missing/bad model file rebooted
+        // the entire board instead of just failing this one command.
+        if (setjmp(g_llm_error_jmp) != 0) {
+            ESP_LOGE(TAG, "LLM operation failed (see error above) — command aborted, board NOT rebooted");
+            s_model_ready = false;   // don't trust a possibly half-built model — force a clean reload next time
+            printf("llm run failed — check the log above (common cause: model/tokenizer file missing from the 'llm' partition).\n");
+            return true;
+        }
 
         if (!_ensure_model_loaded()) {
             printf("Model failed to load — see log above.\n");
             return true;
         }
 
-        const char *prompt = (*p == '\0') ? NULL : p;
         ESP_LOGI(TAG, "Generating (%d steps)%s%s ...", s_steps,
                  prompt ? " — prompt: " : " — no prompt", prompt ? prompt : "");
         generate(&s_transformer, &s_tokenizer, &s_sampler, (char *)prompt, s_steps, &_on_generate_complete);
