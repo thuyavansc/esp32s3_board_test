@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <setjmp.h>
+#include <dirent.h>
+#include <sys/stat.h>
 #include "esp_log.h"
 #include "esp_spiffs.h"
 #include "config.h"
@@ -31,7 +33,47 @@ static void _show_help(void) {
     printf("\n  llm run <prompt text>   Generate text continuing from <prompt text>\n");
     printf("                          (first call loads the model — takes a few seconds)\n");
     printf("  llm steps <n>           Set tokens-to-generate for future 'llm run' (default %d)\n", LLM_DEFAULT_STEPS);
+    printf("  llm ls                  List files actually present on the 'llm' partition right now\n");
+    printf("                          (use this BEFORE 'llm run' if unsure whether the model was ever flashed)\n");
     printf("  llm help                This message\n\n");
+}
+
+// Lists whatever is actually on the mounted 'llm' partition, right now —
+// added specifically so "is the model file actually there?" can be checked
+// directly instead of only finding out indirectly via a failed 'llm run'
+// (doc 125 §9 — the model/tokenizer files need a one-time manual
+// mkspiffs+esptool.py flash; this command shows whether that step has
+// actually landed on THIS board yet).
+static void _list_files(void) {
+    if (!s_mounted) {
+        printf("'llm' partition is not mounted — see the boot log for the mount error.\n");
+        return;
+    }
+    DIR *dir = opendir(LLM_MOUNT_POINT);
+    if (!dir) {
+        printf("Could not open %s\n", LLM_MOUNT_POINT);
+        return;
+    }
+    int count = 0;
+    long total_bytes = 0;
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type != DT_REG) continue;
+        char full_path[400];   // matches trips_api.c's own convention — comfortably over any d_name length
+        snprintf(full_path, sizeof(full_path), "%s/%s", LLM_MOUNT_POINT, entry->d_name);
+        struct stat st;
+        if (stat(full_path, &st) != 0) continue;
+        count++;
+        total_bytes += st.st_size;
+        printf("  [%d] %-24s %7ld bytes\n", count, entry->d_name, (long)st.st_size);
+    }
+    closedir(dir);
+    if (count == 0) {
+        printf("  Nothing here — the 'llm' partition is empty. The model/tokenizer were never\n"
+               "  flashed onto this board yet (doc 125 section 9 has the exact mkspiffs+esptool.py steps).\n");
+    } else {
+        printf("  Total: %d file(s) | %ld bytes\n", count, total_bytes);
+    }
 }
 
 static bool _ensure_model_loaded(void) {
@@ -82,6 +124,7 @@ bool llm_runner_process_command(const char *line) {
     while (*p == ' ') p++;
 
     if (*p == '\0' || strncasecmp(p, "help", 4) == 0) { _show_help(); return true; }
+    if (strncasecmp(p, "ls", 2) == 0) { _list_files(); return true; }
 
     if (strncasecmp(p, "steps", 5) == 0) {
         p += 5;
