@@ -22,7 +22,7 @@
 #define ENABLE_MINI_COMMAND    0   // extra serial "game" command (v4 demo) — unused here
 #define ENABLE_REMOTE_CONFIG   0   // taxiNumber/smsNumber/emergencyContactNumber/serverUrl — CODE KEPT, switched OFF
 #define ENABLE_ADDITIONAL_WORK 1   // catch-all for small standalone requirements — see additional_work.c
-#define ENABLE_LLM              0   // TinyLlama-260K local inference (serial console only) — see llm/llm_runner.c, doc 123/125
+#define ENABLE_LLM              1   // TinyLlama-260K local inference (serial console only) — see llm/llm_runner.c, doc 123/125
 
 // ── WiFi — independent of every other feature flag above ────────
 // WiFi must connect regardless of whether OTA/Trips/Remote-Config are on

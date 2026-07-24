@@ -17,6 +17,22 @@
 
 static const char *TAG = "llm";
 
+// Same helper/rotating-buffer approach as ram_test.c's own _fmt() — formats
+// a byte count as "X.X KB" (under 1MB) or "X.XX MB" (1MB+), so raw byte
+// numbers this module logs also have a human-readable size next to them.
+static const char *_fmt(long bytes) {
+    static char buf[4][24];
+    static int  idx = 0;
+    idx = (idx + 1) % 4;
+    if (bytes < 0) bytes = 0;
+    if ((size_t)bytes < 1024u * 1024u) {
+        snprintf(buf[idx], sizeof(buf[idx]), "%.1f KB", bytes / 1024.0);
+    } else {
+        snprintf(buf[idx], sizeof(buf[idx]), "%.2f MB", bytes / (1024.0 * 1024.0));
+    }
+    return buf[idx];
+}
+
 static bool s_mounted     = false;
 static bool s_model_ready = false;
 static int  s_steps       = LLM_DEFAULT_STEPS;
@@ -65,14 +81,14 @@ static void _list_files(void) {
         if (stat(full_path, &st) != 0) continue;
         count++;
         total_bytes += st.st_size;
-        printf("  [%d] %-24s %7ld bytes\n", count, entry->d_name, (long)st.st_size);
+        printf("  [%d] %-24s %7ld bytes (%s)\n", count, entry->d_name, (long)st.st_size, _fmt((long)st.st_size));
     }
     closedir(dir);
     if (count == 0) {
         printf("  Nothing here — the 'llm' partition is empty. The model/tokenizer were never\n"
                "  flashed onto this board yet (doc 125 section 9 has the exact mkspiffs+esptool.py steps).\n");
     } else {
-        printf("  Total: %d file(s) | %ld bytes\n", count, total_bytes);
+        printf("  Total: %d file(s) | %ld bytes (%s)\n", count, total_bytes, _fmt(total_bytes));
     }
 }
 
@@ -112,7 +128,8 @@ void llm_runner_init(void) {
 
     size_t total = 0, used = 0;
     esp_spiffs_info("llm", &total, &used);
-    ESP_LOGI(TAG, "LLM partition mounted — %u/%u bytes used", (unsigned)used, (unsigned)total);
+    ESP_LOGI(TAG, "LLM partition mounted — %u bytes (%s) / %u bytes (%s) used",
+             (unsigned)used, _fmt((long)used), (unsigned)total, _fmt((long)total));
     s_mounted = true;
 }
 

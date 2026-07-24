@@ -1,0 +1,105 @@
+
+python "$env:USERPROFILE\.platformio\packages\framework-espidf\components\spiffs\spiffsgen.py" --page-size 256 --block-size 4096 --obj-name-len 128 --meta-len 4 2097152 data\llm llm.bin
+
+
+py -m esptool --chip esp32s3 --port COM8 --baud 921600 write_flash 0xE00000 llm.bin
+
+
+PS C:\Projects\esp32s3_board_test> python "$env:USERPROFILE\.platformio\packages\framework-espidf\components\spiffs\spiffsgen.py" --page-size 256 --block-size 4096 --obj-name-len 128 --meta-len 4 2097152 data\llm llm.bin
+PS C:\Projects\esp32s3_board_test> esptool --chip esp32s3 --port COM8 --baud 921600 write_flash 0xE00000 llm.bin
+esptool : The term 'esptool' is not recognized as the name of a 
+cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that 
+the path is correct and try again.
+At line:1 char:1
++ esptool --chip esp32s3 --port COM8 --baud 921600 write_flash 
+0xE00000 ...
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (esptool:String)  
+   [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Projects\esp32s3_board_test> py -m esptool --chip esp32s3 --port COM8 --baud 921600 write_flash 0xE00000 llm.bin
+Warning: Deprecated: Command 'write_flash' is deprecated. Use 'write-flash' instead.
+esptool v5.3.1
+Connected to ESP32-S3 on COM8:
+Chip type:          ESP32-S3 (QFN56) (revision v0.2)
+Features:           Wi-Fi, BT 5 (LE), Dual Core + LP Core, 240MHz, Embedded PSRAM 8MB (AP_3v3)
+Crystal frequency:  40MHz
+MAC:                a4:cb:8f:d6:98:f8
+
+Stub flasher running.
+Changing baud rate to 921600...
+Changed.
+
+Configuring flash size...
+Flash will be erased from 0x00e00000 to 0x00ffffff...
+Compressed 2097152 bytes to 1018423...
+Writing at 0x00e00000 [                              ]   0.0% 0/1
+Writing at 0x00e04e51 [                              ]   1.6% 163
+Writing at 0x00e09db1 [                              ]   3.2% 327
+Writing at 0x00e0e705 [>                             ]   4.8% 491
+Writing at 0x00e132c8 [>                             ]   6.4% 655
+Writing at 0x00e17b51 [=>                            ]   8.0% 819
+Writing at 0x00e1c4f4 [=>                            ]   9.7% 983
+Writing at 0x00e20dac [==>                           ]  11.3% 114
+Writing at 0x00e256c9 [==>                           ]  12.9% 131
+Writing at 0x00e29ed8 [===>                          ]  14.5% 147
+Writing at 0x00e2e7c4 [===>                          ]  16.1% 163
+Writing at 0x00e32fde [====>                         ]  17.7% 180
+Writing at 0x00e3790c [====>                         ]  19.3% 196
+Writing at 0x00e3c252 [=====>                        ]  20.9% 212
+Writing at 0x00e40a7c [=====>                        ]  22.5% 229
+Writing at 0x00e45385 [======>                       ]  24.1% 245
+Writing at 0x00e49bd5 [======>                       ]  25.7% 262
+Writing at 0x00e4e533 [=======>                      ]  27.3% 278
+Writing at 0x00e52db2 [=======>                      ]  29.0% 294
+Writing at 0x00e57718 [========>                     ]  30.6% 311
+Writing at 0x00e5bfb4 [========>                     ]  32.2% 327
+Writing at 0x00e6091d [=========>                    ]  33.8% 344
+Writing at 0x00e6528b [=========>                    ]  35.4% 360
+Writing at 0x00e69a67 [==========>                   ]  37.0% 376
+Writing at 0x00e6e3d4 [==========>                   ]  38.6% 393
+Writing at 0x00e72c1f [===========>                  ]  40.2% 409
+Writing at 0x00e77595 [===========>                  ]  41.8% 425
+Writing at 0x00e7be11 [============>                 ]  43.4% 442
+Writing at 0x00e8077f [============>                 ]  45.0% 458
+Writing at 0x00e84ff7 [============>                 ]  46.7% 475
+Writing at 0x00e89972 [=============>                ]  48.3% 491
+Writing at 0x00e8e2dd [=============>                ]  49.9% 507
+Writing at 0x00e92b55 [==============>               ]  51.5% 524
+Writing at 0x00e974c3 [==============>               ]  53.1% 540
+Writing at 0x00e9bd2a [===============>              ]  54.7% 557
+Writing at 0x00ea0693 [===============>              ]  56.3% 573
+Writing at 0x00ea4eea [================>             ]  57.9% 589
+Writing at 0x00ea9854 [================>             ]  59.5% 606
+Writing at 0x00eae1a0 [=================>            ]  61.1% 622
+Writing at 0x00eb29f8 [=================>            ]  62.7% 638
+Writing at 0x00eb735b [==================>           ]  64.4% 655
+Writing at 0x00ebbbb9 [==================>           ]  66.0% 671
+Writing at 0x00ec0529 [===================>          ]  67.6% 688
+Writing at 0x00ec4d8b [===================>          ]  69.2% 704
+Writing at 0x00ec96f9 [====================>         ]  70.8% 720
+Writing at 0x00ecdf5e [====================>         ]  72.4% 737
+Writing at 0x00ed28c9 [=====================>        ]  74.0% 753
+Writing at 0x00ed722c [=====================>        ]  75.6% 770
+Writing at 0x00edba9a [======================>       ]  77.2% 786
+Writing at 0x00ee03ff [======================>       ]  78.8% 802
+Writing at 0x00ee4c76 [=======================>      ]  80.4% 819
+Writing at 0x00ee95e6 [=======================>      ]  82.0% 835
+Writing at 0x00eede53 [========================>     ]  83.7% 851
+Writing at 0x00ef27c1 [========================>     ]  85.3% 868
+Writing at 0x00ef7112 [=========================>    ]  86.9% 884
+Writing at 0x00efb985 [=========================>    ]  88.5% 901
+Writing at 0x00f002f1 [==========================>   ]  90.1% 917
+Writing at 0x00f04b86 [==========================>   ]  91.7% 933
+Writing at 0x00f094cf [==========================>   ]  93.3% 950
+Writing at 0x00f0dd53 [===========================>  ]  94.9% 966
+Writing at 0x00f126ac [===========================>  ]  96.5% 983
+Writing at 0x00f16f7c [============================> ]  98.1% 999
+Writing at 0x00f1c90e [============================> ]  99.7% 101
+Wrote 2097152 bytes (1018423 compressed) at 0x00e00000 in 17.9 seconds (936.9 kbit/s).
+Hash of data verified.
+
+Hard resetting via RTS pin...
+PS C:\Projects\esp32s3_board_test> 

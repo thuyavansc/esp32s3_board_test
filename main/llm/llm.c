@@ -81,6 +81,23 @@ static const char *TAG = "LLM";
 TaskHandle_t handle_forward_task = NULL;
 TaskHandle_t matmul_task_2 = NULL;
 
+// ESP32 port addition — same helper/rotating-buffer approach used
+// elsewhere in this project (ram_test.c, llm_runner.c): formats a byte
+// count as "X.X KB" (under 1MB) or "X.XX MB" (1MB+), so this file's own
+// diagnostic logging (file size, free RAM) is human-readable too.
+static const char *_fmt_bytes(long bytes) {
+    static char buf[4][24];
+    static int  idx = 0;
+    idx = (idx + 1) % 4;
+    if (bytes < 0) bytes = 0;
+    if ((size_t)bytes < 1024u * 1024u) {
+        snprintf(buf[idx], sizeof(buf[idx]), "%.1f KB", bytes / 1024.0);
+    } else {
+        snprintf(buf[idx], sizeof(buf[idx]), "%.2f MB", bytes / (1024.0 * 1024.0));
+    }
+    return buf[idx];
+}
+
 ForwardTaskParams *forward_params = NULL;
 MatMulTaskParams *matmul_params = NULL;
 
@@ -194,8 +211,8 @@ void read_checkpoint(char *checkpoint, Config *config, TransformerWeights *weigh
     fseek(file, 0, SEEK_END); // move file pointer to end of file
     *file_size = ftell(file); // get the file size, in bytes
     fseek(file, 0, SEEK_SET); // move back to beginning for reading
-    ESP_LOGI(TAG, "File size: %zu bytes", *file_size);
-    ESP_LOGI(TAG, "Free ram available: %lu", esp_get_free_heap_size());
+    ESP_LOGI(TAG, "File size: %zu bytes (%s)", *file_size, _fmt_bytes((long)*file_size));
+    ESP_LOGI(TAG, "Free ram available: %lu bytes (%s)", esp_get_free_heap_size(), _fmt_bytes((long)esp_get_free_heap_size()));
     *data = malloc(*file_size);
     if (*data == NULL)
     {
@@ -207,13 +224,13 @@ void read_checkpoint(char *checkpoint, Config *config, TransformerWeights *weigh
     if (bytes_read != *file_size)
     {
         ESP_LOGE(TAG, "Failed to read file into memory");
-        ESP_LOGE(TAG, "Bytes read %zu bytes", bytes_read);
+        ESP_LOGE(TAG, "Bytes read %zu bytes (%s)", bytes_read, _fmt_bytes((long)bytes_read));
         exit(EXIT_FAILURE);
     }
     fclose(file);
 
     ESP_LOGI(TAG, "Successfully read LLM into memory");
-    ESP_LOGI(TAG, "Free ram available: %lu", esp_get_free_heap_size());
+    ESP_LOGI(TAG, "Free ram available: %lu bytes (%s)", esp_get_free_heap_size(), _fmt_bytes((long)esp_get_free_heap_size()));
     v4sf *weights_ptr = *data + sizeof(Config) / sizeof(v4sf);
     memory_map_weights(weights, config, weights_ptr, shared_weights);
     ESP_LOGI(TAG, "Successfully read checkpoint");
@@ -312,6 +329,13 @@ void matmul_task(void *params)
     TaskHandle_t current_task = xTaskGetCurrentTaskHandle();
     char *tName = pcTaskGetName(current_task);
     // ESP_LOGI(TAG, "Created Task %s", tName);
+    // ESP32 port addition — defense-in-depth alongside generate()'s own
+    // per-token yield (see there for the full explanation/doc reference):
+    // this task is pinned to Core 1 at high priority and never otherwise
+    // yields, so if it's ever the one actively spinning when generate()'s
+    // own yield check isn't reached quickly enough, this is a second,
+    // independent safety net for the exact same watchdog problem.
+    TickType_t last_yield = xTaskGetTickCount();
     for (;;)
     {
         if (xSemaphoreTake(semaDataReady, portMAX_DELAY) == pdTRUE)
@@ -327,6 +351,13 @@ void matmul_task(void *params)
             //    ESP_LOGI(TAG, "Completed task %s", tName);
             xSemaphoreGive(semaDataReady);
             xEventGroupSync(xEventGroup, p->task_num, ALL_SYNC_BITS, portMAX_DELAY);
+
+            TickType_t now = xTaskGetTickCount();
+            if ((now - last_yield) >= pdMS_TO_TICKS(500))
+            {
+                last_yield = now;
+                vTaskDelay(1);
+            }
         }
     }
 }
@@ -338,6 +369,9 @@ void forward_task(void *params)
     TaskHandle_t current_task = xTaskGetCurrentTaskHandle();
     char *tName = pcTaskGetName(current_task);
     // ESP_LOGI(TAG, "Created Task %s", tName);
+    // ESP32 port addition — same defense-in-depth reasoning as matmul_task's
+    // own copy of this, see there.
+    TickType_t last_yield = xTaskGetTickCount();
     for (;;)
     {
         if (xSemaphoreTake(semaForwardDataReady, portMAX_DELAY) == pdTRUE)
@@ -389,6 +423,13 @@ void forward_task(void *params)
             //   ESP_LOGI(TAG, "Completed task %s", tName);
             xSemaphoreGive(semaForwardDataReady);
             xEventGroupSync(ForwardEventGroup, t_params->task_num, ALL_FORWARD_TASKS, portMAX_DELAY);
+
+            TickType_t now = xTaskGetTickCount();
+            if ((now - last_yield) >= pdMS_TO_TICKS(500))
+            {
+                last_yield = now;
+                vTaskDelay(1);
+            }
         }
     }
 }
@@ -1055,6 +1096,16 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
     int next;                     // will store the next token in the sequence
     int token = prompt_tokens[0]; // kick off with the first token in the prompt
     int pos = 0;                  // position in the sequence
+    // ESP32 port addition — this loop (and everything it calls: forward(),
+    // matmul(), the offloaded matmul_task/forward_task work on Core 1) never
+    // calls vTaskDelay()/yields anywhere, upstream's own design (it was
+    // written for a desktop, where this doesn't matter). On ESP-IDF, that
+    // means Core 1's own idle task never gets scheduled for the ENTIRE
+    // generation run, tripping the 5-second task watchdog
+    // (CONFIG_ESP_TASK_WDT_TIMEOUT_S) — confirmed for real on hardware, see
+    // doc 128. A brief, deliberate pause once every ~500ms (10x safety
+    // margin under that 5s timeout) is enough to let it run.
+    TickType_t last_yield = xTaskGetTickCount();
     while (pos < steps)
     {
         // forward the transformer to get logits for the next token
@@ -1089,6 +1140,14 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
         if (start == 0)
         {
             start = time_in_ms();
+        }
+
+        // ESP32 port addition — see the comment above this loop's start.
+        TickType_t now = xTaskGetTickCount();
+        if ((now - last_yield) >= pdMS_TO_TICKS(500))
+        {
+            last_yield = now;
+            vTaskDelay(1);
         }
     }
     printf("\n");
