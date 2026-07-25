@@ -426,29 +426,26 @@ void forward_task(void *params)
 
 void matmul(v4sf *xout, v4sf *x, v4sf *w, int n, int d)
 {
-
     // d is the number of rows
     // n is the number of columns
     // d X n
-    *matmul_params = (MatMulTaskParams){xout, x, w, d / 2, d, n, d, TASK_1_BIT};
-    xSemaphoreGive(semaDataReady);
-    for (int i = 0; i < d / 2; i++)
+
+    // TEMPORARY DIAGNOSTIC (doc 131/133) — the dual-core split (half the
+    // rows computed here inline, half offloaded to matmul_task on Core 1
+    // via the semaphore/event-group handshake below) is disabled. Every
+    // row is now computed inline, single-core, sequentially. This isolates
+    // whether the token-511 collapse is caused by the split/cross-core
+    // handshake itself, or lives elsewhere (logits/weights/state).
+    // matmul_task is still created but never fed, so it just sits asleep,
+    // harmless. REVERT this whole function to restore the original
+    // dual-core split once diagnosed.
+    for (int i = 0; i < d; i++)
     {
         v4sf val = 0.0f;
         v4sf *row = &w[i * n]; // Pointer to the start of the current row in matrix w
         dsps_dotprod_f32_aes3(row, x, &val, n);
         xout[i] = val;
     }
-    if (xSemaphoreTake(semaDataReady, portMAX_DELAY) == pdTRUE)
-    {
-        xEventGroupSync(xEventGroup,
-                        TASK_0_BIT,
-                        ALL_SYNC_BITS,
-                        portMAX_DELAY);
-
-        xEventGroupClearBits(xEventGroup, ALL_SYNC_BITS);
-    }
-    //   ESP_LOGI(TAG, "Completed MatMul tasks");
 }
 
 v4sf *forward(Transformer *transformer, int token, int pos)
@@ -506,28 +503,18 @@ v4sf *forward(Transformer *transformer, int token, int pos)
                 vec[i + 1] = v0 * fci + v1 * fcr;
             }
         }
-        // start task
-        *forward_params = (ForwardTaskParams){
-            .s = s,
-            .w = w,
-            .p = p,
-            .pos = pos,
-            .start = p->n_heads / 2,
-            .loff = loff,
-            .end = p->n_heads,
-            .dim = dim,
-            .kv_dim = kv_dim,
-            .kv_mul = kv_mul,
-            .hidden_dim = hidden_dim,
-            .head_size = head_size,
-            .task_num = FORWARD_TASK_1,
-        };
-        xSemaphoreGive(semaForwardDataReady);
+        // TEMPORARY DIAGNOSTIC (doc 131/133) — same as matmul()'s own
+        // change above: the dual-core split (half the heads here inline,
+        // half offloaded to forward_task on Core 1) is disabled. The loop
+        // below now covers ALL heads (0..n_heads), not just the first
+        // half, so no offloaded work is skipped — forward_task is still
+        // created but never fed, harmless. REVERT to restore the
+        // original split once diagnosed.
 
         // multihead attention. iterate over all heads
         int h;
         // #pragma omp parallel for private(h)
-        for (h = 0; h < (p->n_heads / 2); h++)
+        for (h = 0; h < p->n_heads; h++)
         {
             // get the query vector for this head
             v4sf *q = s->q + h * head_size;
@@ -568,16 +555,14 @@ v4sf *forward(Transformer *transformer, int token, int pos)
                 }
             }
         }
-        if (xSemaphoreTake(semaForwardDataReady, portMAX_DELAY) == pdTRUE)
+        // TEMPORARY DIAGNOSTIC (doc 131/133) — this used to be gated behind
+        // xSemaphoreTake(semaForwardDataReady, ...)/xEventGroupSync(...),
+        // waiting for forward_task's offloaded half. Since nothing feeds
+        // that semaphore anymore (all heads are computed inline above),
+        // that wait would now block forever — removed, and this code
+        // (which was always the real, needed computation, just previously
+        // wrapped in that wait) now just runs unconditionally instead.
         {
-
-            xEventGroupSync(ForwardEventGroup,
-                            FORWARD_TASK_2,
-                            ALL_FORWARD_TASKS,
-                            portMAX_DELAY);
-
-            xEventGroupClearBits(ForwardEventGroup, ALL_FORWARD_TASKS);
-
             // final matmul to get the output of the attention
             matmul(s->xb2, s->xb, w->wo + l * dim * dim, dim, dim);
 
