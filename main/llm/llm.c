@@ -1122,20 +1122,20 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
         // forward the transformer to get logits for the next token
         v4sf *logits = forward(transformer, token, pos);
 
-        // TEMPORARY diagnostic (doc 131/133) — raw logits BEFORE sample()
-        // touches them (sample() divides by temperature + applies softmax
-        // in place when temperature != 0 — logged here to see the true,
-        // untouched forward-pass output). Also finds the actual raw max
-        // across the whole array, independent of sample_argmax(), as a
-        // cross-check.
-        {
-            int raw_max_i = 0;
-            v4sf raw_max_v = logits[0];
-            for (int qi = 1; qi < sampler->vocab_size; qi++) {
-                if (logits[qi] > raw_max_v) { raw_max_v = logits[qi]; raw_max_i = qi; }
-            }
-            ESP_LOGI(TAG, "[logits] pos=%d [0]=%.4f [255]=%.4f [256]=%.4f [511]=%.4f raw_max_i=%d raw_max_v=%.4f",
-                     pos, logits[0], logits[255], logits[256], logits[511], raw_max_i, raw_max_v);
+        // Independent inline argmax scan of the raw logits, BEFORE sample()
+        // would touch them. Confirmed via extensive testing (doc 131/133)
+        // that this loop's answer tracks a sensible, evolving true best
+        // token every step, while sample()/sample_argmax() (identical
+        // logic on the same array) inexplicably kept returning a fixed,
+        // wrong index (511) instead — a discrepancy that couldn't be
+        // pinned down even with logging placed directly inside
+        // sample_argmax() itself. Given that, greedy decoding now uses
+        // this scan's result directly instead of routing through
+        // sample()/sample_argmax() for the temperature==0 case.
+        int raw_max_i = 0;
+        v4sf raw_max_v = logits[0];
+        for (int qi = 1; qi < sampler->vocab_size; qi++) {
+            if (logits[qi] > raw_max_v) { raw_max_v = logits[qi]; raw_max_i = qi; }
         }
 
         // advance the state machine
@@ -1143,6 +1143,11 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
         {
             // if we are still processing the input prompt, force the next prompt token
             next = prompt_tokens[pos + 1];
+        }
+        else if (sampler->temperature == 0.0f)
+        {
+            // greedy decoding — use the verified-correct inline scan above
+            next = raw_max_i;
         }
         else
         {
