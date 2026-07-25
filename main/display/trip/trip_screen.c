@@ -6,10 +6,10 @@
  *   - A trip-number entry box (tap → numeric_keypad_show()) + FETCH button.
  *   - An always-visible, auto-populated trip list (no separate "LIST
  *     STORED" button needed — the list is just always there, sorted
- *     newest-first by trips_api_list()).
+ *     newest-first by rest_api_storage_list()).
  *   - FETCH shows the non-blocking loading_overlay while the ONE
  *     persistent background worker task (bg_worker.c) runs
- *     trips_api_fetch() — ported from esp32_display_taxi_3, where this
+ *     rest_api_storage_fetch() — ported from esp32_display_taxi_3, where this
  *     same pattern was shared with a GPS screen's SEND button (this
  *     project has no GPS hardware/screen); see bg_worker.h for why a
  *     shared persistent worker replaced spawning a fresh task per tap
@@ -33,7 +33,7 @@
 #include "ui_main.h"
 #include "ui_theme.h"
 #include "ui_widgets.h"
-#include "backend/trips_api.h"
+#include "backend/taximeter/rest_api_storage.h"
 #include "ui_components/numeric_keypad.h"
 #include "ui_components/loading_overlay.h"
 #include "ui_components/toast.h"
@@ -163,7 +163,7 @@ void trip_screen_refresh_list(void) {
     lv_obj_clean(s_list_cont);
 
     static trip_file_info_t list[TRIP_LIST_MAX];
-    int count = trips_api_list(list, TRIP_LIST_MAX);
+    int count = rest_api_storage_list(list, TRIP_LIST_MAX);
 
     if (count == 0) {
         lv_obj_t *empty_lbl = ui_label(s_list_cont,

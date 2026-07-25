@@ -19,7 +19,7 @@
 #include "trip_screen.h"
 #include "ui_theme.h"
 #include "ui_widgets.h"
-#include "backend/trips_api.h"
+#include "backend/taximeter/rest_api_storage.h"
 #include "ui_components/confirm_dialog.h"
 #include "ui_components/toast.h"
 
@@ -90,7 +90,7 @@ static void _back_event(lv_event_t *e) {
 
 static void _do_delete(void *user_data) {
     int trip_id = (int)(intptr_t)user_data;
-    trips_api_delete(trip_id);
+    rest_api_storage_delete(trip_id);
     trip_screen_refresh_list();
     _back_event(NULL);
 }
@@ -154,7 +154,7 @@ void trip_json_viewer_show(int trip_id) {
 
     char *raw = NULL;
     size_t raw_len = 0;
-    esp_err_t err = trips_api_read(trip_id, &raw, &raw_len);
+    esp_err_t err = rest_api_storage_read(trip_id, &raw, &raw_len);
 
     if (err != ESP_OK || !raw) {
         lv_label_set_text(s_content_lbl, "Could not read this trip's stored JSON.");

@@ -1,10 +1,18 @@
 /**
  * app_main.c — esp32s3_board: ESP32-S3 N16R8V board bring-up diagnostic
- * firmware, ported from esp32_chip_info_test/main/app_main.c.
+ * firmware + full TaxiMeter backend (fare calculation, provisioning,
+ * login, duty, reference data, trip lifecycle), ported from
+ * esp32_chip_info_test/main/app_main.c and
+ * esp32_display_taxi_meter/main/app_main.c.
  *
- * Base behaviour unchanged: prints chip/flash/RAM/partition/NVS/SPIFFS
- * info once at boot, "getinfo"/"info" reprints it on demand. Changes vs.
- * the original for this project:
+ * See docs/TestFunctionalities/esp32s3_board/
+ * 135_2026-07-25_fare_calc_and_backend_integration_plan.md for the full
+ * integration plan and rationale.
+ *
+ * Base behaviour unchanged from the original diagnostic tool: prints
+ * chip/flash/RAM/partition/NVS/SPIFFS info once at boot, "getinfo"/
+ * "info" reprints it on demand. Changes vs. the original for this
+ * project:
  *
  *   - RAM/heap report extended to show internal SRAM and PSRAM
  *     side-by-side (all live-queried — esp_flash_get_size()/
@@ -21,13 +29,27 @@
  *     present, unchanged, just switched off via config.h (ENABLE_OTA=0,
  *     ENABLE_REMOTE_CONFIG=0).
  *   - Display feature added (ported from esp32_display_taxi_3, ESP32-S3
- *     pins only — see config.h and docs 111/112): bg_worker_init() early
- *     (before WiFi touches the heap), display_init()/touch_init()/
- *     ui_init() after WiFi connects, lv_tick_task started (tick-only,
- *     safe from any task) + an lv_timer for the Dashboard's simulated
- *     values (NOT a separate task — see _sim_timer_cb's own comment,
- *     doc 116), and app_main()'s own final loop is now the LVGL
- *     handler loop — app_main() intentionally no longer returns.
+ *     pins only — see config.h): bg_worker_init() early (before WiFi
+ *     touches the heap), display_init()/touch_init()/ui_init() after
+ *     WiFi connects, lv_tick_task started (tick-only, safe from any
+ *     task) + an lv_timer feeding the Dashboard from the LIVE meter
+ *     (fare_calc_get_snapshot() — zeros when idle, real totals when a
+ *     trip is running; NOT the old simulated sweep), and app_main()'s
+ *     own final loop is now the LVGL handler loop — app_main()
+ *     intentionally no longer returns.
+ *   - TaxiMeter backend added (backend/taximeter/, backend/gps/): SNTP
+ *     time sync (tariffs need real wall-clock time), session_store,
+ *     setup_client (network+vehicle provisioning), auth_client (login),
+ *     duty_client, reference_data (tariffs/fixed-rates/special-fares/
+ *     holidays), fare_calc + trip_manager (the actual meter), and a
+ *     3-backend GPS dispatcher (gps_client.c — NEO-6M / serial
+ *     injection from the PC GUI / GNSS-A7670E [not yet implemented]).
+ *   - backend/ reorganized into subfolders (system/, taximeter/, gps/)
+ *     — was previously a flat dump of ~10 files.
+ *   - trips_api.c/.h REMOVED (redundant — same URL, same job as
+ *     rest_api_storage.c, which is now the single SPIFFS-mount owner +
+ *     "api" command handler; also backs the Display trip screen's
+ *     list/read/delete helpers).
  *
  * ================================================================
  * SERIAL COMMANDS (available ones depend on which flags are ON)
@@ -37,7 +59,15 @@
  *   ram info           Live SRAM+PSRAM totals/free/largest-block (no allocation)
  *   ram test sram|psram|all   Allocate/write/verify/free real-value RAM test
  *   ota check/status   [ENABLE_OTA, currently OFF]
- *   api get/read/list/delete/info/help  [ENABLE_TRIPS_API]  Trip fetch/storage
+ *   api get/read/list/delete/info/help  Trip fetch/storage (rest_api_storage.c)
+ *   gps set|info|start|stop|once|every  GPS — inject a fix or drive a NEO-6M module
+ *   setup network|vehicle|info|help     Network passcode + vehicle provisioning
+ *   auth login|logout|info|help         Driver login/logout
+ *   ref fetch|list|info|help            Tariffs/fixed-rates/special-fares/holidays
+ *   duty on|off|info                    On-duty / off-duty
+ *   trip start|stop|pause|resume|extras|info   The meter itself
+ *   session info|clear                  NVS session dump / logout-style reset
+ *   mem / store                         Heap + SPIFFS/NVS diagnostics
  *   game / guess <n>   [ENABLE_MINI_COMMAND, currently OFF]
  *   config status|check [ENABLE_REMOTE_CONFIG, currently OFF]
  *   sms <command>      [ENABLE_ADDITIONAL_WORK]
@@ -72,18 +102,28 @@
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_netif.h"
+#include "esp_sntp.h"
 #include "lvgl.h"
 #include "config.h"
 #include "version.h"
-#include "backend/ota_client.h"
-#include "backend/trips_api.h"
-#include "backend/mini_command.h"
-#include "backend/factory_reset.h"
-#include "backend/nvs_state.h"
-#include "backend/remote_config.h"
-#include "backend/additional_work.h"
-#include "backend/ram_test.h"
+#include "backend/system/ota_client.h"
+#include "backend/system/mini_command.h"
+#include "backend/system/factory_reset.h"
+#include "backend/system/nvs_state.h"
+#include "backend/system/remote_config.h"
+#include "backend/system/additional_work.h"
+#include "backend/system/ram_test.h"
 #include "backend/bg_worker.h"
+#include "backend/taximeter/session_store.h"
+#include "backend/taximeter/setup_client.h"
+#include "backend/taximeter/auth_client.h"
+#include "backend/taximeter/duty_client.h"
+#include "backend/taximeter/reference_data.h"
+#include "backend/taximeter/fare_calc.h"
+#include "backend/taximeter/trip_manager.h"
+#include "backend/taximeter/diag.h"
+#include "backend/taximeter/rest_api_storage.h"
+#include "backend/gps/gps_client.h"
 #include "display/display_driver.h"
 #include "display/touch_driver.h"
 #include "display/ui_main.h"
@@ -270,7 +310,7 @@ static void storage_mount_once(void) {
     // Only mount here for the report if the trips API module hasn't
     // already mounted it (avoids a duplicate/conflicting mount attempt).
 #if ENABLE_TRIPS_API
-    s_spiffs_mounted = true; // trips_api_init() (called from app_main below) owns the mount
+    s_spiffs_mounted = true; // rest_api_storage_init() (called from app_main below) owns the mount
     return;
 #else
     esp_vfs_spiffs_conf_t conf = {
@@ -381,6 +421,28 @@ static void wifi_init_and_wait(void) {
 #endif // NETWORK_NEEDED
 
 // ═══════════════════════════════════════════════════════════════
+//  SNTP TIME SYNC — the TaxiMeter backend needs real wall-clock time:
+//  tariff time-of-day/day-of-week windows and the public-holiday
+//  22:00-night-before rule (reference_data.c) both compare against
+//  time(NULL)/gmtime_r(). Runs once, right after WiFi connects, before
+//  any HTTPS call that might need a valid clock for TLS certificate
+//  validation.
+// ═══════════════════════════════════════════════════════════════
+#if NETWORK_NEEDED
+static void time_sync_init(void) {
+    esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    esp_sntp_setservername(0, "pool.ntp.org");
+    esp_sntp_init();
+    int retry = 0;
+    while (esp_sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < 200) {
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+    ESP_LOGI(TAG, "NTP sync: %s",
+        esp_sntp_get_sync_status() == SNTP_SYNC_STATUS_COMPLETED ? "OK \xE2\x9C\x93" : "FAILED (tariff time-of-day lookups may be wrong until it syncs)");
+}
+#endif
+
+// ═══════════════════════════════════════════════════════════════
 //  SERIAL COMMAND READER
 // ═══════════════════════════════════════════════════════════════
 static void serial_cmd_task(void *arg) {
@@ -388,11 +450,10 @@ static void serial_cmd_task(void *arg) {
     int  pos = 0;
 
     printf("\nType 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all'"
+           " | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help'"
+           " | 'duty on|off|info' | 'trip help' | 'session info' | 'mem' | 'store'"
 #if ENABLE_OTA
            " | 'ota check' | 'ota status'"
-#endif
-#if ENABLE_TRIPS_API
-           " | 'api help'"
 #endif
 #if ENABLE_MINI_COMMAND
            " | 'game'"
@@ -432,12 +493,26 @@ static void serial_cmd_task(void *arg) {
                     version_print_banner();
                 } else if (ram_test_process_command(line)) {
                     // handled
+                } else if (gps_client_process_command(line)) {
+                    // handled
+                } else if (rest_api_storage_process_command(line)) {
+                    // handled — "api ..." (trip fetch/storage)
+                } else if (session_store_process_command(line)) {
+                    // handled
+                } else if (setup_client_process_command(line)) {
+                    // handled
+                } else if (auth_client_process_command(line)) {
+                    // handled
+                } else if (reference_data_process_command(line)) {
+                    // handled
+                } else if (duty_client_process_command(line)) {
+                    // handled
+                } else if (trip_manager_process_command(line)) {
+                    // handled
+                } else if (diag_process_command(line)) {
+                    // handled — "mem" / "store" / "diag help"
 #if ENABLE_OTA
                 } else if (ota_client_process_command(line)) {
-                    // handled
-#endif
-#if ENABLE_TRIPS_API
-                } else if (trips_api_process_command(line)) {
                     // handled
 #endif
 #if ENABLE_MINI_COMMAND
@@ -484,54 +559,60 @@ static void lv_tick_task(void *arg) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  DASHBOARD DEMO VALUES — simulated speed/distance/fare, same as
-//  the source project (esp32_display_taxi_3): this project has no
-//  real speed sensor/odometer, so the Dashboard screen shows moving
-//  demo values to prove the display+UI actually works end-to-end.
+//  DASHBOARD — fed by the REAL meter (fare_calc.c), not a simulation.
+//  Zeros while no trip is running; live speed/distance/fare once "trip
+//  start" is issued (serial command or, later, a touchscreen control).
 //
 //  Runs as an LVGL timer callback (lv_timer_create(), registered in
 //  app_main() after ui_init()) — NOT a separate FreeRTOS task calling
 //  LVGL functions directly. LVGL is not thread-safe: calling
 //  lv_label_set_text() (via ui_update_dashboard()) from a separate
 //  task while the "main" task concurrently runs lv_timer_handler() is
-//  a real, previously-documented class of bug — confirmed against a
-//  real report with this exact symptom (ESP32 IDLE0 watchdog reboot,
-//  fixed by moving label updates into an lv_timer callback):
-//  https://forum.lvgl.io/t/esp32-rebooting-on-watchdog-for-idle0/20173
-//  An lv_timer's callback runs INSIDE lv_timer_handler() itself, on
-//  the same task, which is what actually satisfies LVGL's
-//  single-thread-access requirement — see doc 116 for the full
-//  analysis (this was the real root cause of doc 114's crash; doc
-//  114's flush-area validation fix was still correct to keep — it
-//  prevents that specific consequence regardless of this fix).
+//  a real, previously-documented class of bug (doc 116) — an lv_timer's
+//  callback runs INSIDE lv_timer_handler() itself, on the same task,
+//  which is what actually satisfies LVGL's single-thread-access
+//  requirement.
 // ═══════════════════════════════════════════════════════════════
-static void _sim_timer_cb(lv_timer_t *timer) {
-    static double speed = 0.0, distance = 0.0;
-    speed += 2.0;
-    if (speed > 55.0) speed = 0.0;
-    distance += speed / 3600.0;
-    double fare = UI_DEFAULT_FLAG_FALL + distance * UI_DEFAULT_FARE_RATE;
-    ui_update_dashboard(speed, distance, fare);
+static void _dashboard_timer_cb(lv_timer_t *timer) {
+    if (trip_manager_is_trip_active()) {
+        fare_calc_snapshot_t snap;
+        fare_calc_get_snapshot(&snap);
+        ui_update_dashboard(snap.speed_kmh, snap.distance_km, snap.total_fare_cents / 100.0);
+    } else {
+        ui_update_dashboard(0.0, 0.0, 0.0);
+    }
 }
 
 void app_main(void) {
     ESP_ERROR_CHECK(nvs_flash_init());
     nvs_state_init();
+    session_store_init();
 
-    // Background worker (Trip FETCH) — started FIRST, before anything
-    // else touches the heap, so its one-time 8KB stack allocation can't
-    // fail later once WiFi/display/SPIFFS have fragmented/consumed most
-    // of it (same reasoning as esp32_display_taxi_3's own app_main()).
+    // Background worker (Trip FETCH + every TaxiMeter HTTPS call routed
+    // via bg_worker_submit_fn()) — started FIRST, before anything else
+    // touches the heap, so its one-time 8KB stack allocation can't fail
+    // later once WiFi/display/SPIFFS have fragmented/consumed most of it.
     bg_worker_init();
 
 #if NETWORK_NEEDED
     wifi_init_and_wait();
+    // SNTP + one-time-per-device provisioning (network passcode + vehicle
+    // lookup) run HERE, immediately after WiFi connects and BEFORE
+    // display/touch/UI/SPIFFS touch the heap — the heap-hungry TLS
+    // handshake gets first pick of the largest free heap available all
+    // boot, same reasoning bg_worker_init() above already follows.
+    time_sync_init();
+    setup_client_run_if_needed();
 #endif
 
     storage_mount_once();
-#if ENABLE_TRIPS_API
-    trips_api_init();
-#endif
+    rest_api_storage_init();
+
+    // reference_data_init() must come AFTER rest_api_storage_init() —
+    // it depends on SPIFFS already being mounted there.
+    reference_data_init();
+    gps_client_init();
+    trip_manager_init();
 
     // Automatic report — ONCE, at boot (unchanged behaviour from the
     // original diagnostic tool).
@@ -574,9 +655,9 @@ void app_main(void) {
 
     xTaskCreate(lv_tick_task, "lv_tick", 2048, NULL, 2, NULL);
 
-    // lv_timer_create(), NOT xTaskCreate() — see _sim_timer_cb's own
-    // comment above for why this matters (LVGL thread-safety).
-    lv_timer_create(_sim_timer_cb, 1000, NULL);
+    // lv_timer_create(), NOT xTaskCreate() — see _dashboard_timer_cb's
+    // own comment above for why this matters (LVGL thread-safety).
+    lv_timer_create(_dashboard_timer_cb, 1000, NULL);
 
     ESP_LOGI(TAG, "READY — Touch UI Active ✓");
 

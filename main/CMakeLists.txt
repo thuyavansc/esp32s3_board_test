@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.16)
 idf_component_register(
     SRCS "app_main.c" "version.c"
-         "backend/ota_client.c" "backend/trips_api.c" "backend/mini_command.c"
-         "backend/factory_reset.c" "backend/nvs_state.c" "backend/remote_config.c"
-         "backend/additional_work.c" "backend/ram_test.c" "backend/psram_download_test.c"
          "backend/bg_worker.c"
+         "backend/system/ota_client.c" "backend/system/mini_command.c"
+         "backend/system/factory_reset.c" "backend/system/nvs_state.c" "backend/system/remote_config.c"
+         "backend/system/additional_work.c" "backend/system/ram_test.c" "backend/system/psram_download_test.c"
+         "backend/taximeter/session_store.c" "backend/taximeter/api_client.c"
+         "backend/taximeter/setup_client.c" "backend/taximeter/auth_client.c" "backend/taximeter/duty_client.c"
+         "backend/taximeter/reference_data.c" "backend/taximeter/fare_calc.c" "backend/taximeter/trip_manager.c"
+         "backend/taximeter/diag.c" "backend/taximeter/rest_api_storage.c"
+         "backend/gps/gps_client.c" "backend/gps/gps_backend_neo6m.c"
          "display/display_driver.c" "display/touch_driver.c" "display/ui_main.c" "display/ui_widgets.c"
          "display/trip/trip_screen.c" "display/trip/trip_json_viewer.c"
          "display/test/test_menu.c" "display/test/test_pax_meter.c"
@@ -12,7 +17,8 @@ idf_component_register(
          "ui_components/numeric_keypad.c" "ui_components/toast.c"
          "ui_components/loading_overlay.c" "ui_components/confirm_dialog.c"
          "llm/llm.c" "llm/llm_runner.c"
-    INCLUDE_DIRS "." "backend" "display" "display/trip" "display/test" "display/test/color_palette" "ui_components" "llm"
+    INCLUDE_DIRS "." "backend" "backend/system" "backend/taximeter" "backend/gps"
+                 "display" "display/trip" "display/test" "display/test/color_palette" "ui_components" "llm"
     REQUIRES esp_partition spi_flash esp_hw_support esp_system esp_common heap
              esp_psram
              nvs_flash spiffs
@@ -45,3 +51,19 @@ set_source_files_properties("llm/llm.c" PROPERTIES COMPILE_OPTIONS "-fno-if-conv
 # tested commands. Intentionally NOT calling spiffs_create_partition_image()
 # here — it would be dead code under this build system, misleading anyone
 # reading this file into thinking the model gets flashed automatically.
+
+# ════════════════════════════════════════════════════════════════
+# TaxiMeter backend (backend/taximeter/, backend/gps/) — ported from
+# esp32_display_taxi_meter for the real fare-calculation + provisioning/
+# auth/duty/reference-data flow. See
+# docs/TestFunctionalities/esp32s3_board/
+# 135_2026-07-25_fare_calc_and_backend_integration_plan.md for the full
+# integration plan and rationale (folder layout, which trip-fetch module
+# was kept, GPS backend design).
+#
+# g2_protocol.c / local_socket.c / socket_client.c (G2 binary protocol,
+# local Node.js test socket, iStartek GPRS socket) are deliberately NOT
+# compiled in — unused by this feature set, would only add unwanted
+# flash size. Not even present in this project (they were esp32_
+# display_taxi_meter-only files, never copied here).
+# ════════════════════════════════════════════════════════════════

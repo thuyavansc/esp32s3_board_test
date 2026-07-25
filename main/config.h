@@ -140,29 +140,117 @@
 #define STORAGE_DIR            "/store"
 #define STORAGE_MAX_FILES      100
 
-// ── Trips-API-specific auth (added for esp32s3_board) ───────────
+// ── Trips-API-specific auth ───────────────────────────────────
 // Deliberately named TRIPS_API_* (not a generic "AUTH_TOKEN") — this
 // token is scoped to ONLY this one GET endpoint (TRIPS_API_HOST +
 // TRIPS_API_PATH). It is NOT a general/shared credential: OTA's
 // Manifest/Report calls and remote-config's own endpoint send no auth
-// at all today, and any future API module that needs its own token
-// should define its own <MODULE>_AUTH_ENABLED / <MODULE>_AUTH_TOKEN
-// pair here rather than reusing this one. Stored in config.h (compiled
-// in), NOT NVS — this is a build-time credential, not a per-device
-// runtime value.
+// at all today. The TaxiMeter business API below (login/duty/tariffs/
+// trip) uses its own Bearer token from session_store instead — see
+// api_client.c. Stored in config.h (compiled in), NOT NVS — this is a
+// build-time credential, not a per-device runtime value.
 //
-// ⚠ The token below is the same one already used in this repo
-// (esp32_wave_board_test/main/config.h) — decoded, it is a JWT valid
-// ONLY 2026-07-08 12:09:30 UTC through 2026-07-09 12:09:30 UTC (a
-// 24-hour window). It is therefore ALREADY EXPIRED as of this build
-// (2026-07-23). Left here as a wired-up placeholder with
-// TRIPS_API_AUTH_ENABLED=0 — replace the token string and flip this to
-// 1 once you have a fresh one. Sending an expired token behaves
-// identically to sending none (401 / "Job id not found in trips."), so
-// leaving it at 0 for now costs nothing.
-#define TRIPS_API_AUTH_ENABLED  0        // 0 = OFF (no Authorization header), 1 = ON
-#define TRIPS_API_AUTH_TOKEN \
+// Macro names (TRIPS_API_SEND_AUTH / TRIPS_API_BEARER_TOKEN) match what
+// backend/taximeter/rest_api_storage.c actually reads.
+//
+// ⚠ The token below — decoded, it is a JWT valid ONLY 2026-07-08
+// 12:09:30 UTC through 2026-07-09 12:09:30 UTC (a 24-hour window). It is
+// therefore ALREADY EXPIRED as of this build. Left here as a wired-up
+// placeholder with TRIPS_API_SEND_AUTH=0 — replace the token string and
+// flip this to 1 once you have a fresh one. Sending an expired token
+// behaves identically to sending none (401 / "Job id not found in
+// trips."), so leaving it at 0 for now costs nothing.
+#define TRIPS_API_SEND_AUTH  0        // 0 = OFF (no Authorization header), 1 = ON
+#define TRIPS_API_BEARER_TOKEN \
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMTEwMDEiLCJqdGkiOiI2YzQ5ZTI4OS01Y2MxLTQyYWQtYWY1Zi0yZDY3ZTk2Mjg4ZjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjVlZDBiZDU3LWFkOTktNDNkMS04ZDk3LWYzZjRkMTAwZTE2YyIsIk5ldHdvcmsiOiIyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJuYmYiOjE3ODM1MTI1NzAsImV4cCI6MTc4MzU5ODk3MCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDgzIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MDgzIn0.X6z8mZ1piSwQjA7XDFeCh4cj8Z0eB_O2gBpqb1iD5NA"
+
+// ── Storage backend for rest_api_storage.c (1=LittleFS 2=SPIFFS(default)
+//    3=SD 4=PSRAM 5=SRAM) — see backend/taximeter/rest_api_storage.h.
+//    SPIFFS is this board's proven, board-tested option (matches the
+//    'storage' partition already used everywhere else in this project).
+#define STORAGE_BACKEND  2
+
+// ================================================================
+// TAXIMETER BUSINESS API — login, duty, tariffs, fare calc, trips.
+// Ported from esp32_display_taxi_meter/main/backend/ — see
+// docs/TestFunctionalities/esp32s3_board/
+// 135_2026-07-25_fare_calc_and_backend_integration_plan.md for the full
+// integration plan. Always compiled/active (this IS the taxi meter) —
+// no ENABLE_* toggle, unlike OTA/remote-config, which are optional
+// diagnostic extras.
+// ================================================================
+#define TAXIMETER_API_HOST        "mytaxis.softclient.com.au"   // same host as TRIPS_API_HOST
+#define TAXIMETER_HTTP_TIMEOUT_MS  15000
+
+// Endpoint paths
+#define EP_NETWORK           "/devices-api/api/DevicePublic/Network"
+#define EP_VEHICLE           "/devices-api/api/DevicePublic/Vehicle"
+#define EP_LOGIN             "/taxis-api/api/Authentications/Login"
+#define EP_LOGOUT            "/taxis-api/api/Authentications/Logout"
+#define EP_DRIVER            "/taxis-api/api/Driver"
+#define EP_ON_DUTY           "/taxis-api/api/DriverStatus/OnDuty"
+#define EP_OFF_DUTY          "/taxis-api/api/DriverStatus/OffDuty"
+#define EP_TARIFFS_FMT       "/taxis-api/api/VehicleType/%ld/Tarifs/v2"   // %ld = vehicleTypeId
+#define EP_FIXED_FARES       "/taxis-api/api/FixedFares"
+#define EP_SPECIAL_FARES     "/taxis-api/api/SpecialFare"
+#define EP_PUBLIC_HOLIDAYS   "/devices-api/api/PublicHolidays"
+
+// Device provisioning — network passcode + vehicle number are per-device,
+// set-once values. No provisioning UI yet — set these once per physical
+// device and reflash. Loaded into NVS by session_store on first boot
+// only; "setup" serial commands can override at runtime for testing
+// without a reflash.
+#define SETUP_NETWORK_PASSCODE   "PBI8ZLOC"
+#define SETUP_VEHICLE_NO         "Tu001"
+
+// Driver login — TEMPORARY hardcoded test credentials, same "hardcode
+// for the test bench, replace before field use" precedent as
+// TRIPS_API_BEARER_TOKEN above. No login screen yet — use the "auth
+// login" serial command to log in with these, or pass different
+// credentials to that command directly.
+#define AUTH_TEST_USERNAME       "12345"
+#define AUTH_TEST_PASSWORD       "12345"
+
+// Small, fixed-size buffers for the mostly-tiny JSON bodies these
+// endpoints exchange (login/driver/network/vehicle/duty) — kept off the
+// heap deliberately. Reference-data fetches (tariffs/fixed-rates/
+// special-fares/public-holidays), which can be larger, stream to a
+// SPIFFS file instead — see backend/taximeter/reference_data.c.
+#define API_SMALL_BUFFER_SIZE     2048
+
+// ================================================================
+// GPS — three selectable backends, one shared dispatcher
+// (backend/gps/gps_client.c). See that file's header and
+// docs/TestFunctionalities/esp32s3_board/
+// 136_2026-07-25_gpio_uart_conflict_analysis_and_board_identity_question.md
+// for the full analysis of why GPS_SRC_GNSS isn't wired in yet.
+// ================================================================
+#define GPS_SRC_NEO6M   0   // u-blox NEO-6M NMEA over dedicated UART — bench-tested, real hardware
+#define GPS_SRC_INJECT  1   // No GPS hardware — PC GUI feeds fixes via "gps set ..." serial command
+#define GPS_SRC_GNSS    2   // A7670E built-in GNSS + A-GPS/SUPL — NOT YET IMPLEMENTED (see doc 136 §5)
+
+// Default: INJECT — lets the PC GUI drive a complete trip (setup → auth
+// → duty → trip start → simulated drive → trip stop) with zero GPS
+// hardware attached, which is how this integration is meant to be
+// tested first (per your own instruction). Switch to GPS_SRC_NEO6M if
+// you wire up a real NEO-6M module for bench testing. GPS_SRC_GNSS is
+// the intended FINAL default for real deployment on the Waveshare
+// A7670E board, once doc 136's board-identity question is answered and
+// that backend is actually implemented — do not select it yet, it
+// currently falls back to injection-only with a warning logged at boot.
+#define GPS_SOURCE  GPS_SRC_INJECT
+
+// ── NEO-6M UART pins (GPS_SRC_NEO6M only) ──────────────────────
+// UART2 — the one hardware UART this board has left completely free
+// (UART0 = PC console, UART1 = A7670E modem AT-channel, both reserved —
+// see doc 136 §1's full pin inventory). GPIO 1/2 appear in ZERO pin
+// tables across every doc in this repo — the cleanest available
+// general-purpose pair. Change these here (not in gps_backend_neo6m.c)
+// if your physical NEO-6M wiring differs.
+#define GPS_UART_NUM     UART_NUM_2
+#define GPS_UART_TX      1     // ESP32 TX → NEO-6M RX (not used for reading)
+#define GPS_UART_RX      2     // ESP32 RX ← NEO-6M TX
+#define GPS_BAUD         9600  // NEO-6M default baud rate
 
 // ================================================================
 // PSRAM DOWNLOAD TEST — real network download, buffered ENTIRELY in
