@@ -7,6 +7,7 @@
  */
 
 #include "llm.h"
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -211,9 +212,11 @@ void read_checkpoint(char *checkpoint, Config *config, TransformerWeights *weigh
     // was parsed correctly. Expected for stories260K: dim=64 n_layers=5
     // n_heads=8 n_kv_heads=4 vocab=512 seq=512 (hidden_dim derived, not
     // officially published — see doc 123 — expect roughly ~172).
+#if LLM_VERBOSE_DEBUG
     ESP_LOGI(TAG, "[cfg] dim=%d hidden_dim=%d n_layers=%d n_heads=%d n_kv_heads=%d vocab=%d seq_len=%d",
              config->dim, config->hidden_dim, config->n_layers, config->n_heads,
              config->n_kv_heads, config->vocab_size, config->seq_len);
+#endif
     // figure out the file size
     fseek(file, 0, SEEK_END); // move file pointer to end of file
     *file_size = ftell(file); // get the file size, in bytes
@@ -244,6 +247,7 @@ void read_checkpoint(char *checkpoint, Config *config, TransformerWeights *weigh
     // weight values. A real, trained model's embedding weights should be
     // small floats (roughly -1.0 to +1.0) — all-zero, all-identical, NaN,
     // or huge values here would mean the file wasn't loaded/mapped correctly.
+#if LLM_VERBOSE_DEBUG
     ESP_LOGI(TAG, "[wgt] token_embedding_table[0..7]: %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f",
              weights->token_embedding_table[0], weights->token_embedding_table[1],
              weights->token_embedding_table[2], weights->token_embedding_table[3],
@@ -251,6 +255,7 @@ void read_checkpoint(char *checkpoint, Config *config, TransformerWeights *weigh
              weights->token_embedding_table[6], weights->token_embedding_table[7]);
     ESP_LOGI(TAG, "[wgt] wcls[0..3] (classifier weights, first row): %.4f %.4f %.4f %.4f",
              weights->wcls[0], weights->wcls[1], weights->wcls[2], weights->wcls[3]);
+#endif
     ESP_LOGI(TAG, "Successfully read checkpoint");
 }
 
@@ -914,8 +919,10 @@ int sample_argmax(v4sf *probabilities, int n)
     // of the same array, the array itself changed between the two reads —
     // if it agrees but the caller still sees a different "next" afterward,
     // something is corrupting the return value/variable, not this loop.
+#if LLM_VERBOSE_DEBUG
     ESP_LOGI(TAG, "[argmax] n=%d max_i=%d max_p=%.4f probabilities[0]=%.4f ptr=%p",
              n, max_i, max_p, probabilities[0], (void *)probabilities);
+#endif
     return max_i;
 }
 
@@ -1065,8 +1072,10 @@ int sample(Sampler *sampler, v4sf *logits)
     // in source and confirmed compiled (fresh ELF timestamp). Collapsing to
     // one statement removes any question of whether a specific log call's
     // output failed to appear.
+#if LLM_VERBOSE_DEBUG
     ESP_LOGI(TAG, "[smp-final] temperature=%.6f vocab_size=%d next=%d logits_ptr=%p",
              sampler->temperature, sampler->vocab_size, next, (void *)logits);
+#endif
     return next;
 }
 
@@ -1169,8 +1178,10 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
         // piece's length and first byte (hex), so we can see whether the
         // model is predicting the same token repeatedly, or different
         // tokens that all happen to decode to something blank-looking.
+#if LLM_VERBOSE_DEBUG
         ESP_LOGI(TAG, "[dbg] pos=%d next_token_id=%d piece_len=%d piece_byte0=0x%02X",
                  pos, next, (int)strlen(piece), (unsigned)(unsigned char)piece[0]);
+#endif
         safe_printf(piece); // same as printf("%s", piece), but skips "unsafe" bytes
         fflush(stdout);
         token = next;

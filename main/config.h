@@ -247,6 +247,12 @@
 #define LLM_TEMPERATURE      0.0f
 #define LLM_TOPP             0.9f
 
+// Per-token diagnostic logging ([cfg]/[wgt]/[dbg]/[argmax]/[smp-final] —
+// doc 131/133 debugging). OFF (0) by default so normal use just prints the
+// generated sentence with no extra noise. Set to 1 to re-enable when
+// debugging a generation issue.
+#define LLM_VERBOSE_DEBUG    0
+
 // ================================================================
 // DISPLAY — Waveshare 3.5" Capacitive Touch LCD (ST7796S + FT6336U),
 // 320x480, ported from esp32_display_taxi_3 (which targets classic
