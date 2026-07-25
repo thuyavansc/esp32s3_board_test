@@ -20,6 +20,7 @@
 #include "esp_system.h"
 #include "esp_dsp.h"
 #include "esp_attr.h"
+#include "esp_task_wdt.h"
 
 #define MAP_FAILED NULL
 #define munmap(ptr, length) custom_munmap(ptr)
@@ -1199,6 +1200,12 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
         // ESP32 port addition — see the comment above this loop's start.
         // Unconditional per-token yield (not time-gated) — see why above.
         vTaskDelay(1);
+        // Feed the task watchdog directly — llm_runner.c subscribed this
+        // task (esp_task_wdt_add(NULL)) before calling generate(). This is
+        // what actually prevents a trip now, not the yield above (the
+        // yield alone wasn't a reliable guarantee — see the comment where
+        // this loop starts).
+        esp_task_wdt_reset();
     }
     printf("\n");
 

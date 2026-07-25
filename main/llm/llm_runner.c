@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include "esp_log.h"
 #include "esp_spiffs.h"
+#include "esp_task_wdt.h"
 #include "config.h"
 #include "llm.h"
 #include "llm_runner.h"
@@ -177,11 +178,26 @@ bool llm_runner_process_command(const char *line) {
         if (setjmp(g_llm_error_jmp) != 0) {
             ESP_LOGE(TAG, "LLM operation failed (see error above) — command aborted, board NOT rebooted");
             s_model_ready = false;   // don't trust a possibly half-built model — force a clean reload next time
+            // Unsubscribe from the TWDT — we subscribed below, before the
+            // risky calls, and this longjmp() skipped past the normal
+            // unsubscribe at the end of this block.
+            esp_task_wdt_delete(NULL);
             printf("llm run failed — check the log above (common cause: model/tokenizer file missing from the 'llm' partition).\n");
             return true;
         }
 
+        // Subscribe THIS task to the task watchdog and feed it directly
+        // (generate()'s loop calls esp_task_wdt_reset() every token) rather
+        // than raising the global CONFIG_ESP_TASK_WDT_TIMEOUT_S (5s default)
+        // — that would also delay detecting a genuine hang in an unrelated
+        // task elsewhere in the system. Feeding our own long-running task
+        // directly keeps the fast 5s default everywhere else (doc 131/133
+        // continued — the standard ESP-IDF pattern for tasks with real,
+        // expected long compute bursts).
+        esp_task_wdt_add(NULL);
+
         if (!_ensure_model_loaded()) {
+            esp_task_wdt_delete(NULL);
             printf("Model failed to load — see log above.\n");
             return true;
         }
@@ -189,6 +205,7 @@ bool llm_runner_process_command(const char *line) {
         ESP_LOGI(TAG, "Generating (%d steps)%s%s ...", s_steps,
                  prompt ? " — prompt: " : " — no prompt", prompt ? prompt : "");
         generate(&s_transformer, &s_tokenizer, &s_sampler, (char *)prompt, s_steps, &_on_generate_complete);
+        esp_task_wdt_delete(NULL);
         return true;
     }
 
