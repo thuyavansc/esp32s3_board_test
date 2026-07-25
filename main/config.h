@@ -228,38 +228,73 @@
 #define API_SMALL_BUFFER_SIZE     2048
 
 // ================================================================
-// GPS — three selectable backends, one shared dispatcher
-// (backend/gps/gps_client.c). See that file's header and
-// docs/TestFunctionalities/esp32s3_board/
-// 136_2026-07-25_gpio_uart_conflict_analysis_and_board_identity_question.md
-// for the full analysis of why GPS_SRC_GNSS isn't wired in yet.
+// GPS — TWO backends compiled in and runnable in PARALLEL (GNSS +
+// NEO-6M), plus always-on serial injection. See
+// backend/gps/gps_client.c and docs/TestFunctionalities/esp32s3_board/
+// 139_2026-07-25_gnss_agps_implementation_research_and_plan.md /
+// 140_2026-07-25_agps_how_it_actually_works_explained.md for the full
+// research and design this is built from. Board identity + the A7670E
+// UART pins were confirmed in doc 138.
 // ================================================================
-#define GPS_SRC_NEO6M   0   // u-blox NEO-6M NMEA over dedicated UART — bench-tested, real hardware
-#define GPS_SRC_INJECT  1   // No GPS hardware — PC GUI feeds fixes via "gps set ..." serial command
-#define GPS_SRC_GNSS    2   // A7670E built-in GNSS + A-GPS/SUPL — NOT YET IMPLEMENTED (see doc 136 §5)
+#define ENABLE_GPS_GNSS    1   // A7670E built-in GNSS over modem AT-UART1 (GPIO18/17) — DEFAULT real GPS
+#define ENABLE_GPS_NEO6M   1   // external NEO-6M NMEA over UART2 — kept compiled, runnable alongside GNSS
 
-// Default: INJECT — lets the PC GUI drive a complete trip (setup → auth
-// → duty → trip start → simulated drive → trip stop) with zero GPS
-// hardware attached, which is how this integration is meant to be
-// tested first (per your own instruction). Switch to GPS_SRC_NEO6M if
-// you wire up a real NEO-6M module for bench testing. GPS_SRC_GNSS is
-// the intended FINAL default for real deployment on the Waveshare
-// A7670E board, once doc 136's board-identity question is answered and
-// that backend is actually implemented — do not select it yet, it
-// currently falls back to injection-only with a warning logged at boot.
-#define GPS_SOURCE  GPS_SRC_INJECT
+// Which backend feeds fare_calc by default at boot — runtime-switchable
+// via "gps source gnss|neo6m|inject" without a rebuild (gps_client.h's
+// gps_source_t enum defines these values).
+#define GPS_DEFAULT_ACTIVE_SOURCE   GPS_SRC_GNSS
 
-// ── NEO-6M UART pins (GPS_SRC_NEO6M only) ──────────────────────
-// UART2 — the one hardware UART this board has left completely free
-// (UART0 = PC console, UART1 = A7670E modem AT-channel, both reserved —
-// see doc 136 §1's full pin inventory). GPIO 1/2 appear in ZERO pin
-// tables across every doc in this repo — the cleanest available
-// general-purpose pair. Change these here (not in gps_backend_neo6m.c)
-// if your physical NEO-6M wiring differs.
-#define GPS_UART_NUM     UART_NUM_2
-#define GPS_UART_TX      1     // ESP32 TX → NEO-6M RX (not used for reading)
-#define GPS_UART_RX      2     // ESP32 RX ← NEO-6M TX
-#define GPS_BAUD         9600  // NEO-6M default baud rate
+// ── GNSS (A7670E) — UART1, the modem's own AT-command channel ──
+// GPIO 18(TX)/17(RX) are confirmed, reserved, real hardware pins (docs
+// 5/6/136/138) — do not reassign these for anything else.
+#define GNSS_UART_NUM              UART_NUM_1
+#define GNSS_UART_TX               18
+#define GNSS_UART_RX               17
+#define GNSS_UART_BAUD             115200
+
+// AT+CGNSSPORTSWITCH argument — routes NMEA output to this UART. The two
+// GNSS samples researched disagree on the first parameter (1,1 in the
+// ESP-IDF sample; 0,1 in the Arduino sample) — defaulting to the
+// ESP-IDF sample's value since that's the framework we're actually
+// using; verify on real hardware (doc 139 §9 open item 1) and adjust
+// here if NMEA doesn't start streaming.
+#define GNSS_CGNSSPORTSWITCH_ARGS  "1,1"
+
+// Some boards need the modem's PWRKEY pulsed to power on; the confirmed-
+// working ESP-IDF sample for THIS chip does not do this (relies on the
+// board's own 4G DIP switch + an AT-retry-until-OK loop) — OFF by
+// default. Flip on + verify GNSS_PWRKEY_GPIO if your board needs it
+// (doc 139 §9 open item 2).
+#define ENABLE_GNSS_PWRKEY         0
+#define GNSS_PWRKEY_GPIO           21
+
+// ── A-GPS / SUPL — OFF until a data-enabled SIM is inserted (doc 140:
+// "in the config add a control for that, later after i insert sim we
+// will enable that"). The AT trigger sequence is fully implemented and
+// gated behind this flag; flipping it to 1 (after inserting a SIM with
+// a data plan) makes gps_backend_gnss.c send the SUPL/XTRA setup
+// commands automatically at GNSS bring-up, with a precondition check
+// (SIM present + network registered) that falls back cleanly to plain
+// (non-assisted) GNSS if either isn't ready — see
+// backend/gps/gps_backend_gnss.c.
+#define ENABLE_AGPS                0
+#define AGPS_SUPL_SERVER           "supl.google.com"
+#define AGPS_SUPL_PORT             7276
+#define AGPS_ENABLE_XTRA           1   // Qualcomm XTRA predicted-ephemeris assist
+#define AGPS_ENABLE_SUPL           1   // standard OMA SUPL A-GPS
+#define AGPS_ENABLE_HOTSTILL       1   // fast re-acquisition after a fix
+
+// ── NEO-6M — UART2, an external module, free/unclaimed pins (doc 136) ──
+// UART2 is the one hardware UART this board has left completely free
+// (UART0 = PC console, UART1 = GNSS/modem AT-channel, both reserved —
+// see doc 136 §1's full pin inventory, and doc 139 §4's note to verify
+// GPIO 1/2 are physically accessible on this board before wiring a real
+// module). Change these here (not in gps_backend_neo6m.c) if your
+// physical NEO-6M wiring differs.
+#define NEO6M_UART_NUM             UART_NUM_2
+#define NEO6M_UART_TX              1     // ESP32 TX → NEO-6M RX (not used for reading)
+#define NEO6M_UART_RX              2     // ESP32 RX ← NEO-6M TX
+#define NEO6M_UART_BAUD            9600  // NEO-6M default baud rate
 
 // ================================================================
 // PSRAM DOWNLOAD TEST — real network download, buffered ENTIRELY in
@@ -361,9 +396,16 @@
 // for WROOM). These are the values already confirmed on a REAL
 // ESP32-S3-N16R8V board with this exact display in this repo's sibling
 // project esp32_wave_board_test — proven hardware over an untested
-// guess. That's also why TOUCH_INT/TOUCH_RST are 18/8, not 17/16 as
-// some docs suggest — 17/16 are free on THIS project (no GPS module),
-// but 18/8 are what's actually wired/working on the real board.
+// guess.
+//
+// TOUCH_INT moved 18 -> 14 (2026-07-25): GPIO 18 is the A7670E modem's
+// AT-command UART1 TX (docs 5/6/136/138) — confirmed working, real
+// hardware, NEVER to be reused for anything else (same reason GPIO 17
+// is off-limits too — that's the modem's UART1 RX). GPIO 14 has zero
+// conflicts with the LCD SPI bus, touch I2C bus, either UART, native
+// USB, the PSRAM/Flash range, or any strapping pin — see doc 138 §4 and
+// the follow-up analysis in docs/TestFunctionalities/esp32s3_board/ for
+// the full pin-by-pin check. The physical wire was moved to match.
 // ================================================================
 #define LCD_SPI_HOST    SPI3_HOST
 #define LCD_MOSI        42
@@ -384,7 +426,7 @@
 #define TOUCH_I2C_SDA     15
 #define TOUCH_I2C_SCL     7
 #define TOUCH_I2C_ADDR    0x38   // FT6336U 7-bit I2C address
-#define TOUCH_INT         18
+#define TOUCH_INT         14  // moved from 18 — GPIO18 is the modem's UART1 TX, do not reuse (see comment above)
 #define TOUCH_RST         8
 
 // ── LVGL ────────────────────────────────────────────────────────

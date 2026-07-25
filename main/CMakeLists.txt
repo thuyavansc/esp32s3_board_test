@@ -9,7 +9,8 @@ idf_component_register(
          "backend/taximeter/setup_client.c" "backend/taximeter/auth_client.c" "backend/taximeter/duty_client.c"
          "backend/taximeter/reference_data.c" "backend/taximeter/fare_calc.c" "backend/taximeter/trip_manager.c"
          "backend/taximeter/diag.c" "backend/taximeter/rest_api_storage.c"
-         "backend/gps/gps_client.c" "backend/gps/gps_backend_neo6m.c"
+         "backend/gps/gps_client.c" "backend/gps/gps_nmea.c"
+         "backend/gps/gps_backend_neo6m.c" "backend/gps/gps_backend_gnss.c"
          "display/display_driver.c" "display/touch_driver.c" "display/ui_main.c" "display/ui_widgets.c"
          "display/trip/trip_screen.c" "display/trip/trip_json_viewer.c"
          "display/test/test_menu.c" "display/test/test_pax_meter.c"
@@ -60,6 +61,16 @@ set_source_files_properties("llm/llm.c" PROPERTIES COMPILE_OPTIONS "-fno-if-conv
 # 135_2026-07-25_fare_calc_and_backend_integration_plan.md for the full
 # integration plan and rationale (folder layout, which trip-fetch module
 # was kept, GPS backend design).
+#
+# backend/gps/ — TWO GPS backends running in PARALLEL (not mutually
+# exclusive): gps_backend_gnss.c (A7670E built-in GNSS + staged A-GPS,
+# over the modem's own AT-command UART1) and gps_backend_neo6m.c
+# (external NEO-6M module, UART2) — both share gps_nmea.c's parser
+# (both backends emit identical NMEA) and both publish through
+# gps_client.c's dispatcher, which decides which one feeds fare_calc.
+# See docs/TestFunctionalities/esp32s3_board/
+# 139_2026-07-25_gnss_agps_implementation_research_and_plan.md and
+# 140_2026-07-25_agps_how_it_actually_works_explained.md.
 #
 # g2_protocol.c / local_socket.c / socket_client.c (G2 binary protocol,
 # local Node.js test socket, iStartek GPRS socket) are deliberately NOT
