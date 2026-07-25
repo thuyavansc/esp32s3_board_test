@@ -195,6 +195,15 @@
 #define EP_SPECIAL_FARES     "/taxis-api/api/SpecialFare"
 #define EP_PUBLIC_HOLIDAYS   "/devices-api/api/PublicHolidays"
 
+// Sent as the "App-Version" header on every TaxiMeter API call (see
+// api_client.c's _perform()) — the server's Login endpoint rejects
+// requests missing this header with HTTP 200 {"success":false,
+// "message":"App version is outdated..."}, confirmed against a real
+// login attempt. The real Android app sends its actual build's
+// versionName (mytaxisv2/app/build.gradle.kts, format YY.MM.DD.build) —
+// this is this firmware's own equivalent, dated to match this build.
+#define TAXIMETER_APP_VERSION   "26.07.25.00"
+
 // Device provisioning — network passcode + vehicle number are per-device,
 // set-once values. No provisioning UI yet — set these once per physical
 // device and reflash. Loaded into NVS by session_store on first boot

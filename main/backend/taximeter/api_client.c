@@ -116,6 +116,16 @@ static esp_err_t _perform(api_method_t method, const char *path, const char *jso
 
     esp_http_client_set_header(client, "Accept", "application/json");
     esp_http_client_set_header(client, "User-Agent", "ESP32-TaxiMeter/1.0");
+    // Sent on EVERY call, including Login — matches the real Android app's
+    // AuthInterceptor.kt, which adds this same header via .addHeader()
+    // before every request goes out (mytaxisv2/.../features/user/
+    // AuthInterceptor.kt). Without it, the server's Login endpoint returns
+    // HTTP 200 with {"success":false,"message":"App version is outdated.
+    // Please update your application."} — confirmed by testing: this
+    // exact response was reproduced against a real login attempt before
+    // this header was added (docs/TestFunctionalities/esp32s3_board/
+    // — see the auth-login serial-log analysis session, 2026-07-25).
+    esp_http_client_set_header(client, "App-Version", TAXIMETER_APP_VERSION);
 
     if (use_auth) {
         // Must stay >= session_store's access_token[] size (session_store.c)
