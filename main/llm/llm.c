@@ -1021,10 +1021,19 @@ int sample(Sampler *sampler, v4sf *logits)
 {
     // sample the token given the logits and some hyperparameters
     int next;
+    // TEMPORARY diagnostic (doc 131/133 continued) — logits[] independently
+    // scanned in generate() right before this call disagrees with what this
+    // function returns. This proves either (a) temperature isn't really
+    // 0.0f at runtime so the argmax branch below isn't even taken, or
+    // (b) sample_argmax() itself returns something other than the true max
+    // despite identical logic to the independent scan. Logged here, at the
+    // exact point of use, to tell those two apart.
+    ESP_LOGI(TAG, "[smp] temperature=%.6f vocab_size=%d", sampler->temperature, sampler->vocab_size);
     if (sampler->temperature == 0.0f)
     {
         // greedy argmax sampling: take the token with the highest probability
         next = sample_argmax(logits, sampler->vocab_size);
+        ESP_LOGI(TAG, "[smp] sample_argmax returned=%d", next);
     }
     else
     {
