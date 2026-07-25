@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "driver/uart.h"   // UART_NUM_1/UART_NUM_2 (GNSS_UART_NUM/NEO6M_UART_NUM) referenced in the log lines below
 #include "esp_log.h"
 #include "config.h"
 #include "gps_client.h"
