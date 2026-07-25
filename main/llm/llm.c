@@ -1123,9 +1123,13 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
     // means Core 1's own idle task never gets scheduled for the ENTIRE
     // generation run, tripping the 5-second task watchdog
     // (CONFIG_ESP_TASK_WDT_TIMEOUT_S) — confirmed for real on hardware, see
-    // doc 128. A brief, deliberate pause once every ~500ms (10x safety
-    // margin under that 5s timeout) is enough to let it run.
-    TickType_t last_yield = xTaskGetTickCount();
+    // doc 128. A time-gated pause (once per ~500ms) used to be enough, but
+    // that relied partly on incidental scheduling points created by the
+    // per-token ESP_LOGI() diagnostic calls blocking on UART output —
+    // once LLM_VERBOSE_DEBUG=0 removed those, the same 500ms gate alone
+    // wasn't tight enough and the watchdog tripped for real (doc 131/133
+    // continued). Yielding once per token, unconditionally, removes the
+    // dependency on that incidental behavior.
     while (pos < steps)
     {
         // forward the transformer to get logits for the next token
@@ -1193,12 +1197,8 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
         }
 
         // ESP32 port addition — see the comment above this loop's start.
-        TickType_t now = xTaskGetTickCount();
-        if ((now - last_yield) >= pdMS_TO_TICKS(500))
-        {
-            last_yield = now;
-            vTaskDelay(1);
-        }
+        // Unconditional per-token yield (not time-gated) — see why above.
+        vTaskDelay(1);
     }
     printf("\n");
 
