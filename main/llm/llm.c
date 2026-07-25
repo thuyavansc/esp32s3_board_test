@@ -908,6 +908,14 @@ int sample_argmax(v4sf *probabilities, int n)
             max_p = probabilities[i];
         }
     }
+    // TEMPORARY diagnostic (doc 131/133 continued) — logged from inside this
+    // function's own loop, using its own local max_i/max_p, right before
+    // returning. If this ever disagrees with the caller's independent scan
+    // of the same array, the array itself changed between the two reads —
+    // if it agrees but the caller still sees a different "next" afterward,
+    // something is corrupting the return value/variable, not this loop.
+    ESP_LOGI(TAG, "[argmax] n=%d max_i=%d max_p=%.4f probabilities[0]=%.4f ptr=%p",
+             n, max_i, max_p, probabilities[0], (void *)probabilities);
     return max_i;
 }
 
