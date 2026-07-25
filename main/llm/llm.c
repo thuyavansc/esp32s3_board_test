@@ -1165,8 +1165,71 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
         }
         else
         {
-            // otherwise sample the next token from the logits
-            next = sample(sampler, logits);
+            // Inline equivalent of sample()'s non-greedy path (doc 131/133
+            // continued). Same reasoning as the greedy-path bypass above:
+            // sample_argmax() was confirmed (via [smp-final]/[argmax]
+            // logging) to return a different answer than an identical
+            // inline loop given the identical array — a discrepancy that
+            // never got explained despite our llm.c being byte-for-byte
+            // identical to the original upstream repo (confirmed by
+            // fetching it directly). Since inlining is the one thing
+            // that's actually fixed it so far, applying the same
+            // approach here instead of calling sample()/sample_mult()/
+            // sample_topp() as separate functions. softmax() itself is
+            // still called normally — only the final *selection* step
+            // (the part analogous to the broken sample_argmax()) is
+            // inlined.
+            for (int q = 0; q < sampler->vocab_size; q++)
+            {
+                logits[q] /= sampler->temperature;
+            }
+            softmax(logits, sampler->vocab_size);
+            v4sf coin = random_f32(&sampler->rng_state);
+            if (sampler->topp <= 0 || sampler->topp >= 1)
+            {
+                // inline sample_mult()
+                v4sf cdf = 0.0f;
+                next = sampler->vocab_size - 1;
+                for (int qi = 0; qi < sampler->vocab_size; qi++)
+                {
+                    cdf += logits[qi];
+                    if (coin < cdf) { next = qi; break; }
+                }
+            }
+            else
+            {
+                // inline sample_topp() (nucleus sampling) — identical logic
+                // to the original sample_topp(), executed directly here.
+                int n0 = 0;
+                const v4sf cutoff = (1.0f - sampler->topp) / (sampler->vocab_size - 1);
+                for (int qi = 0; qi < sampler->vocab_size; qi++)
+                {
+                    if (logits[qi] >= cutoff)
+                    {
+                        sampler->probindex[n0].index = qi;
+                        sampler->probindex[n0].prob = logits[qi];
+                        n0++;
+                    }
+                }
+                qsort(sampler->probindex, n0, sizeof(ProbIndex), compare);
+
+                v4sf cumulative_prob = 0.0f;
+                int last_idx = n0 - 1;
+                for (int qi = 0; qi < n0; qi++)
+                {
+                    cumulative_prob += sampler->probindex[qi].prob;
+                    if (cumulative_prob > sampler->topp) { last_idx = qi; break; }
+                }
+
+                v4sf r = coin * cumulative_prob;
+                v4sf cdf = 0.0f;
+                next = sampler->probindex[last_idx].index;
+                for (int qi = 0; qi <= last_idx; qi++)
+                {
+                    cdf += sampler->probindex[qi].prob;
+                    if (r < cdf) { next = sampler->probindex[qi].index; break; }
+                }
+            }
         }
         pos++;
 
