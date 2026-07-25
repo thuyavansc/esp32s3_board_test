@@ -207,6 +207,13 @@ void read_checkpoint(char *checkpoint, Config *config, TransformerWeights *weigh
     int shared_weights = config->vocab_size > 0 ? 1 : 0;
     config->vocab_size = abs(config->vocab_size);
     ESP_LOGI(TAG, "Vocab size if %d", config->vocab_size);
+    // TEMPORARY diagnostic (doc 131/133) — confirm the Config header itself
+    // was parsed correctly. Expected for stories260K: dim=64 n_layers=5
+    // n_heads=8 n_kv_heads=4 vocab=512 seq=512 (hidden_dim derived, not
+    // officially published — see doc 123 — expect roughly ~172).
+    ESP_LOGI(TAG, "[cfg] dim=%d hidden_dim=%d n_layers=%d n_heads=%d n_kv_heads=%d vocab=%d seq_len=%d",
+             config->dim, config->hidden_dim, config->n_layers, config->n_heads,
+             config->n_kv_heads, config->vocab_size, config->seq_len);
     // figure out the file size
     fseek(file, 0, SEEK_END); // move file pointer to end of file
     *file_size = ftell(file); // get the file size, in bytes
@@ -233,6 +240,17 @@ void read_checkpoint(char *checkpoint, Config *config, TransformerWeights *weigh
     ESP_LOGI(TAG, "Free ram available: %lu bytes (%s)", esp_get_free_heap_size(), _fmt_bytes((long)esp_get_free_heap_size()));
     v4sf *weights_ptr = *data + sizeof(Config) / sizeof(v4sf);
     memory_map_weights(weights, config, weights_ptr, shared_weights);
+    // TEMPORARY diagnostic (doc 131/133) — sanity-check the actual loaded
+    // weight values. A real, trained model's embedding weights should be
+    // small floats (roughly -1.0 to +1.0) — all-zero, all-identical, NaN,
+    // or huge values here would mean the file wasn't loaded/mapped correctly.
+    ESP_LOGI(TAG, "[wgt] token_embedding_table[0..7]: %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f",
+             weights->token_embedding_table[0], weights->token_embedding_table[1],
+             weights->token_embedding_table[2], weights->token_embedding_table[3],
+             weights->token_embedding_table[4], weights->token_embedding_table[5],
+             weights->token_embedding_table[6], weights->token_embedding_table[7]);
+    ESP_LOGI(TAG, "[wgt] wcls[0..3] (classifier weights, first row): %.4f %.4f %.4f %.4f",
+             weights->wcls[0], weights->wcls[1], weights->wcls[2], weights->wcls[3]);
     ESP_LOGI(TAG, "Successfully read checkpoint");
 }
 
@@ -1085,6 +1103,22 @@ void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, 
     {
         // forward the transformer to get logits for the next token
         v4sf *logits = forward(transformer, token, pos);
+
+        // TEMPORARY diagnostic (doc 131/133) — raw logits BEFORE sample()
+        // touches them (sample() divides by temperature + applies softmax
+        // in place when temperature != 0 — logged here to see the true,
+        // untouched forward-pass output). Also finds the actual raw max
+        // across the whole array, independent of sample_argmax(), as a
+        // cross-check.
+        {
+            int raw_max_i = 0;
+            v4sf raw_max_v = logits[0];
+            for (int qi = 1; qi < sampler->vocab_size; qi++) {
+                if (logits[qi] > raw_max_v) { raw_max_v = logits[qi]; raw_max_i = qi; }
+            }
+            ESP_LOGI(TAG, "[logits] pos=%d [0]=%.4f [255]=%.4f [256]=%.4f [511]=%.4f raw_max_i=%d raw_max_v=%.4f",
+                     pos, logits[0], logits[255], logits[256], logits[511], raw_max_i, raw_max_v);
+        }
 
         // advance the state machine
         if (pos < num_prompt_tokens - 1)
