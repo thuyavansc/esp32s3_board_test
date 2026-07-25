@@ -31,6 +31,23 @@ CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_DEFAULT_FULL=y
 CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN=16384
 CONFIG_MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH=y
 CONFIG_MBEDTLS_HARDWARE_MPI=n
+
+# mbedTLS memory allocation mode — ESP-IDF's own factory default is
+# MBEDTLS_INTERNAL_MEM_ALLOC (internal SRAM only, for every allocation
+# mbedTLS makes: TLS session buffers, X.509 parsing, RSA/ECC verify
+# scratch math). On this board that pool is small and shared with WiFi/
+# every task's stack/LVGL/both GPS UART read tasks, and under load this
+# caused real HTTPS failures (esp-x509-crt-bundle "PK verify failed" /
+# mbedtls_ssl_handshake -0x3000, decoding to MBEDTLS_ERR_MPI_ALLOC_FAILED
+# — see docs/TestFunctionalities/esp32s3_board/143_2026-07-25_https_tls_
+# failure_mbedtls_memory_allocation_analysis.md). This board has 8MB
+# PSRAM with no such contention — switching mbedTLS to draw from it
+# instead removes the failure for every HTTPS call project-wide (doc
+# 145 §1). Trade-off (accepted, see doc 145 §3): TLS working memory now
+# crosses the external PSRAM bus instead of staying on-chip-only — a
+# physical-access security nuance, not a functional one, and this board
+# doesn't have flash encryption enabled to close that gap anyway.
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
 CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM=6
 CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM=16
 
