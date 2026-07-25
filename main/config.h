@@ -239,7 +239,12 @@
 #define LLM_MODEL_PATH       "/llm/stories260K.bin"
 #define LLM_TOKENIZER_PATH   "/llm/tok512.bin"
 #define LLM_DEFAULT_STEPS    256     // ~13-14s at ~19 tok/s (doc 123) — override with "llm run <n> <prompt>"
-#define LLM_TEMPERATURE      1.0f
+// TEMPORARY diagnostic (doc 131/133) — 0.0f routes sample() through
+// sample_argmax() (greedy) instead of sample_topp() (nucleus sampling),
+// to test whether the token-511/hair-space collapse is in the logits
+// computation itself (would still collapse) or in sample_topp()'s own
+// fallback path (greedy would differ). Revert to 1.0f once diagnosed.
+#define LLM_TEMPERATURE      0.0f
 #define LLM_TOPP             0.9f
 
 // ================================================================
