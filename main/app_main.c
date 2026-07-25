@@ -113,6 +113,7 @@
 #include "backend/system/remote_config.h"
 #include "backend/system/additional_work.h"
 #include "backend/system/ram_test.h"
+#include "backend/system/net_diag.h"
 #include "backend/bg_worker.h"
 #include "backend/taximeter/session_store.h"
 #include "backend/taximeter/setup_client.h"
@@ -443,14 +444,77 @@ static void time_sync_init(void) {
 #endif
 
 // ═══════════════════════════════════════════════════════════════
+//  "help" / "?" — top-level command list, grouped by category. Only
+//  lists commands that actually exist in this build (ENABLE_* gated),
+//  so it never advertises something that would print "Unknown
+//  command". See docs/TestFunctionalities/esp32s3_board/
+//  141_2026-07-25_serial_command_inventory_and_gui_gap_analysis.md for
+//  the full reference (syntax, flows, GUI mapping).
+// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  AT<command> — raw AT command passthrough to the A7670E modem, no
+//  wrapper needed (type "AT+CSQ" exactly as you would in any other
+//  modem terminal). Forwarded to gps_client_send_raw_at(), which owns
+//  the UART1 the modem lives on — see gps_backend_gnss.c for how it
+//  stays safe to use even while a GNSS fix is actively streaming on the
+//  same wire. See docs/TestFunctionalities/esp32s3_board/
+//  141_2026-07-25_serial_command_inventory_and_gui_gap_analysis.md.
+// ═══════════════════════════════════════════════════════════════
+static void _handle_at_passthrough(const char *cmd) {
+    char resp[512];
+    ESP_LOGI(TAG, "AT> %s", cmd);
+    bool ok = gps_client_send_raw_at(cmd, resp, sizeof(resp), 3000);
+    printf("%s\n", resp);
+    if (!ok) {
+        ESP_LOGW(TAG, "AT command timed out or returned no clean OK/ERROR — see raw response above.");
+    }
+}
+
+static void _print_help(void) {
+    printf("\n=== esp32s3_board_test — command reference ===\n");
+    printf("General:      help | ?  |  getinfo | info  |  getversion  |  reboot | restart\n");
+    printf("Modem AT:     AT<command>  (raw passthrough, no wrapper — e.g. AT+CSQ, AT+COPS?)\n");
+    printf("RAM:          ram info  |  ram test sram|psram|download|all\n");
+    printf("Network:      net info  |  net test\n");
+    printf("Diagnostics:  mem  |  store\n");
+    printf("NVS:          nvs status  |  nvs company <id>  |  nvs product <name>\n");
+    printf("Factory:      factory reset            (arms; passcode on the NEXT line)\n");
+    printf("Setup:        setup network <ssid> <pass>  |  setup vehicle <plate>  |  setup info | setup help\n");
+    printf("Auth:         auth login <username> <password>  |  auth logout  |  auth info | auth help\n");
+    printf("Reference:    ref fetch  |  ref list  |  ref info | ref help\n");
+    printf("Duty:         duty on  |  duty off  |  duty info\n");
+    printf("Trip/Meter:   trip start  |  trip stop  |  trip pause  |  trip resume  |  trip extras  |  trip info | trip help\n");
+    printf("Session:      session info  |  session clear\n");
+    printf("Trips API:    api get|read|list|delete|info|help\n");
+    printf("GPS:          gps info  |  gps source gnss|neo6m|inject  |  gps set <lat> <lon> <speed> [hdop] [sats]\n");
+    printf("              gps gnss on|off|info|agps  |  gps neo6m on|off|info|start|stop|once|every\n");
+#if ENABLE_OTA
+    printf("OTA:          ota check  |  ota status\n");
+#endif
+#if ENABLE_MINI_COMMAND
+    printf("Game:         game  |  guess <n>\n");
+#endif
+#if ENABLE_REMOTE_CONFIG
+    printf("Remote cfg:   config status  |  config check\n");
+#endif
+#if ENABLE_ADDITIONAL_WORK
+    printf("SMS:          sms <command text>   (recognized: 'sms reboot' / 'sms restart')\n");
+#endif
+#if ENABLE_LLM
+    printf("LLM:          llm run <prompt>  |  llm run <steps> <prompt>  |  llm help\n");
+#endif
+    printf("===============================================\n\n");
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  SERIAL COMMAND READER
 // ═══════════════════════════════════════════════════════════════
 static void serial_cmd_task(void *arg) {
     char line[96];
     int  pos = 0;
 
-    printf("\nType 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all'"
-           " | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help'"
+    printf("\nType 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all'"
+           " | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help'"
            " | 'duty on|off|info' | 'trip help' | 'session info' | 'mem' | 'store'"
 #if ENABLE_OTA
            " | 'ota check' | 'ota status'"
@@ -481,18 +545,36 @@ static void serial_cmd_task(void *arg) {
             if (pos > 0) {
                 line[pos] = '\0';
 
+                // Leading-whitespace-trimmed alias of `line` — only the AT
+                // passthrough check needs this (a real AT command is
+                // recognized purely by its "AT" prefix, so a stray leading
+                // space shouldn't hide it); every other command below still
+                // matches on `line` unchanged, same as before.
+                const char *trimmed = line;
+                while (*trimmed == ' ' || *trimmed == '\t') trimmed++;
+
                 // Checked FIRST, unconditionally — while "armed" (awaiting
                 // its passcode), it must consume the very next line
                 // regardless of what it looks like, even if it happens to
                 // match another command's name.
                 if (factory_reset_process_line(line)) {
                     // handled — either armed the prompt or consumed a passcode attempt
+                } else if (strcasecmp(line, "help") == 0 || strcmp(line, "?") == 0) {
+                    _print_help();
+                } else if (strcasecmp(line, "reboot") == 0 || strcasecmp(line, "restart") == 0) {
+                    printf("Rebooting...\n");
+                    vTaskDelay(pdMS_TO_TICKS(200));
+                    esp_restart();
+                } else if (strncasecmp(trimmed, "AT", 2) == 0) {
+                    _handle_at_passthrough(trimmed);
                 } else if (strcasecmp(line, "getinfo") == 0 || strcasecmp(line, "info") == 0) {
                     print_full_report();
                 } else if (strcasecmp(line, "getversion") == 0) {
                     version_print_banner();
                 } else if (ram_test_process_command(line)) {
                     // handled
+                } else if (net_diag_process_command(line)) {
+                    // handled — "net info" / "net test" (WiFi status + real internet check)
                 } else if (gps_client_process_command(line)) {
                     // handled
                 } else if (rest_api_storage_process_command(line)) {

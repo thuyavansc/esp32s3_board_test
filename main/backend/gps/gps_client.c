@@ -219,3 +219,15 @@ bool gps_client_process_command(const char *line) {
     ESP_LOGW(TAG, "Unknown 'gps' command: '%s'. Try: set | info | source | gnss | neo6m", cmd);
     return true;
 }
+
+bool gps_client_send_raw_at(const char *cmd, char *out, size_t out_size, int timeout_ms) {
+#if ENABLE_GPS_GNSS
+    return gps_backend_gnss_send_raw_at(cmd, out, out_size, timeout_ms);
+#else
+    if (out_size > 0) {
+        snprintf(out, out_size, "AT passthrough needs the GNSS backend's modem UART "
+                                 "(ENABLE_GPS_GNSS=0 in this build) — nothing to send to.");
+    }
+    return false;
+#endif
+}

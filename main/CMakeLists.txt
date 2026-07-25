@@ -5,6 +5,7 @@ idf_component_register(
          "backend/system/ota_client.c" "backend/system/mini_command.c"
          "backend/system/factory_reset.c" "backend/system/nvs_state.c" "backend/system/remote_config.c"
          "backend/system/additional_work.c" "backend/system/ram_test.c" "backend/system/psram_download_test.c"
+         "backend/system/net_diag.c"
          "backend/taximeter/session_store.c" "backend/taximeter/api_client.c"
          "backend/taximeter/setup_client.c" "backend/taximeter/auth_client.c" "backend/taximeter/duty_client.c"
          "backend/taximeter/reference_data.c" "backend/taximeter/fare_calc.c" "backend/taximeter/trip_manager.c"
@@ -21,7 +22,7 @@ idf_component_register(
     INCLUDE_DIRS "." "backend" "backend/system" "backend/taximeter" "backend/gps"
                  "display" "display/trip" "display/test" "display/test/color_palette" "ui_components" "llm"
     REQUIRES esp_partition spi_flash esp_hw_support esp_system esp_common heap
-             esp_psram
+             esp_psram esp_timer
              nvs_flash spiffs
              esp_wifi esp_netif esp_event
              esp_http_client esp_https_ota app_update

@@ -91,6 +91,15 @@ const char *gps_client_get_status(void);
 // itself, delegates "gnss ..."/"neo6m ..." to the matching backend.
 bool gps_client_process_command(const char *line);
 
+// Raw AT-command passthrough to the modem chip (A7670E) — forwards to
+// gps_backend_gnss.c, the only owner of that UART. `cmd` is sent exactly
+// as given (no wrapper — a real AT command like "AT+CSQ"). `out` gets
+// filled with the modem's response (NMEA lines filtered out) or an
+// explanatory message if the GNSS backend isn't compiled into this
+// build. Independent of "gps source ..." — always talks to the modem
+// itself, regardless of which GPS source is currently active.
+bool gps_client_send_raw_at(const char *cmd, char *out, size_t out_size, int timeout_ms);
+
 // True once gps_client_init() has run.
 bool gps_client_is_running(void);
 

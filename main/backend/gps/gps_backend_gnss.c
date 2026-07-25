@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/semphr.h"
 #include "driver/uart.h"
 #include "driver/gpio.h"
 #include "esp_log.h"
@@ -28,13 +29,31 @@ static bool s_at_ready = false;  // modem has answered "AT" at least once — br
 static int  s_total_reads = 0;
 static int  s_valid_reads = 0;
 
+// Guards every access to UART1 — shared between this module's own AT
+// traffic (_at_send()/_at_ok(), used by bring-up/on/off/agps, all
+// callable from serial_cmd_task via gps_backend_gnss_set_enabled()/
+// gps_backend_gnss_process_command()) and TWO other things that must
+// never interleave with it on the same wire: the continuous NMEA-read
+// loop in _gnss_read_task() (a different task, reading byte-by-byte),
+// and gps_backend_gnss_send_raw_at() (the AT passthrough, reached from
+// the serial command reader — also a different task). Without this,
+// two tasks calling uart_read_bytes() on the same port at once would
+// each get an unpredictable, interleaved slice of the incoming bytes.
+static SemaphoreHandle_t s_uart_mutex;
+
 // ═══════════════════════════════════════════════════════════════
 //  Blocking AT-command helper — setup phase only, before continuous
 //  NMEA streaming starts. Same "read until OK/ERROR or timeout" pattern
 //  already proven in this repo (esp32s3_4g_hotspot/gps_manager.c's own
-//  _at_send()).
+//  _at_send()). Mutex-protected — see s_uart_mutex above.
 // ═══════════════════════════════════════════════════════════════
 static int _at_send(const char *cmd, char *resp, size_t resp_len, int timeout_ms) {
+    if (xSemaphoreTake(s_uart_mutex, pdMS_TO_TICKS(2000)) != pdTRUE) {
+        resp[0] = '\0';
+        ESP_LOGW(TAG, "  UART1 busy (AT passthrough in progress?) — '%s' skipped", cmd);
+        return 0;
+    }
+
     uart_flush_input(GNSS_UART_NUM);
     uart_write_bytes(GNSS_UART_NUM, cmd, strlen(cmd));
     uart_write_bytes(GNSS_UART_NUM, "\r\n", 2);
@@ -50,6 +69,7 @@ static int _at_send(const char *cmd, char *resp, size_t resp_len, int timeout_ms
             if (strstr(resp, "OK\r\n") || strstr(resp, "ERROR\r\n") || strstr(resp, "ERROR:")) break;
         }
     }
+    xSemaphoreGive(s_uart_mutex);
     return (int)pos;
 }
 
@@ -197,6 +217,14 @@ static void _power_down_gnss(void) {
     _at_ok("AT+CGNSSPWR=0", 3000);
 }
 
+// Doc 142 §4.2 — lets a periodic status log say whether ITS OWN backend
+// is the one actually feeding fare_calc right now, without having to
+// separately run "gps info". Same helper duplicated (not shared) in
+// gps_backend_neo6m.c — trivial logic, not worth a new coupling.
+static const char *_active_tag(gps_source_t mine) {
+    return (gps_client_get_active_source() == mine) ? "[ACTIVE]" : "[not active]";
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  Continuous NMEA read task — same line-assembly pattern as the NEO-6M
 //  backend (backend/gps/gps_backend_neo6m.c), just reading UART1 instead
@@ -216,35 +244,69 @@ static void _gnss_read_task(void *arg) {
     s_at_ready = true;
 
     while (1) {
-        uint8_t c;
-        while (uart_read_bytes(GNSS_UART_NUM, &c, 1, pdMS_TO_TICKS(20)) > 0) {
-            if (c == '\n') {
-                line[pos] = '\0';
+        // Non-blocking take: if an AT passthrough command currently owns
+        // the UART, just skip this iteration rather than fight it for
+        // bytes — incoming NMEA bytes sit safely in the UART driver's own
+        // ring buffer (1024 bytes, installed in _uart_init()) for the
+        // brief window a passthrough transaction takes, so nothing is
+        // lost, just read a little later.
+        if (xSemaphoreTake(s_uart_mutex, 0) == pdTRUE) {
+            uint8_t c;
+            while (uart_read_bytes(GNSS_UART_NUM, &c, 1, pdMS_TO_TICKS(20)) > 0) {
+                if (c == '\n') {
+                    line[pos] = '\0';
 
-                if (s_enabled) {
-                    gps_data_t tmp = {0};
-                    if (gps_nmea_parse_gga(line, &tmp)) {
-                        s_gnss_data.lat         = tmp.lat;
-                        s_gnss_data.lon         = tmp.lon;
-                        s_gnss_data.alt         = tmp.alt;
-                        s_gnss_data.satellites  = tmp.satellites;
-                        s_gnss_data.hdop        = tmp.hdop;
-                        s_gnss_data.fix_quality = tmp.fix_quality;
-                        s_gnss_data.has_fix     = tmp.has_fix;
-                    }
-                    gps_nmea_parse_rmc(line, &s_gnss_data);
+                    if (s_enabled) {
+                        gps_data_t tmp = {0};
+                        if (gps_nmea_parse_gga(line, &tmp)) {
+                            s_gnss_data.lat         = tmp.lat;
+                            s_gnss_data.lon         = tmp.lon;
+                            s_gnss_data.alt         = tmp.alt;
+                            s_gnss_data.satellites  = tmp.satellites;
+                            s_gnss_data.hdop        = tmp.hdop;
+                            s_gnss_data.fix_quality = tmp.fix_quality;
+                            s_gnss_data.has_fix     = tmp.has_fix;
+                        }
+                        gps_nmea_parse_rmc(line, &s_gnss_data);
 
-                    if (s_gnss_data.has_fix) {
-                        s_valid_reads++;
-                        gps_client_publish_gnss_fix(&s_gnss_data);
+                        if (s_gnss_data.has_fix) {
+                            s_valid_reads++;
+                            gps_client_publish_gnss_fix(&s_gnss_data);
+                        }
+                        s_total_reads++;
                     }
-                    s_total_reads++;
+                    pos = 0;
+                } else if (c != '\r' && pos < (int)sizeof(line) - 1) {
+                    line[pos++] = (char)c;
                 }
-                pos = 0;
-            } else if (c != '\r' && pos < (int)sizeof(line) - 1) {
-                line[pos++] = (char)c;
+            }
+            xSemaphoreGive(s_uart_mutex);
+        }
+
+        // Doc 142 §4.1 — periodic idle heartbeat, mirroring NEO-6M's own
+        // (gps_backend_neo6m.c's _gps_read_task). Before this, GNSS never
+        // logged anything after the one-time bring-up sequence unless you
+        // ran "gps gnss info" yourself — from the serial monitor it looked
+        // silent/dead even though it was running fine. Gated on the same
+        // real s_enabled flag "gps gnss off" already sets (AT+CGNSSPWR=0),
+        // so this never claims activity that isn't actually happening.
+        if (s_enabled) {
+            static unsigned long last_status = 0;
+            unsigned long now = xTaskGetTickCount() * portTICK_PERIOD_MS;
+            if (now - last_status >= 30000) {
+                last_status = now;
+                const char *tag = _active_tag(GPS_SRC_GNSS);
+                if (s_gnss_data.has_fix) {
+                    ESP_LOGI(TAG, "GNSS: fix OK | lat=%.4f lon=%.4f speed=%.1fkm/h sats=%d hdop=%.1f %s (idle — use 'gps gnss info' for full status)",
+                             s_gnss_data.lat, s_gnss_data.lon, s_gnss_data.speed,
+                             s_gnss_data.satellites, s_gnss_data.hdop, tag);
+                } else {
+                    ESP_LOGI(TAG, "GNSS: no fix | reads=%d %s (idle — waiting for satellites)",
+                             s_total_reads, tag);
+                }
             }
         }
+
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
@@ -258,6 +320,7 @@ esp_err_t gps_backend_gnss_init(void) {
     ESP_LOGI(TAG, "  A-GPS: %s", ENABLE_AGPS ? "ENABLED in config.h" : "disabled (no SIM yet — see doc 140)");
     ESP_LOGI(TAG, "══════════════════════════════════════");
 
+    s_uart_mutex = xSemaphoreCreateMutex();
     _uart_init();
 #if ENABLE_GNSS_PWRKEY
     _pulse_pwrkey();
@@ -314,4 +377,67 @@ bool gps_backend_gnss_process_command(const char *args) {
 
     ESP_LOGW(TAG, "Unknown 'gps gnss' command: '%s'. Try: on | off | info | agps", args);
     return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Raw AT passthrough — see gps_backend_gnss.h for the full contract.
+//  Same "read until OK/ERROR or timeout" shape as _at_send() above, but
+//  line-by-line instead of accumulate-then-scan, so NMEA sentences
+//  ('$'-prefixed lines — the GNSS engine can interleave these with AT
+//  responses on this same UART once streaming has started) can be
+//  filtered out of the response instead of corrupting it.
+// ═══════════════════════════════════════════════════════════════
+bool gps_backend_gnss_send_raw_at(const char *cmd, char *out, size_t out_size, int timeout_ms) {
+    if (out_size > 0) out[0] = '\0';
+
+    if (xSemaphoreTake(s_uart_mutex, pdMS_TO_TICKS(2000)) != pdTRUE) {
+        snprintf(out, out_size, "(AT passthrough busy — GNSS backend mid-transaction, try again)");
+        return false;
+    }
+
+    uart_flush_input(GNSS_UART_NUM);
+    uart_write_bytes(GNSS_UART_NUM, cmd, strlen(cmd));
+    uart_write_bytes(GNSS_UART_NUM, "\r\n", 2);
+
+    char   line[160];
+    int    lpos = 0;
+    size_t opos = 0;
+    bool   terminal_seen = false;
+    TickType_t start = xTaskGetTickCount();
+
+    while (!terminal_seen && (xTaskGetTickCount() - start) < pdMS_TO_TICKS(timeout_ms)) {
+        uint8_t c;
+        if (uart_read_bytes(GNSS_UART_NUM, &c, 1, pdMS_TO_TICKS(50)) <= 0) continue;
+
+        if (c == '\n') {
+            line[lpos] = '\0';
+            bool is_nmea  = (lpos > 0 && line[0] == '$');
+            bool is_blank = (lpos == 0);
+            if (!is_nmea && !is_blank) {
+                size_t room = (out_size > opos + 1) ? (out_size - opos - 1) : 0;
+                size_t n = strlen(line);
+                if (n > room) n = room;
+                if (n > 0) {
+                    memcpy(out + opos, line, n);
+                    opos += n;
+                    out[opos++] = '\n';
+                    out[opos] = '\0';
+                }
+                if (strcmp(line, "OK") == 0 || strncmp(line, "ERROR", 5) == 0 ||
+                    strncmp(line, "+CME ERROR", 10) == 0 || strncmp(line, "+CMS ERROR", 10) == 0) {
+                    terminal_seen = true;
+                }
+            }
+            lpos = 0;
+        } else if (c != '\r' && lpos < (int)sizeof(line) - 1) {
+            line[lpos++] = (char)c;
+        }
+    }
+
+    xSemaphoreGive(s_uart_mutex);
+
+    if (opos == 0) {
+        snprintf(out, out_size, "(no response — modem timeout after %dms; still connected? see 'gps gnss info')", timeout_ms);
+    }
+    return terminal_seen;
 }

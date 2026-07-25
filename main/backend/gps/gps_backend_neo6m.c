@@ -36,6 +36,14 @@ static int   s_remaining      = -1;      // -1 = infinite, >0 = countdown
 static int   s_count_total    = 0;       // total count specified (for logging)
 static unsigned long s_last_read_ms = 0;
 
+// Doc 142 §4.2 — lets a periodic status log say whether ITS OWN backend
+// is the one actually feeding fare_calc right now, without having to
+// separately run "gps info". Same helper duplicated (not shared) in
+// gps_backend_gnss.c — trivial logic, not worth a new coupling.
+static const char *_active_tag(gps_source_t mine) {
+    return (gps_client_get_active_source() == mine) ? "[ACTIVE]" : "[not active]";
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  Log GPS data to serial monitor
 // ═══════════════════════════════════════════════════════════════
@@ -130,13 +138,14 @@ static void _gps_read_task(void *arg) {
             unsigned long now = xTaskGetTickCount() * portTICK_PERIOD_MS;
             if (now - last_status >= 30000) {
                 last_status = now;
+                const char *tag = _active_tag(GPS_SRC_NEO6M);
                 if (s_gps_data.has_fix) {
-                    ESP_LOGI(TAG, "GPS: fix OK | lat=%.4f lon=%.4f speed=%.1fkm/h sats=%d hdop=%.1f (idle — use 'gps neo6m start' for full log)",
+                    ESP_LOGI(TAG, "GPS: fix OK | lat=%.4f lon=%.4f speed=%.1fkm/h sats=%d hdop=%.1f %s (idle — use 'gps neo6m start' for full log)",
                              s_gps_data.lat, s_gps_data.lon, s_gps_data.speed,
-                             s_gps_data.satellites, s_gps_data.hdop);
+                             s_gps_data.satellites, s_gps_data.hdop, tag);
                 } else {
-                    ESP_LOGI(TAG, "GPS: no fix | reads=%d (idle — waiting for satellites)",
-                             s_total_reads);
+                    ESP_LOGI(TAG, "GPS: no fix | reads=%d %s (idle — waiting for satellites)",
+                             s_total_reads, tag);
                 }
             }
         }
