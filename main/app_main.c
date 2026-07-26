@@ -50,6 +50,15 @@
  *     rest_api_storage.c, which is now the single SPIFFS-mount owner +
  *     "api" command handler; also backs the Display trip screen's
  *     list/read/delete helpers).
+ *   - Trip-to-server sync added (docs/TestFunctionalities/esp32s3_board/
+ *     calculations-impl/151_..._esp32_vs_android_gap_analysis_and_
+ *     implementation_plan.md, D1-D5): fare_calc.c now keeps a full
+ *     per-segment TimeFrame history (not a single running total),
+ *     directions_client.c road-snaps any GPS gap over
+ *     DIRECTIONS_MIN_DISTANCE_M via GraphHopper, and trip_sync.c runs
+ *     the AddJob->Trips->SaveJobFares sequence (driver identity, Bearer
+ *     token, with a re-login-once-on-401 retry) — wired into
+ *     trip_manager.c's start/tick/finalize lifecycle.
  *
  * ================================================================
  * SERIAL COMMANDS (available ones depend on which flags are ON)
@@ -65,7 +74,9 @@
  *   auth login|logout|info|help         Driver login/logout
  *   ref fetch|list|info|help            Tariffs/fixed-rates/special-fares/holidays
  *   duty on|off|info                    On-duty / off-duty
- *   trip start|stop|pause|resume|extras|info   The meter itself
+ *   trip start|stop|pause|resume|extras|finalize|info   The meter itself
+ *   sync now|status                     Force/inspect AddJob->Trips->SaveJobFares sync (trip_sync.c)
+ *   directions test <lat1> <lon1> <lat2> <lon2>   Manually exercise the GraphHopper road-distance call
  *   session info|clear                  NVS session dump / logout-style reset
  *   mem / store                         Heap + SPIFFS/NVS diagnostics
  *   game / guess <n>   [ENABLE_MINI_COMMAND, currently OFF]
@@ -121,6 +132,8 @@
 #include "backend/taximeter/duty_client.h"
 #include "backend/taximeter/reference_data.h"
 #include "backend/taximeter/fare_calc.h"
+#include "backend/taximeter/directions_client.h"
+#include "backend/taximeter/trip_sync.h"
 #include "backend/taximeter/trip_manager.h"
 #include "backend/taximeter/diag.h"
 #include "backend/taximeter/rest_api_storage.h"
@@ -515,7 +528,7 @@ static void serial_cmd_task(void *arg) {
 
     printf("\nType 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all'"
            " | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help'"
-           " | 'duty on|off|info' | 'trip help' | 'session info' | 'mem' | 'store'"
+           " | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store'"
 #if ENABLE_OTA
            " | 'ota check' | 'ota status'"
 #endif
@@ -591,6 +604,10 @@ static void serial_cmd_task(void *arg) {
                     // handled
                 } else if (trip_manager_process_command(line)) {
                     // handled
+                } else if (trip_sync_process_command(line)) {
+                    // handled — "sync now" / "sync status"
+                } else if (directions_client_process_command(line)) {
+                    // handled — "directions test <lat1> <lon1> <lat2> <lon2>"
                 } else if (diag_process_command(line)) {
                     // handled — "mem" / "store" / "diag help"
 #if ENABLE_OTA

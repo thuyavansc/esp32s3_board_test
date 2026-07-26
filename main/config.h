@@ -195,6 +195,61 @@
 #define EP_SPECIAL_FARES     "/taxis-api/api/SpecialFare"
 #define EP_PUBLIC_HOLIDAYS   "/devices-api/api/PublicHolidays"
 
+// ── Trip-sync endpoints (driver variant — D1, doc 151 §7.1) ──────
+// This device logs in with a username/password and holds a Bearer
+// token (like Android's UserDetails.IS_DRIVER == true — doc 149
+// §1.2), so it uses the SAME "Job/*" + "Trips" paths a driver's phone
+// would, NOT the "DeviceJobs/*" + AppKey variant (that fork is for a
+// headless meter provisioned with a per-device AppKey instead of a
+// login — not our current provisioning model; revisit if/when an
+// AppKey is ever issued for this device).
+#define EP_ADD_JOB              "/taxis-api/api/Job/AddJobByDriver"
+#define EP_TRIP_UPDATE          "/taxis-api/api/Trips"
+#define EP_SAVE_JOB_FARES       "/taxis-api/api/Job/SaveJobFares"
+#define EP_PICKUP               "/taxis-api/api/Job/Pickup"
+#define EP_CHANGE_STATUS_FMT    "/taxis-api/api/Job/ChangeStatus/%d"   // %d = status ordinal
+
+// Buffer for trip-sync JSON bodies/responses — bigger than
+// API_SMALL_BUFFER_SIZE because the Trips-update payload carries the
+// whole timeFrames[]/paths[] arrays (doc 149 §2.3), not the tiny
+// login/duty-style bodies API_SMALL_BUFFER_SIZE was sized for.
+#define TRIP_SYNC_BUFFER_SIZE    8192
+
+// ================================================================
+// DIRECTIONS (GraphHopper) — road-snapped distance, matching the
+// Android reference's GetDirectionsUseCase/GraphHopperInstance (doc
+// 149 §4.3, doc 150 §5/§7). D4 (doc 151 §7.1): the ESP32 does the same
+// thing Android does — call a real routing service for any GPS gap
+// bigger than DIRECTIONS_MIN_DISTANCE_M, instead of only ever billing
+// the straight-line chord (which under-counts distance on a curving
+// road).
+//
+// GRAPHHOPPER_API_KEY is a placeholder — get a real key from
+// graphhopper.com (a free tier exists) before this is used against
+// real trips; DIRECTIONS_ENABLED gates it off cleanly (falls back to
+// straight-line haversine automatically, see directions_client.c) if
+// no key is set yet, so the meter still works with an empty key.
+// ================================================================
+#define DIRECTIONS_ENABLED           1
+#define DIRECTIONS_API_HOST          "graphhopper.com"
+#define DIRECTIONS_API_PATH          "/api/1/route"
+#define GRAPHHOPPER_API_KEY          ""   // ⚠ set a real key before relying on road-snapping in the field
+#define DIRECTIONS_MIN_DISTANCE_M    250.0   // matches Android's GH_DIRECTIONS_MIN_DISTANCE (doc 150 §5/§12)
+#define DIRECTIONS_HTTP_TIMEOUT_MS   10000
+#define DIRECTIONS_BUFFER_SIZE       4096
+
+// ================================================================
+// TIME FRAMES — per-segment fare history (D3, doc 151 §7.1: full
+// per-segment history, matching Android's TripTimeFrame table, doc
+// 150 §0). Fixed-size arrays (not heap-allocated per row), same
+// pattern as reference_data.h's REF_MAX_* — sized generously for a
+// normal trip; "trip info"/logs warn (not crash) if a trip's real
+// segment/point count ever exceeds these, exactly like ref data's own
+// overflow policy. Raise these if that warning fires routinely.
+// ================================================================
+#define FARE_CALC_MAX_TIME_FRAMES        32   // one frame opens per GPS-active<->inactive flip or pause/resume
+#define FARE_CALC_MAX_POINTS_PER_FRAME   40   // GPS points stored per frame, for the synced polyline
+
 // Sent as the "App-Version" header on every TaxiMeter API call (see
 // api_client.c's _perform()) — the server's Login endpoint rejects
 // requests missing this header with HTTP 200 {"success":false,

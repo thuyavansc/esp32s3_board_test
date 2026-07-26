@@ -1,0 +1,145 @@
+gps infoI (1754054) gps: ══════════════════════════════════════
+[gui] Logging started (TXT) → logs/serial_log_20260726_040610.txt
+> gps infoI (1759063) gps: ══════════════════════════════════════
+> gps infoI (1764075) gps: ══════════════════════════════════════
+> gps infoI (1769134) gps: ══════════════════════════════════════
+> I (1771391) gps_gnss: GNSS: no fix | reads=25725 [ACTIVE] (idle — waiting for satellites)
+I (1772791) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1774143) gps: ══════════════════════════════════════
+> net info
+> net infoI (1776852) net_diag: ══════════════════════════════════════
+I (1776854) net_diag: NETWORK STATUS
+I (1776857) net_diag: ──────────────────────────────────────
+I (1776869) net_diag:   Device MAC (STA):  A4:CB:8F:D6:98:F8
+I (1776875) net_diag:   Connected SSID:    TWHSP
+I (1776879) net_diag:   AP BSSID:          20:B0:01:BE:14:63
+I (1776884) net_diag:   RSSI:              -62 dBm
+I (1776889) net_diag:   Channel:           12
+I (1776893) net_diag:   Local IP:          192.168.0.62
+I (1776898) net_diag:   Netmask:           255.255.255.0
+I (1776903) net_diag:   Gateway:           192.168.0.1
+I (1776908) net_diag:   DNS server:        192.168.0.1
+I (1776912) net_diag: ══════════════════════════════════════
+> net test
+> gps infoI (1779129) gps: ══════════════════════════════════════
+> net testI (1779188) net_diag: ══════════════════════════════════════
+I (1779200) net_diag: INTERNET CONNECTIVITY TEST
+I (1779205) net_diag:   GET https://www.google.com/generate_204
+I (1779210) net_diag:   (Same trick phones/laptops use to tell "connected to WiFi"
+I (1779218) net_diag:    apart from "WiFi actually reaches the internet" — a real HTTPS
+I (1779225) net_diag:    request to a public endpoint, not just a link/ARP check.)
+I (1779233) net_diag: ──────────────────────────────────────
+I (1779550) esp-x509-crt-bundle: Certificate validated
+I (1779938) net_diag:   Result:            ✓ INTERNET OK
+I (1779938) net_diag:   HTTP status:       204
+I (1779939) net_diag:   Content length:    0 bytes
+I (1779941) net_diag:   Round-trip time:   692 ms
+I (1779948) net_diag: ══════════════════════════════════════
+> gps infoI (1784158) gps: ══════════════════════════════════════
+> gps infoI (1789167) gps: ══════════════════════════════════════
+> ATI
+> ATII (1792576) chipinfo: AT> ATI
+ATI
+Manufacturer: INCORPORATED
+Model: A7670E-FASE
+Revision: A7670M7_V1.11.1
+IMEI: 862596081934709
++GCAP: +CGSM,+FCLASS,+DS
+OK
+> gps infoI (1794198) gps: ══════════════════════════════════════
+> gps infoI (1799157) gps: ══════════════════════════════════════
+> AT+CEREG?
+> AT+CEREG?I (1800866) chipinfo: AT> AT+CEREG?
+AT+CEREG?
++CEREG: 0,1
+OK
+> I (1801392) gps_gnss: GNSS: no fix | reads=26148 [ACTIVE] (idle — waiting for satellites)
+I (1802821) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1804188) gps: ══════════════════════════════════════
+> gps infoI (1809197) gps: ══════════════════════════════════════
+> AT+CGATT?
+> AT+CGATT?I (1810306) chipinfo: AT> AT+CGATT?
+AT+CGATT?
++CGATT: 1
+OK
+> AT+CGPADDR=1
+> AT+CGPADDR=1I (1813128) chipinfo: AT> AT+CGPADDR=1
+AT+CGPADDR=1
++CGPADDR: 1,10.84.143.72
+OK
+> gps infoI (1814186) gps: ══════════════════════════════════════
+> I (1817032) ram_test: ══════════════════════════════════════
+I (1817033) ram_test: PSRAM periodic health-check
+I (1817037) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (1817044) ram_test:   Before: free=8381176 bytes (7.99 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1817194) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (1817194) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7332596 bytes (6.99 MB)
+I (1817202) ram_test:   After free: free=8381176 bytes (7.99 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1817211) ram_test: ══════════════════════════════════════
+gps infoI (1819202) gps: ══════════════════════════════════════
+> AT+CGACT?
+> AT+CGACT?I (1821711) chipinfo: AT> AT+CGACT?
+AT+CGACT?
++CGACT: 1,1
++CGACT: 8,1
+OK
+> gps infoI (1824219) gps: ══════════════════════════════════════
+> gps infoI (1829230) gps: ══════════════════════════════════════
+> I (1831393) gps_gnss: GNSS: no fix | reads=26571 [ACTIVE] (idle — waiting for satellites)
+I (1832851) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1834239) gps: ══════════════════════════════════════
+> gps infoI (1839248) gps: ══════════════════════════════════════
+> gps infoI (1844257) gps: ══════════════════════════════════════
+> gps infoI (1849316) gps: ══════════════════════════════════════
+> gps infoI (1854328) gps: ══════════════════════════════════════
+> gps infoI (1859337) gps: ══════════════════════════════════════
+> I (1861395) gps_gnss: GNSS: no fix | reads=26994 [ACTIVE] (idle — waiting for satellites)
+I (1862881) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1864346) gps: ══════════════════════════════════════
+> gps infoI (1869355) gps: ══════════════════════════════════════
+> AT+CGNSSPWR?
+> AT+CGNSSPWR?I (1870864) chipinfo: AT> AT+CGNSSPWR?
+AT+CGNSSPWR?
++CGNSSPWR: 1,0,1,0
+OK
+> gps infoI (1874372) gps: ══════════════════════════════════════
+> AT+CGNSSINFO
+> AT+CGNSSINFOI (1877082) chipinfo: AT> AT+CGNSSINFO
+AT+CGNSSINFO
++CGNSSINFO: ,,,,,,,,
+OK
+> gps infoI (1879422) gps: ══════════════════════════════════════
+> AT+CGNSSTST?
+> AT+CGNSSTST?I (1880531) chipinfo: AT> AT+CGNSSTST?
+AT+CGNSSTST?
++CGNSSTST: 1
+OK
+> gps infoI (1884441) gps: ══════════════════════════════════════
+> gps infoI (1889450) gps: ══════════════════════════════════════
+> I (1891395) gps_gnss: GNSS: no fix | reads=27417 [ACTIVE] (idle — waiting for satellites)
+I (1892911) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+> gps gnss info
+gps gnss infoI (1894159) gps_gnss: ══════════════════════════════════════
+I (1894161) gps_gnss: GNSS (A7670E) STATUS
+I (1894165) gps_gnss: ──────────────────────────────────────
+I (1894177) gps_gnss:   UART:        UART1 TX=GPIO18 RX=GPIO17 @ 115200 baud
+I (1894184) gps_gnss:   Bring-up:    complete
+I (1894188) gps_gnss:   Enabled:     yes
+I (1894191) gps_gnss:   A-GPS:       disabled in config.h (no SIM yet)
+I (1894198) gps_gnss:   Reads:       27459 total | 0 valid fixes
+I (1894203) gps_gnss:   Fix:         NO
+I (1894207) gps_gnss: ══════════════════════════════════════
+> gps infoI (1894469) gps: ══════════════════════════════════════
+> gps infoI (1899481) gps: ══════════════════════════════════════
+> gps info
+> gps infoI (1902390) gps: ══════════════════════════════════════
+> gps infoI (1904449) gps: ══════════════════════════════════════
+> gps infoI (1909508) gps: ══════════════════════════════════════
+[gui] Logging stopped → C:\Projects\esp32_taxi_gui\logs\serial_log_20260726_040610.txt
+> gps infoI (1914467) gps: ══════════════════════════════════════
+> gps infoI (1919483) gps: ══════════════════════════════════════
+> I (1921396) gps_gnss: GNSS: no fix | reads=27840 [ACTIVE] (idle — waiting for satellites)
+I (1922941) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1924542) gps: ══════════════════════════════════════
+> gps infoI (1929551) gps: ══════════════════════════════════════
+> gps infoI (1934560) gps: ══════════════════════════════════════

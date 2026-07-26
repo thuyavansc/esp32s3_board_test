@@ -9,6 +9,7 @@ idf_component_register(
          "backend/taximeter/session_store.c" "backend/taximeter/api_client.c"
          "backend/taximeter/setup_client.c" "backend/taximeter/auth_client.c" "backend/taximeter/duty_client.c"
          "backend/taximeter/reference_data.c" "backend/taximeter/fare_calc.c" "backend/taximeter/trip_manager.c"
+         "backend/taximeter/directions_client.c" "backend/taximeter/trip_sync.c"
          "backend/taximeter/diag.c" "backend/taximeter/rest_api_storage.c"
          "backend/gps/gps_client.c" "backend/gps/gps_nmea.c"
          "backend/gps/gps_backend_neo6m.c" "backend/gps/gps_backend_gnss.c"
