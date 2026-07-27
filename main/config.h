@@ -47,8 +47,11 @@
 #define ENABLE_WIFI     1
 #define NETWORK_NEEDED  ENABLE_WIFI
 
-#define WIFI_SSID   "TWHSP"
-#define WIFI_PASS   "TollWirelessWPA2"
+// #define WIFI_SSID   "TWHSP"
+// #define WIFI_PASS   "TollWirelessWPA2"
+
+#define WIFI_SSID   "404"
+#define WIFI_PASS   "supun404404"
 
 // ── Factory reset safety passcode ──────────────────────────────
 // Type "factory reset" then this passcode on the very next line in the
