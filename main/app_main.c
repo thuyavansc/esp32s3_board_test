@@ -680,6 +680,15 @@ static void _dashboard_timer_cb(lv_timer_t *timer) {
     } else {
         ui_update_dashboard(0.0, 0.0, 0.0);
     }
+
+    // Phase 0 (doc 155 §12.4): sample LVGL's own memory pool from HERE
+    // specifically — this callback already runs on the LVGL thread, which
+    // is the only place lv_mem_monitor() may legally be called. The "mem"
+    // serial command then reads the cached result from its own task
+    // without ever touching LVGL. Cheap (a few struct field copies), so
+    // running it on the existing 1s dashboard tick costs nothing
+    // measurable and needs no extra timer.
+    ui_refresh_lvgl_mem_stats();
 }
 
 void app_main(void) {

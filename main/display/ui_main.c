@@ -381,3 +381,50 @@ void ui_log_event(const char *msg) {
 }
 
 ui_screen_t ui_get_current_screen(void) { return s_current; }
+
+// ═══════════════════════════════════════════════════════════════
+//  LVGL MEMORY-POOL STATS (Phase 0 — doc 155 §12.4)
+//
+//  See ui_main.h for the full rationale and the threading split.
+//  Short version: lv_mem_monitor() must only run on the LVGL thread,
+//  so the refresh happens there and everyone else reads a plain cached
+//  copy — no LVGL internals touched from the serial-command task.
+// ═══════════════════════════════════════════════════════════════
+static ui_lvgl_mem_stats_t s_lvgl_mem = {0};
+
+void ui_refresh_lvgl_mem_stats(void) {
+#if LV_MEM_CUSTOM == 0
+    lv_mem_monitor_t m;
+    lv_mem_monitor(&m);
+
+    s_lvgl_mem.total_bytes    = m.total_size;
+    s_lvgl_mem.free_bytes     = m.free_size;
+    s_lvgl_mem.free_biggest   = m.free_biggest_size;
+    s_lvgl_mem.used_bytes     = m.total_size - m.free_size;
+    s_lvgl_mem.used_pct       = m.used_pct;
+    s_lvgl_mem.frag_pct       = m.frag_pct;
+
+    // max_used is the number Phase 0 actually needs — the high-water
+    // mark, not the instantaneous value. LVGL tracks it internally as
+    // max_used; keep our own running peak too so this stays correct
+    // even if a future LVGL version drops that field.
+    if (m.max_used > s_lvgl_mem.max_used_bytes) {
+        s_lvgl_mem.max_used_bytes = m.max_used;
+    }
+    if (s_lvgl_mem.used_bytes > s_lvgl_mem.max_used_bytes) {
+        s_lvgl_mem.max_used_bytes = s_lvgl_mem.used_bytes;
+    }
+    s_lvgl_mem.valid = true;
+#else
+    // LV_MEM_CUSTOM=1 means LVGL uses plain malloc() instead of its own
+    // pool — there is no pool to measure, and these numbers would be
+    // meaningless rather than merely zero. Leave valid=false so "mem"
+    // says so explicitly instead of printing a misleading 0KB.
+    s_lvgl_mem.valid = false;
+#endif
+}
+
+void ui_get_lvgl_mem_stats(ui_lvgl_mem_stats_t *out) {
+    if (!out) return;
+    *out = s_lvgl_mem;   // plain struct copy — no LVGL call, safe from any task
+}

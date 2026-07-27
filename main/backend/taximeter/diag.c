@@ -14,6 +14,7 @@
 #include "esp_spiffs.h"
 #include "config.h"
 #include "session_store.h"
+#include "ui_main.h"   // ui_get_lvgl_mem_stats() — plain cached struct, no LVGL call from this task
 #include "diag.h"
 
 #if CONFIG_SPIRAM
@@ -25,36 +26,73 @@ static const char *TAG = "diag";
 // ═══════════════════════════════════════════════════════════════
 //  "mem" — RAM
 // ═══════════════════════════════════════════════════════════════
+// Phase 0 (doc 155 §12) — this command was REWRITTEN because the old
+// version was actively misleading: it reported esp_get_free_heap_size(),
+// which sums ALL capabilities. On this board that total is dominated by
+// 8MB of PSRAM, so it printed a reassuring "8221 KB free" while INTERNAL
+// SRAM — the pool that actually constrains WiFi/USB-host/lwIP/task stacks
+// — was down to 38KB. That's why the internal-SRAM problem stayed
+// invisible until a `getinfo` happened to break the pools out separately.
+// Internal SRAM is now reported FIRST and on its own, because it is the
+// number that decides whether a feature fits on this board.
 static void _cmd_mem(void) {
-    size_t free_now    = esp_get_free_heap_size();
-    size_t free_min_ever = esp_get_minimum_free_heap_size();
-    size_t largest_8bit = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
-    size_t largest_dma  = heap_caps_get_largest_free_block(MALLOC_CAP_DMA);
+    // ── Internal SRAM — the constrained pool ──
+    size_t int_total   = heap_caps_get_total_size(MALLOC_CAP_INTERNAL);
+    size_t int_free    = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+    size_t int_min     = heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL);
+    size_t int_largest = heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL);
+    size_t largest_dma = heap_caps_get_largest_free_block(MALLOC_CAP_DMA);
 
     ESP_LOGI(TAG, "══════════════════════════════════════");
     ESP_LOGI(TAG, "MEMORY (RAM)");
     ESP_LOGI(TAG, "──────────────────────────────────────");
-    ESP_LOGI(TAG, "  Free heap NOW:          %6u KB", (unsigned)(free_now / 1024));
-    ESP_LOGI(TAG, "  Lowest free heap EVER:  %6u KB  \xE2\x86\x90 the real danger number — how close this", (unsigned)(free_min_ever / 1024));
-    ESP_LOGI(TAG, "                                     device has come to running out since boot");
-    ESP_LOGI(TAG, "  Largest free block:     %6u KB  (8-bit-capable — general allocations)", (unsigned)(largest_8bit / 1024));
-    ESP_LOGI(TAG, "  Largest DMA block:      %6u KB  (needed by the display driver's draw buffers)", (unsigned)(largest_dma / 1024));
+    ESP_LOGI(TAG, "  INTERNAL SRAM  \xE2\x86\x90 the pool that actually limits this board");
+    ESP_LOGI(TAG, "    Total:                %6u KB", (unsigned)(int_total / 1024));
+    ESP_LOGI(TAG, "    Free NOW:             %6u KB", (unsigned)(int_free / 1024));
+    ESP_LOGI(TAG, "    Lowest EVER:          %6u KB  \xE2\x86\x90 how close we've come to running out", (unsigned)(int_min / 1024));
+    ESP_LOGI(TAG, "    Largest free block:   %6u KB  \xE2\x86\x90 a big single alloc can't exceed this,", (unsigned)(int_largest / 1024));
+    ESP_LOGI(TAG, "                                     no matter how much total is free");
+    ESP_LOGI(TAG, "    Largest DMA block:    %6u KB  (display draw buffers, WiFi, USB host)", (unsigned)(largest_dma / 1024));
 
     #if CONFIG_SPIRAM
-        size_t psram_total = esp_psram_get_size();
-        size_t psram_free  = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
-        ESP_LOGI(TAG, "  PSRAM total:            %6u KB", (unsigned)(psram_total / 1024));
-        ESP_LOGI(TAG, "  PSRAM free:             %6u KB", (unsigned)(psram_free / 1024));
+        size_t psram_total   = esp_psram_get_size();
+        size_t psram_free    = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
+        size_t psram_largest = heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM);
+        ESP_LOGI(TAG, "  PSRAM  (plentiful — but CANNOT serve DMA or <16KB allocations)");
+        ESP_LOGI(TAG, "    Total:                %6u KB", (unsigned)(psram_total / 1024));
+        ESP_LOGI(TAG, "    Free NOW:             %6u KB", (unsigned)(psram_free / 1024));
+        ESP_LOGI(TAG, "    Largest free block:   %6u KB", (unsigned)(psram_largest / 1024));
     #else
         ESP_LOGI(TAG, "  PSRAM:                  not present on this build");
     #endif
 
-    ESP_LOGI(TAG, "──────────────────────────────────────");
-    if (free_now < 20 * 1024) {
-        ESP_LOGW(TAG, "  \xE2\x9A\xA0 Free heap is under 20KB — an HTTPS/TLS call right now may fail");
-        ESP_LOGW(TAG, "    (mbedTLS alone can need ~16-20KB contiguous).");
+    // ── LVGL's own static pool — the biggest internal-SRAM consumer ──
+    // Read from the cached snapshot the dashboard lv_timer maintains;
+    // this never calls into LVGL from this task (see ui_main.h).
+    ui_lvgl_mem_stats_t lv;
+    ui_get_lvgl_mem_stats(&lv);
+    ESP_LOGI(TAG, "  LVGL POOL  (static, carved out of internal SRAM above)");
+    if (!lv.valid) {
+        ESP_LOGI(TAG, "    (no sample yet — the dashboard timer fills this in ~1s after ui_init,");
+        ESP_LOGI(TAG, "     or LV_MEM_CUSTOM=1 is set, in which case LVGL has no pool to measure)");
     } else {
-        ESP_LOGI(TAG, "  Heap headroom looks healthy for an HTTPS call right now.");
+        ESP_LOGI(TAG, "    Pool size:            %6u KB  (= CONFIG_LV_MEM_SIZE_KILOBYTES)", (unsigned)(lv.total_bytes / 1024));
+        ESP_LOGI(TAG, "    Used now:             %6u KB  (%u%%)", (unsigned)(lv.used_bytes / 1024), (unsigned)lv.used_pct);
+        ESP_LOGI(TAG, "    PEAK used since boot: %6u KB  \xE2\x86\x90 size the pool from THIS, + headroom", (unsigned)(lv.max_used_bytes / 1024));
+        ESP_LOGI(TAG, "    Largest free in pool: %6u KB  | fragmentation %u%%", (unsigned)(lv.free_biggest / 1024), (unsigned)lv.frag_pct);
+        ESP_LOGI(TAG, "    (visit every screen + run a trip before trusting PEAK — it only");
+        ESP_LOGI(TAG, "     reflects what the UI has actually been asked to draw so far)");
+    }
+
+    ESP_LOGI(TAG, "──────────────────────────────────────");
+    if (int_free < 20 * 1024) {
+        ESP_LOGW(TAG, "  \xE2\x9A\xA0 Internal SRAM under 20KB — an HTTPS/TLS call may fail right now");
+        ESP_LOGW(TAG, "    (mbedTLS is on PSRAM here, but WiFi/lwIP/task stacks still need internal).");
+    } else if (int_free < 60 * 1024) {
+        ESP_LOGW(TAG, "  \xE2\x9A\xA0 Internal SRAM under 60KB — too tight to add USB-host + SoftAP + PPP");
+        ESP_LOGW(TAG, "    (doc 155 §6 estimates that feature needs 55-80KB internal).");
+    } else {
+        ESP_LOGI(TAG, "  Internal SRAM headroom looks healthy.");
     }
     ESP_LOGI(TAG, "══════════════════════════════════════\n");
 }

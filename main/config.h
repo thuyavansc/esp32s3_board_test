@@ -22,7 +22,22 @@
 #define ENABLE_MINI_COMMAND    0   // extra serial "game" command (v4 demo) — unused here
 #define ENABLE_REMOTE_CONFIG   0   // taxiNumber/smsNumber/emergencyContactNumber/serverUrl — CODE KEPT, switched OFF
 #define ENABLE_ADDITIONAL_WORK 1   // catch-all for small standalone requirements — see additional_work.c
-#define ENABLE_LLM              1   // TinyLlama-260K local inference (serial console only) — see llm/llm_runner.c, doc 123/125
+// ⚠ PHASE 0 CHANGE (2026-07-26, doc 155 §12.4): 1 -> 0.
+// The LLM is a demo/experiment feature, not taxi-meter functionality,
+// and it is the easiest internal-SRAM lever to pull before adding the
+// cellular/hotspot network stack. Two distinct savings:
+//   1. Boot-time: llm_runner_init() mounts the dedicated `llm` SPIFFS
+//      partition, whose cache/metadata buffers are internal SRAM.
+//   2. Far more important — RISK: the model itself loads lazily on the
+//      first "llm run" and pulls ~1MB (observed: PSRAM lowest-ever
+//      dropped ~1MB in the captured session) plus internal task stack.
+//      With USB-host + SoftAP + PPP running, an ad-hoc "llm run" could
+//      starve the network stack mid-trip. Removing the command removes
+//      that failure mode entirely.
+// The `llm` flash partition and llm.c/llm_runner.c are DELIBERATELY left
+// in place — flipping this back to 1 restores the feature with no
+// partition migration and no code changes, exactly like ENABLE_OTA.
+#define ENABLE_LLM              0   // TinyLlama-260K local inference (serial console only) — see llm/llm_runner.c, doc 123/125
 
 // ── WiFi — independent of every other feature flag above ────────
 // WiFi must connect regardless of whether OTA/Trips/Remote-Config are on
@@ -485,13 +500,23 @@
 #define TOUCH_RST         8
 
 // ── LVGL ────────────────────────────────────────────────────────
-// 5% of screen rows per draw buffer (not a full 320x480 framebuffer) —
-// same proven trade-off as the sibling display projects in this repo:
-// keeps the two DMA draw buffers (~15KB each, internal SRAM — see doc
-// 111/112 for why these can't be PSRAM) small, at the cost of slightly
-// more flush cycles per full-screen redraw (negligible on this size
-// display).
-#define LVGL_BUF_SIZE_PCT  5
+// Percentage of screen rows per draw buffer (not a full 320x480
+// framebuffer) — keeps the two DMA draw buffers small. These MUST be
+// internal, DMA-capable SRAM (doc 111/112, doc 144 §3: the SPI
+// peripheral DMAs pixels straight out of them, and PSRAM cannot serve
+// DMA) — so they are pure internal-SRAM cost with no PSRAM escape.
+//
+// ⚠ PHASE 0 CHANGE (2026-07-26, doc 155 §12.4): 5 -> 3.
+//   At 5%: 320 x (480*5/100 = 24 rows) x 2 bytes = 15,360 B per buffer,
+//          x2 buffers = ~30KB internal SRAM.
+//   At 3%: 320 x (480*3/100 = 14 rows) x 2 bytes =  8,960 B per buffer,
+//          x2 buffers = ~17.5KB internal SRAM.   → frees ~12KB
+// Cost: more flush cycles per full-screen redraw. On a 320x480 SPI
+// display at 40MHz this is a small, mostly-imperceptible refresh
+// slowdown — an acceptable trade for 12KB of the scarcest resource on
+// the board. If the UI feels sluggish after this, raise it back to 5
+// (the display code reads this value; no other change needed).
+#define LVGL_BUF_SIZE_PCT  3
 #define LVGL_TICK_PERIOD_MS 5
 
 // ── UI Defaults ─────────────────────────────────────────────────
