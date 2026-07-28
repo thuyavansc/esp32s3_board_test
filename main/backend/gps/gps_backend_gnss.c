@@ -41,6 +41,11 @@ static int  s_valid_reads = 0;
 // each get an unpredictable, interleaved slice of the incoming bytes.
 static SemaphoreHandle_t s_uart_mutex;
 
+// Phase 2 (doc 155/159) — SMS URC hook, see gps_backend_gnss.h's own
+// comment for the full contract (handler must be non-blocking, must
+// never re-take s_uart_mutex).
+static gnss_urc_handler_t s_urc_handler = NULL;
+
 // ═══════════════════════════════════════════════════════════════
 //  Blocking AT-command helper — setup phase only, before continuous
 //  NMEA streaming starts. Same "read until OK/ERROR or timeout" pattern
@@ -256,6 +261,18 @@ static void _gnss_read_task(void *arg) {
                 if (c == '\n') {
                     line[pos] = '\0';
 
+                    // Phase 2 (doc 155/159) — SMS URC hook. Unconditional
+                    // (NOT gated on s_enabled — that flag only controls the
+                    // GNSS engine's own power state, unrelated to whether
+                    // the modem can receive SMS). Any non-NMEA, non-empty
+                    // line goes to the registered handler; NMEA sentences
+                    // ('$'-prefixed) are left to the parsing below exactly
+                    // as before — this line is the ONLY change to the
+                    // existing NMEA read path.
+                    if (line[0] != '\0' && line[0] != '$' && s_urc_handler) {
+                        s_urc_handler(line);
+                    }
+
                     if (s_enabled) {
                         gps_data_t tmp = {0};
                         if (gps_nmea_parse_gga(line, &tmp)) {
@@ -440,4 +457,82 @@ bool gps_backend_gnss_send_raw_at(const char *cmd, char *out, size_t out_size, i
         snprintf(out, out_size, "(no response — modem timeout after %dms; still connected? see 'gps gnss info')", timeout_ms);
     }
     return terminal_seen;
+}
+
+void gps_backend_gnss_register_urc_handler(gnss_urc_handler_t handler) {
+    s_urc_handler = handler;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AT+CMGS SMS send — see gps_backend_gnss.h for the full contract.
+//  Two-stage handshake (wait for '>' prompt, THEN send body+Ctrl-Z) —
+//  different shape than gps_backend_gnss_send_raw_at()'s single-shot
+//  "send, wait for terminal line" pattern, so it can't reuse that
+//  function; the mutex-take/uart_flush_input/write sequence is copied
+//  from it for consistency.
+// ═══════════════════════════════════════════════════════════════
+bool gps_backend_gnss_send_sms(const char *number, const char *message, int timeout_ms) {
+    if (!number || !number[0] || !message) return false;
+
+    if (xSemaphoreTake(s_uart_mutex, pdMS_TO_TICKS(2000)) != pdTRUE) {
+        ESP_LOGW(TAG, "send_sms: UART1 busy (AT passthrough/GNSS bring-up in progress?) — try again");
+        return false;
+    }
+
+    uart_flush_input(GNSS_UART_NUM);
+    char cmd[48];
+    snprintf(cmd, sizeof(cmd), "AT+CMGS=\"%s\"", number);
+    uart_write_bytes(GNSS_UART_NUM, cmd, strlen(cmd));
+    uart_write_bytes(GNSS_UART_NUM, "\r\n", 2);
+
+    // Wait for the '>' prompt — the modem's signal it's ready for the
+    // message body. Fixed 5s cap (not timeout_ms) — this first stage is
+    // just the modem parsing the command locally, never involves the
+    // cellular network, so it should never take long; timeout_ms is
+    // reserved for the SECOND stage below (the actual over-the-air send).
+    bool got_prompt = false;
+    char probe[64] = {0};
+    size_t ppos = 0;
+    TickType_t start = xTaskGetTickCount();
+    while ((xTaskGetTickCount() - start) < pdMS_TO_TICKS(5000)) {
+        uint8_t c;
+        if (uart_read_bytes(GNSS_UART_NUM, &c, 1, pdMS_TO_TICKS(50)) <= 0) continue;
+        if (c == '>') { got_prompt = true; break; }
+        if (ppos < sizeof(probe) - 1) probe[ppos++] = (char)c;
+        probe[ppos] = '\0';
+        if (strstr(probe, "ERROR")) break;   // e.g. malformed number, SMS service unavailable
+    }
+
+    if (!got_prompt) {
+        uint8_t esc = 0x1B;
+        uart_write_bytes(GNSS_UART_NUM, &esc, 1);   // cancel — don't leave the modem stuck mid-prompt
+        xSemaphoreGive(s_uart_mutex);
+        ESP_LOGW(TAG, "send_sms to %s: no '>' prompt from AT+CMGS (raw: %.60s)", number, probe);
+        return false;
+    }
+
+    uart_write_bytes(GNSS_UART_NUM, message, strlen(message));
+    uint8_t ctrl_z = 0x1A;
+    uart_write_bytes(GNSS_UART_NUM, &ctrl_z, 1);
+
+    // Second stage: wait for "+CMGS: <mr>\r\nOK\r\n" (sent) or "ERROR"/
+    // "+CMS ERROR: <n>" (network-side failure) — this IS the over-the-
+    // air leg, hence the caller-supplied timeout_ms here.
+    char resp[96] = {0};
+    size_t rpos = 0;
+    bool ok = false;
+    start = xTaskGetTickCount();
+    while ((xTaskGetTickCount() - start) < pdMS_TO_TICKS(timeout_ms)) {
+        uint8_t c;
+        if (uart_read_bytes(GNSS_UART_NUM, &c, 1, pdMS_TO_TICKS(50)) <= 0) continue;
+        if (rpos < sizeof(resp) - 1) resp[rpos++] = (char)c;
+        resp[rpos] = '\0';
+        if (strstr(resp, "OK\r\n")) { ok = true; break; }
+        if (strstr(resp, "ERROR")) break;
+    }
+
+    xSemaphoreGive(s_uart_mutex);
+    ESP_LOGI(TAG, "send_sms to %s: %s", number, ok ? "OK" : "FAILED");
+    if (!ok) ESP_LOGW(TAG, "  raw: %.90s", resp);
+    return ok;
 }

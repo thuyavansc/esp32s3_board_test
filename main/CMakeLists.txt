@@ -13,15 +13,21 @@ idf_component_register(
          "backend/taximeter/diag.c" "backend/taximeter/rest_api_storage.c"
          "backend/gps/gps_client.c" "backend/gps/gps_nmea.c"
          "backend/gps/gps_backend_neo6m.c" "backend/gps/gps_backend_gnss.c"
+         "backend/network/hotspot/hotspot_nvs.c" "backend/network/hotspot/hotspot_ap.c"
+         "backend/network/cellular/cellular_ppp.c" "backend/network/net_manager.c"
+         "backend/network/sms/sms_client.c" "backend/network/sms/sms_commands.c"
          "display/display_driver.c" "display/touch_driver.c" "display/ui_main.c" "display/ui_widgets.c"
          "display/trip/trip_screen.c" "display/trip/trip_json_viewer.c"
+         "display/network/network_screen.c"
+         "display/sms/sms_screen.c"
          "display/test/test_menu.c" "display/test/test_pax_meter.c"
          "display/test/color_palette/color_palette_ui.c"
-         "ui_components/numeric_keypad.c" "ui_components/toast.c"
+         "ui_components/numeric_keypad.c" "ui_components/text_keypad.c" "ui_components/toast.c"
          "ui_components/loading_overlay.c" "ui_components/confirm_dialog.c"
          "llm/llm.c" "llm/llm_runner.c"
     INCLUDE_DIRS "." "backend" "backend/system" "backend/taximeter" "backend/gps"
-                 "display" "display/trip" "display/test" "display/test/color_palette" "ui_components" "llm"
+                 "backend/network" "backend/network/cellular" "backend/network/hotspot" "backend/network/sms"
+                 "display" "display/trip" "display/network" "display/sms" "display/test" "display/test/color_palette" "ui_components" "llm"
     REQUIRES esp_partition spi_flash esp_hw_support esp_system esp_common heap
              esp_psram esp_timer
              nvs_flash spiffs
@@ -30,6 +36,15 @@ idf_component_register(
              json mbedtls
              driver lvgl esp_lcd
              esp-dsp
+             # PHASE 1 (doc 155/158): USB host stack for the cellular
+             # modem's native USB CDC path. iot_usbh_modem/iot_usbh_cdc
+             # (idf_component.yml) declare their OWN transitive REQUIRES
+             # (usb, esp_netif, esp_wifi) automatically via the component
+             # manager — "usb" is listed here too anyway for explicit
+             # clarity, matching this project's existing style of never
+             # relying on an implicit transitive REQUIRES if the real
+             # dependency is known.
+             usb
 )
 
 # llm.c ported from https://github.com/DaveBben/esp32-llm — the author's own

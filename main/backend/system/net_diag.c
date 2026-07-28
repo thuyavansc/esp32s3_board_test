@@ -10,8 +10,12 @@
 #include "esp_http_client.h"
 #include "esp_crt_bundle.h"
 #include "esp_timer.h"
+#include "esp_heap_caps.h"
 #include "config.h"
 #include "net_diag.h"
+#include "network/net_manager.h"   // Phase 1 (doc 155/158) — "net uplink/status/mem" forward here.
+                                    // Kept as ONE "net" prefix owner (this file) rather than a
+                                    // second competing dispatcher — see net_manager.h's own comment.
 
 static const char *TAG = "net_diag";
 
@@ -24,7 +28,28 @@ static const char *TAG = "net_diag";
 #define NET_TEST_URL "https://www.google.com/generate_204"
 
 static void _print_help(void) {
-    printf("Net Commands: net info | net test | net help\n");
+    printf("Net Commands: net info | net test | net uplink wifi|cellular|auto | net status | net mem | net help\n");
+}
+
+// Phase 1 (doc 155/158) — network-stack-specific memory footprint,
+// distinct from diag.c's general "mem" command: this ONLY breaks out
+// what net_manager/cellular_ppp/hotspot_ap's own state is (they don't
+// hold large buffers themselves — USB host/lwIP/WiFi driver internals
+// account for nearly everything), so this is really "did enabling the
+// network stack cost us what we expected" — best read side-by-side
+// with a "mem" reading taken before Phase 1 was enabled.
+static void _cmd_net_mem(void) {
+    ESP_LOGI(TAG, "══════════════════════════════════════");
+    ESP_LOGI(TAG, "NETWORK STACK MEMORY (informational — see 'mem' for the full picture)");
+    ESP_LOGI(TAG, "──────────────────────────────────────");
+    ESP_LOGI(TAG, "  Internal SRAM free:      %6u KB",
+             (unsigned)(heap_caps_get_free_size(MALLOC_CAP_INTERNAL) / 1024));
+    ESP_LOGI(TAG, "  Internal SRAM largest:   %6u KB  (USB host driver needs a sizeable contiguous block)",
+             (unsigned)(heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL) / 1024));
+    ESP_LOGI(TAG, "  Compare against a 'mem' reading taken BEFORE cellular/hotspot were enabled");
+    ESP_LOGI(TAG, "  (docs/TestFunctionalities/esp32s3_board/internet--hotsport-sms/");
+    ESP_LOGI(TAG, "   160_..._ram_buffer_size_list.md) to see exactly what Phase 1 cost.");
+    ESP_LOGI(TAG, "══════════════════════════════════════\n");
 }
 
 static void _cmd_info(void) {
@@ -134,7 +159,29 @@ bool net_diag_process_command(const char *line) {
     if (strcmp(p, "info") == 0) { _cmd_info(); return true; }
     if (strcmp(p, "test") == 0) { _cmd_test(); return true; }
     if (strcmp(p, "help") == 0 || *p == '\0') { _print_help(); return true; }
+    if (strcmp(p, "status") == 0) { net_manager_print_status(); return true; }
+    if (strcmp(p, "mem") == 0) { _cmd_net_mem(); return true; }
 
-    ESP_LOGW(TAG, "Unknown 'net' command: '%s'. Try: info | test | help", p);
+    if (strncmp(p, "uplink", 6) == 0) {
+        const char *arg = p + 6;
+        while (*arg == ' ') arg++;
+        // NOTE: net_manager_set_uplink(CELLULAR) can block up to ~30s
+        // dialling — this runs on the "serial_cmd" task, which is fine
+        // for a TYPED command (the user is already waiting for a
+        // response), unlike an automatic boot-time call which routes
+        // through bg_worker instead (net_manager.c's own init job).
+        if (strcmp(arg, "wifi") == 0) {
+            net_manager_set_uplink(NET_UPLINK_WIFI);
+        } else if (strcmp(arg, "cellular") == 0) {
+            net_manager_set_uplink(NET_UPLINK_CELLULAR);
+        } else if (strcmp(arg, "auto") == 0) {
+            net_manager_set_uplink_auto();
+        } else {
+            printf("Usage: net uplink wifi|cellular|auto\n");
+        }
+        return true;
+    }
+
+    ESP_LOGW(TAG, "Unknown 'net' command: '%s'. Try: info | test | uplink | status | mem | help", p);
     return true;
 }

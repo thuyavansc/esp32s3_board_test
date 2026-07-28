@@ -15,6 +15,8 @@
 #include "test_menu.h"
 #include "test_pax_meter.h"
 #include "color_palette/color_palette_ui.h"
+#include "network/network_screen.h"
+#include "sms/sms_screen.h"
 #include "ui_theme.h"
 #include "ui_widgets.h"
 
@@ -28,6 +30,8 @@ typedef struct {
 static const test_entry_t s_tests[] = {
     { "PAX A920Pro Meter UI",  test_pax_meter_get_screen },
     { "Color Palette Viewer",  color_palette_ui_get_screen },
+    { "Network (Cellular/Hotspot)", network_screen_get_screen },
+    { "SMS (Inbox/Send)",           sms_screen_get_screen },
 };
 #define TEST_COUNT (sizeof(s_tests) / sizeof(s_tests[0]))
 
@@ -45,6 +49,8 @@ lv_obj_t *test_menu_init(void) {
     // as the 4 main screens being pre-created in ui_init()).
     test_pax_meter_create();
     color_palette_ui_create();
+    network_screen_create();
+    sms_screen_create();
 
     lv_obj_t *scr = lv_obj_create(NULL);
     lv_obj_set_size(scr, 320, 480);

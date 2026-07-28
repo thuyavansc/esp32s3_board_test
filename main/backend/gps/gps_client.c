@@ -231,3 +231,20 @@ bool gps_client_send_raw_at(const char *cmd, char *out, size_t out_size, int tim
     return false;
 #endif
 }
+
+void gps_client_register_sms_urc_handler(gps_sms_urc_handler_t handler) {
+#if ENABLE_GPS_GNSS
+    gps_backend_gnss_register_urc_handler(handler);
+#else
+    ESP_LOGW(TAG, "register_sms_urc_handler: GNSS backend not compiled in (ENABLE_GPS_GNSS=0) — SMS URCs will never fire");
+#endif
+}
+
+bool gps_client_send_sms(const char *number, const char *message, int timeout_ms) {
+#if ENABLE_GPS_GNSS
+    return gps_backend_gnss_send_sms(number, message, timeout_ms);
+#else
+    ESP_LOGW(TAG, "send_sms: GNSS backend not compiled in (ENABLE_GPS_GNSS=0)");
+    return false;
+#endif
+}

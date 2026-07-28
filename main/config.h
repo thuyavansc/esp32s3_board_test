@@ -522,6 +522,163 @@
 #define LVGL_BUF_SIZE_PCT  3
 #define LVGL_TICK_PERIOD_MS 5
 
+// ================================================================
+// PSRAM TASK STACKS — Phase 0 round 3 (doc 155/157/160): move a task's
+// STACK (not just its heap allocations) to PSRAM, freeing its internal-
+// SRAM footprint entirely.
+//
+// ⚠ ONLY SAFE FOR A CAREFULLY CHOSEN SUBSET OF TASKS. PSRAM shares the
+// same bus/cache mechanism as flash on this chip — any task whose stack
+// lives in PSRAM will CRASH if its own call graph ever reaches an NVS/
+// SPIFFS/flash write, because the flash-op critical section disables
+// that same cache, making the task's OWN stack briefly unreachable to
+// itself mid-function. This project's own tasks were individually
+// audited (see docs/TestFunctionalities/esp32s3_board/internet--
+// hotsport-sms/160_..._ram_buffer_size_list.md "PSRAM-stack audit"
+// table) — ONLY lv_tick_task (pure lv_tick_inc(), no I/O at all) and
+// ram_test's periodic PSRAM health-check task (heap_caps_malloc/free +
+// memset only) were found to NEVER touch flash in their call graph.
+// Every other task (bg_worker, serial console, GNSS/NEO-6M readers,
+// trip_manager's tick task) either transitively writes NVS/SPIFFS or is
+// UART-timing-sensitive — deliberately left on internal-SRAM stacks.
+//
+// This flag exists so the conversion can be disabled with NO code
+// change if it proves unstable on real hardware (untested — no
+// toolchain available when this was written) — flip to 0, rebuild.
+#define ENABLE_PSRAM_TASK_STACKS   1
+
 // ── UI Defaults ─────────────────────────────────────────────────
 #define UI_DEFAULT_FARE_RATE   2.50   // $ per km
 #define UI_DEFAULT_FLAG_FALL   3.80   // Base fare
+
+// ================================================================
+// NETWORK — cellular internet (PPP over USB CDC) + WiFi hotspot
+// (SoftAP + NAPT). See docs/TestFunctionalities/esp32s3_board/
+// internet--hotsport-sms/155_..._cellular_ppp_hotspot_sms_analysis_
+// and_two_phase_plan.md for the full analysis + hardware verification
+// this was built from, and 158_..._phase1_... for the implementation
+// record.
+//
+// ARCHITECTURE (verified on real hardware, doc 155 §12.6): the A7670E
+// modem exposes TWO independent channels — PPP data goes over native
+// USB CDC (GPIO 19/20, needs DIP USB=OFF), while AT commands (GNSS,
+// SMS, signal queries) keep working over UART1 (GPIO 18/17) the whole
+// time, completely unaffected by the USB DIP setting or by PPP being
+// active. Confirmed empirically: GNSS + AT passthrough + the PC
+// console all verified working AT USB=OFF, 2026-07-26.
+// ================================================================
+#define ENABLE_CELLULAR_PPP   1   // modem internet via USB CDC PPP (iot_usbh_modem) — needs DIP USB=OFF
+#define ENABLE_WIFI_HOTSPOT   0   // SoftAP + NAPT internet sharing — OFF BY DEFAULT, explicit opt-in
+                                  // required (build-time flag here, OR runtime "hotspot on" — either
+                                  // way it never turns itself on automatically, per your requirement)
+
+// Which uplink is preferred when BOTH cellular and WiFi-STA are
+// available — runtime-switchable via "net uplink wifi|cellular|auto"
+// (net_manager.c) without a rebuild; this is only the boot-time default.
+#define NET_UPLINK_PREFER_CELLULAR   1
+
+// ── Cellular / USB modem identification ──
+// VID:PID + interface indices match the SIMCom A7670E exactly as
+// Waveshare's own firmware and the proven esp32s3_4g_hotspotWorkingClaude
+// reference project (docs 14/15) both use — not guessed.
+#define MODEM_USB_VID          0x1E0E   // SIMCom vendor ID
+#define MODEM_USB_PID          0x9011   // A7670E product ID
+#define MODEM_USB_CDC_ITF      5        // CDC data interface index
+#define MODEM_USB_NOTIF_ITF    (-1)     // no notification interface on this modem
+
+// APN — confirmed against the SIM currently in this board (doc 155 §12,
+// user-confirmed 2026-07-26). CELLULAR_APN_OVERRIDE="" means "use
+// CELLULAR_APN below, or the built-in MCC/MNC auto-detect table if that's
+// ever cleared" — set a non-empty override here (or via "cell apn ...")
+// to force a specific APN regardless of what SIM is inserted.
+#define CELLULAR_APN            "live.vodafone.com"
+#define CELLULAR_APN_OVERRIDE   ""
+
+#define CELLULAR_HTTP_TIMEOUT_MS   15000   // unused directly (PPP is raw IP, not HTTP) — reserved for any future modem-side HTTP diagnostics
+
+// ── WiFi Hotspot (SoftAP) defaults ──
+// These are FACTORY DEFAULTS ONLY — the live values live in NVS
+// (backend/network/hotspot/hotspot_nvs.c) and survive reboot/OTA;
+// changing these constants only affects a brand-new device's first boot.
+// Runtime change: "hotspot ssid <name>" / "hotspot passwd <old> <new>".
+#define HOTSPOT_DEFAULT_SSID       "TaxiMeter-200"
+#define HOTSPOT_DEFAULT_PASSWORD   "IamATaxiDriver"   // >=8 chars — WPA2 minimum; shorter silently fails AP start
+#define HOTSPOT_DEFAULT_CHANNEL    6
+#define HOTSPOT_MAX_CLIENTS        8
+#define HOTSPOT_AP_IP              "192.168.4.1"
+// Pushed to DHCP clients until real carrier DNS arrives (net_manager.c
+// then prepends the carrier's own DNS once PPP is up) — Google + Cloudflare,
+// two independent public resolvers, matches the reference project's own
+// "static fallback + carrier DNS on top" design (doc 15 §9.2/§9.3).
+#define HOTSPOT_DNS_PRIMARY        "8.8.8.8"
+#define HOTSPOT_DNS_SECONDARY      "1.1.1.1"
+
+// ================================================================
+// SMS — Phase 2 (doc 155/159). Receive+log every SMS, send SMS, and
+// execute a small set of remote commands via a three-layer safety gate
+// (a message cannot be treated as a command just because it arrived —
+// your explicit requirement). See backend/network/sms/sms_commands.h for the
+// full gate design and the exact command list.
+//
+// NOTE ON THE EXISTING "sms <command text>" SERIAL COMMAND
+// (additional_work.c, ENABLE_ADDITIONAL_WORK): that one is a pre-
+// existing, UNRELATED bench-test simulator ("pretend an SMS with this
+// body just arrived") — its own header comment already anticipated
+// this exact phase ("wire its message received callback to call
+// sms_command_execute() directly... nothing about THIS function needs
+// to change"). Left completely untouched — the REAL SMS runtime added
+// here uses the "smsc" prefix (SMS Client) for its own serial commands
+// specifically to avoid colliding with "sms" in the dispatch chain
+// (first-prefix-match-wins — same class of collision net_diag.c/
+// net_manager.c already had for "net", resolved the same way: give the
+// newer module a different prefix rather than touch a proven file).
+// ================================================================
+#define ENABLE_SMS   1
+
+// ── Layer 1: sender whitelist ───────────────────────────────────
+// EMPTY (count 0) means "reject every command, from anyone" — the safe
+// default until you explicitly add your own phone number(s) below.
+// Format: exactly how the modem reports the sender (usually
+// "+<countrycode><number>", e.g. "+61412345678" — confirm the real
+// format against a live "smsc list" entry before relying on this).
+// SMS_COMMAND_SENDER_COUNT MUST match the real non-empty entry count —
+// it exists as a separate constant (not sizeof/strlen-derived) so the
+// gate's "reject all" default is a single obvious number to flip, not
+// something that silently changes if the array literal is edited.
+#define SMS_COMMAND_SENDER_WHITELIST   { "" }
+#define SMS_COMMAND_SENDER_COUNT       0
+
+// ── Layer 2: command prefix ─────────────────────────────────────
+// A received SMS body must start with this (case-sensitive) to even be
+// CONSIDERED a command attempt — anything else is just logged as a
+// normal received SMS (inbox), never executed, regardless of sender.
+#define SMS_COMMAND_PREFIX             "TAXI#"
+
+// ── Layer 3: passcode ────────────────────────────────────────────
+// Required ONLY for the destructive REBOOT command (see below) — the
+// 3 read-only status commands (STATUS/LOCATE/NET) need whitelist+prefix
+// only, no passcode, since they can't change or destroy anything.
+// Deliberately a SEPARATE constant from FACTORY_RESET_PASSCODE/hotspot's
+// reset passcode — rotating one must not silently rotate the others.
+#define SMS_COMMAND_PASSCODE           "1010"
+
+// "TAXI#REBOOT <passcode>" — trip-safety interlock (your requirement:
+// "do not lose data mid-trip... show a confirm dialog but force reboot
+// after a timeout so the command can't be indefinitely evaded"). On
+// acceptance: a bounded trip-sync flush is attempted (if a trip is
+// active), then a confirm dialog appears on whatever screen is
+// currently displayed; tapping "Reboot Now" reboots immediately,
+// otherwise this timeout forces it regardless — see sms_commands.c.
+#define SMS_REBOOT_CONFIRM_TIMEOUT_S    120
+#define SMS_REBOOT_SYNC_FLUSH_TIMEOUT_S  10   // bounded — never lets a stuck sync hold up the whole interlock indefinitely
+
+// Reliability sweep (sms_client.c) — catches any SMS whose +CMTI URC was
+// missed (e.g. arrived during boot, before the URC handler was
+// registered) by periodically listing unread messages directly, in
+// addition to the normal URC-driven path.
+#define SMS_SWEEP_INTERVAL_S             60
+
+// In-RAM inbox (not persisted to NVS/SPIFFS — see sms_client.h for why):
+// how many of the most recent received SMS the GUI inbox/"smsc list"
+// serial command keep available.
+#define SMS_INBOX_CAPACITY               10

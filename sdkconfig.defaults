@@ -12,6 +12,40 @@ CONFIG_ESP_WIFI_STA_SUPPORT=y
 CONFIG_ESP_WIFI_SSID_CONFIG=y
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
 CONFIG_FREERTOS_HZ=1000
+
+# ── PHASE 1 (2026-07-26, doc 155/158): cellular PPP + WiFi hotspot ────
+#
+# USB Host — required for USB CDC modem (iot_usbh_modem/iot_usbh_cdc,
+# idf_component.yml). This is genuinely new hardware usage for this
+# firmware — GPIO 19/20 (native USB D-/D+) were previously unused.
+CONFIG_USB_OTG_SUPPORTED=y
+CONFIG_USB_HOST_CONTROL_TRANSFER_MAX_SIZE=512
+
+# lwIP — PPP protocol + IP forwarding + NAT (NAPT). Matches the proven
+# esp32s3_4g_hotspotWorkingClaude reference project's own working values
+# (docs 14/15) exactly for these four.
+CONFIG_LWIP_PPP_SUPPORT=y
+CONFIG_LWIP_PPP_NOTIFY_PHASE_SUPPORT=y
+CONFIG_LWIP_PPP_PAP_SUPPORT=y
+CONFIG_LWIP_PPP_CHAP_SUPPORT=y
+CONFIG_LWIP_IP_FORWARD=y
+CONFIG_LWIP_IPV4_NAPT=y
+
+# WiFi SoftAP support — alongside the existing STA support above
+# (APSTA mode, app_main.c) so the hotspot can run at the same time as
+# the WiFi-uplink connection.
+CONFIG_ESP_WIFI_SOFTAP_SUPPORT=y
+
+# ⚠ DELIBERATELY NOT COPIED from the reference project (doc 155 §F1 /
+# doc 157): its own aggressive lwIP buffer tuning —
+#   CONFIG_LWIP_TCP_SND_BUF_DEFAULT=65535
+#   CONFIG_LWIP_TCP_WND_DEFAULT=65535
+#   CONFIG_LWIP_TCPIP_RECVMBOX_SIZE=64
+# — that project had ~3x this board's internal-SRAM headroom (no
+# display/LVGL/LLM/GNSS/NEO-6M competing for it). Copying those values
+# here would directly fight Phase 0's entire internal-SRAM recovery
+# effort. ESP-IDF's own (much smaller) lwIP defaults are kept instead;
+# revisit ONLY if a measured throughput problem appears, not preemptively.
 CONFIG_LOG_DEFAULT_LEVEL_INFO=y
 
 # ── TLS ──────────────────────────────────────────────────────────────
@@ -61,6 +95,37 @@ CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ=240
 CONFIG_SPIRAM=y
 CONFIG_SPIRAM_MODE_OCT=y
 CONFIG_SPIRAM_SPEED_80M=y
+
+# ⚠ PHASE 0 ADDITION (2026-07-26, doc 155/157 — internal-SRAM recovery
+# for cellular/hotspot): lower the automatic-PSRAM-eligibility floor.
+#
+# ESP-IDF's own factory default is 16384 (16KB) — ANY plain malloc()/
+# calloc() request smaller than this is forced into internal SRAM,
+# even when PSRAM is completely empty and the caller made no explicit
+# request either way (doc 144 §2.2's "Mechanism B"). Lowered to 4096
+# so 4-16KB requests become PSRAM-eligible too.
+#
+# WHY THIS IS SAFE — the short version: DMA-bound allocations (WiFi
+# driver buffers, the display's draw buffers, and the USB-host
+# descriptors Phase 1 will add) are excluded by CAPABILITY matching,
+# not by this size threshold — PSRAM has no MALLOC_CAP_DMA capability
+# on this chip at all, so heap_caps_malloc() never even considers it
+# for a DMA request regardless of what this value is set to. This
+# threshold only ever affects code that called plain malloc()/calloc()
+# with NO capability request at all — which, by definition, does not
+# care which pool it lands in; only the access latency differs
+# (slightly slower on PSRAM's external bus vs. internal SRAM), not
+# correctness. mbedTLS is unaffected (it has its own private allocator,
+# already on PSRAM — doc 144 §2.3); the UART ring buffers stay internal
+# regardless (1024 bytes, still well under even this lower floor).
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=4096
+
+# lwIP IPv6 — nothing in this project uses it (no IPv6 code anywhere in
+# this codebase). Disabling removes real internal-SRAM state lwIP
+# otherwise carries per network interface (address lists, ND6/MLD
+# state) — pure savings, no functional loss. Same setting the reference
+# hotspot project (esp32s3_4g_hotspotWorkingClaude) already ships with.
+CONFIG_LWIP_IPV6=n
 
 # ── App rollback — required for the always-on "factory reset" safety
 # net (factory_reset.c) even while ENABLE_OTA=0 in config.h; it still

@@ -100,6 +100,25 @@ bool gps_client_process_command(const char *line);
 // itself, regardless of which GPS source is currently active.
 bool gps_client_send_raw_at(const char *cmd, char *out, size_t out_size, int timeout_ms);
 
+// ── SMS (Phase 2, doc 155/159) — forwards to the GNSS backend's own
+// modem UART1 (the A7670E is a combined cellular-modem+GNSS chip —
+// NEO-6M has no SMS capability at all) — same "only the GNSS backend
+// owns this UART" rule the raw AT passthrough above already follows.
+// sms_client.c is the only intended caller of either of these.
+typedef void (*gps_sms_urc_handler_t)(const char *line);
+
+// Registers the callback that fires whenever a non-NMEA line (e.g.
+// "+CMTI: \"SM\",3") arrives on the modem UART — see
+// gps_backend_gnss.h's gps_backend_gnss_register_urc_handler() for the
+// full (non-negotiable) threading contract the handler must follow.
+void gps_client_register_sms_urc_handler(gps_sms_urc_handler_t handler);
+
+// Sends one SMS via AT+CMGS. Blocks the calling task up to timeout_ms
+// (a real send commonly takes 5-15s) — route through bg_worker_submit_fn()
+// from any small-stack/serial/LVGL task, same rule as every other
+// blocking call in this project.
+bool gps_client_send_sms(const char *number, const char *message, int timeout_ms);
+
 // True once gps_client_init() has run.
 bool gps_client_is_running(void);
 

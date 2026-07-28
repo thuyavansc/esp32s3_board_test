@@ -87,3 +87,47 @@ bool gps_backend_gnss_process_command(const char *args);
 // the exact moment one of those runs waits up to 2s for its turn before
 // giving up).
 bool gps_backend_gnss_send_raw_at(const char *cmd, char *out, size_t out_size, int timeout_ms);
+
+// ================================================================
+// SMS (Phase 2, doc 155/159) — ADDITIVE ONLY: neither of these touch
+// the proven bring-up/NMEA-parsing code above. Deliberately chosen
+// over extracting a full shared modem_at.c module (doc 155's original
+// Option A) — lower risk since nothing here can be build-tested before
+// real hardware; every existing GNSS code path is byte-for-byte
+// unchanged.
+// ================================================================
+
+// Registers a callback invoked from _gnss_read_task's OWN context every
+// time a complete UART1 line arrives that is NOT an NMEA sentence
+// (doesn't start with '$') — the only place this project can observe
+// unsolicited AT URCs, e.g. "+CMTI: \"SM\",3" (new SMS arrived).
+//
+// CRITICAL CONTRACT: the handler runs WHILE _gnss_read_task holds
+// s_uart_mutex (briefly, non-blockingly acquired every read-loop
+// iteration). It MUST return immediately — copy the line into a queue
+// and nothing else. It must NEVER call gps_backend_gnss_send_raw_at(),
+// gps_backend_gnss_send_sms(), or anything else that re-takes
+// s_uart_mutex: that mutex is a plain (non-recursive)
+// xSemaphoreCreateMutex(), so re-taking it from inside this callback
+// would deadlock the GNSS read task permanently. sms_client.c's own
+// handler only enqueues the raw line; a separate task/bg_worker job
+// processes the queue afterward (issuing its own AT+CMGR from a
+// DIFFERENT task, which takes the mutex fresh — safe).
+typedef void (*gnss_urc_handler_t)(const char *line);
+void gps_backend_gnss_register_urc_handler(gnss_urc_handler_t handler);
+
+// AT+CMGS SMS send — the "send AT+CMGS=\"<number>\", wait for the '>'
+// prompt, write the message body, terminate with Ctrl-Z (0x1A)"
+// handshake, which is a different shape than gps_backend_gnss_send_raw_at()'s
+// single-shot "send, wait for terminal OK/ERROR" and so needs its own
+// function rather than reusing that one. Mutex-protected the same as
+// every other UART1 access in this file — safe to call even while GNSS
+// fixes are streaming. Requires AT+CMGF=1 (text mode) to already be set
+// (sms_client.c's init does this once, via the raw-AT passthrough).
+// Blocks the calling task up to timeout_ms (a real SMS send over a live
+// cellular network commonly takes 5-15s) — callers on a small-stack/
+// serial task MUST route this through bg_worker_submit_fn(), same rule
+// as every other blocking call in this project. Sends ESC (cancels the
+// pending AT+CMGS) instead of leaving the modem stuck mid-prompt if the
+// '>' prompt never arrives.
+bool gps_backend_gnss_send_sms(const char *number, const char *message, int timeout_ms);

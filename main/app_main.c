@@ -138,9 +138,18 @@
 #include "backend/taximeter/diag.h"
 #include "backend/taximeter/rest_api_storage.h"
 #include "backend/gps/gps_client.h"
+#include "backend/network/cellular/cellular_ppp.h"
+#include "backend/network/hotspot/hotspot_nvs.h"
+#include "backend/network/hotspot/hotspot_ap.h"
+#include "backend/network/net_manager.h"
+#include "backend/network/sms/sms_client.h"
+#include "backend/network/sms/sms_commands.h"
 #include "display/display_driver.h"
 #include "display/touch_driver.h"
 #include "display/ui_main.h"
+#include "display/network/network_screen.h"
+#include "display/sms/sms_screen.h"
+#include "ui_components/confirm_dialog.h"
 #include "llm/llm_runner.h"
 
 static const char *TAG = "chipinfo";
@@ -488,7 +497,10 @@ static void _print_help(void) {
     printf("General:      help | ?  |  getinfo | info  |  getversion  |  reboot | restart\n");
     printf("Modem AT:     AT<command>  (raw passthrough, no wrapper — e.g. AT+CSQ, AT+COPS?)\n");
     printf("RAM:          ram info  |  ram test sram|psram|download|all\n");
-    printf("Network:      net info  |  net test\n");
+    printf("Network:      net info  |  net test  |  net uplink wifi|cellular|auto  |  net status\n");
+    printf("Cellular:     cell up  |  cell down  |  cell status  |  cell apn <apn>  |  cell ip\n");
+    printf("Hotspot:      hotspot on|off  |  hotspot status  |  hotspot ssid <name>  |  hotspot passwd <old> <new>\n");
+    printf("              hotspot clients  |  hotspot kick <mac>  |  hotspot reset-credentials <passcode>\n");
     printf("Diagnostics:  mem  |  store\n");
     printf("NVS:          nvs status  |  nvs company <id>  |  nvs product <name>\n");
     printf("Factory:      factory reset            (arms; passcode on the NEXT line)\n");
@@ -511,7 +523,11 @@ static void _print_help(void) {
     printf("Remote cfg:   config status  |  config check\n");
 #endif
 #if ENABLE_ADDITIONAL_WORK
-    printf("SMS:          sms <command text>   (recognized: 'sms reboot' / 'sms restart')\n");
+    printf("SMS (sim):    sms <command text>   (bench-test simulator, recognized: 'sms reboot'/'sms restart')\n");
+#endif
+#if ENABLE_SMS
+    printf("SMS (real):   smsc send <number> <message>  |  smsc list  |  smsc status  |  smsc help\n");
+    printf("              incoming SMS commands: TAXI#STATUS | TAXI#LOCATE | TAXI#NET | TAXI#REBOOT <passcode>\n");
 #endif
 #if ENABLE_LLM
     printf("LLM:          llm run <prompt>  |  llm run <steps> <prompt>  |  llm help\n");
@@ -529,6 +545,10 @@ static void serial_cmd_task(void *arg) {
     printf("\nType 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all'"
            " | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help'"
            " | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store'"
+           " | 'net uplink wifi|cellular|auto' | 'cell up|status' | 'hotspot on|off|status'"
+#if ENABLE_SMS
+           " | 'smsc send|list|status'"
+#endif
 #if ENABLE_OTA
            " | 'ota check' | 'ota status'"
 #endif
@@ -608,6 +628,14 @@ static void serial_cmd_task(void *arg) {
                     // handled — "sync now" / "sync status"
                 } else if (directions_client_process_command(line)) {
                     // handled — "directions test <lat1> <lon1> <lat2> <lon2>"
+                } else if (cellular_ppp_process_command(line)) {
+                    // handled — "cell up|down|status|apn|ip" (Phase 1, doc 155/158)
+                } else if (hotspot_ap_process_command(line)) {
+                    // handled — "hotspot on|off|status|ssid|passwd|clients|kick|reset-credentials" (Phase 1)
+#if ENABLE_SMS
+                } else if (sms_client_process_command(line)) {
+                    // handled — "smsc send|list|status" (Phase 2, doc 155/159) — NOT "sms", see config.h's comment
+#endif
                 } else if (diag_process_command(line)) {
                     // handled — "mem" / "store" / "diag help"
 #if ENABLE_OTA
@@ -657,6 +685,19 @@ static void lv_tick_task(void *arg) {
     }
 }
 
+#if ENABLE_PSRAM_TASK_STACKS
+// Phase 0 round 3 (config.h's ENABLE_PSRAM_TASK_STACKS comment has the
+// full safety reasoning) — lv_tick_task's entire body is
+// vTaskDelay()+lv_tick_inc(), never touches flash/NVS/SPIFFS, so its
+// stack is safe to move to PSRAM entirely, freeing its internal-SRAM
+// footprint. The TCB itself (StaticTask_t) must stay in internal SRAM
+// regardless (a hard FreeRTOS/ESP-IDF requirement — only the stack
+// buffer may be external) — it's tiny (~76 bytes), negligible.
+static StaticTask_t s_lv_tick_tcb;
+static StackType_t *s_lv_tick_stack = NULL;
+#define LV_TICK_STACK_BYTES 4096
+#endif
+
 // ═══════════════════════════════════════════════════════════════
 //  DASHBOARD — fed by the REAL meter (fare_calc.c), not a simulation.
 //  Zeros while no trip is running; live speed/distance/fare once "trip
@@ -672,7 +713,25 @@ static void lv_tick_task(void *arg) {
 //  which is what actually satisfies LVGL's single-thread-access
 //  requirement.
 // ═══════════════════════════════════════════════════════════════
+// Phase 2 (doc 155/159) — SMS REBOOT interlock's GUI courtesy. Backend
+// code (sms_commands.c) can never call LVGL directly (doc 116) — it
+// just sets a plain flag/message; THIS callback, which already runs on
+// the LVGL thread every 1s, is what actually shows the dialog. The
+// forced-timeout reboot itself is guaranteed independently by
+// sms_commands.c's own esp_timer, NOT by this poll — even if the
+// display were somehow stuck, the reboot still happens.
+static void _on_sms_reboot_confirm(void *user_data) {
+    (void)user_data;
+    sms_commands_reboot_now();
+}
+
 static void _dashboard_timer_cb(lv_timer_t *timer) {
+    if (sms_commands_reboot_ui_pending()) {
+        char msg[128];
+        sms_commands_reboot_ui_consume(msg, sizeof(msg));
+        confirm_dialog_show(lv_scr_act(), msg, _on_sms_reboot_confirm, NULL);
+    }
+
     if (trip_manager_is_trip_active()) {
         fare_calc_snapshot_t snap;
         fare_calc_get_snapshot(&snap);
@@ -704,6 +763,22 @@ void app_main(void) {
 
 #if NETWORK_NEEDED
     wifi_init_and_wait();
+
+    // ── PHASE 1 (doc 155/158): cellular + hotspot ──────────────────
+    // Deliberately placed HERE — right after WiFi-STA connects, BEFORE
+    // SNTP/provisioning/display/SPIFFS touch the heap further. This is
+    // the SAME "grab the largest contiguous block while the heap is
+    // least fragmented" discipline bg_worker_init() already follows
+    // (its own header comment states the identical principle) — the
+    // USB host driver (cellular_ppp_init()) needs a sizeable contiguous
+    // internal-SRAM/DMA block, and this is the earliest point after the
+    // event loop + esp_netif are actually available (both come from
+    // wifi_init_and_wait() above).
+    hotspot_nvs_init();
+    cellular_ppp_init();
+    hotspot_ap_init();
+    net_manager_init();
+
     // SNTP + one-time-per-device provisioning (network passcode + vehicle
     // lookup) run HERE, immediately after WiFi connects and BEFORE
     // display/touch/UI/SPIFFS touch the heap — the heap-hungry TLS
@@ -721,6 +796,13 @@ void app_main(void) {
     reference_data_init();
     gps_client_init();
     trip_manager_init();
+
+#if ENABLE_SMS
+    // Phase 2 (doc 155/159) — AFTER gps_client_init() (needs the GNSS
+    // backend's UART1 + mutex already up) and trip_manager_init() (the
+    // STATUS command reads live trip state).
+    sms_client_init();
+#endif
 
     // Automatic report — ONCE, at boot (unchanged behaviour from the
     // original diagnostic tool).
@@ -761,7 +843,21 @@ void app_main(void) {
     // headroom at 4096 on this larger, more heavily-flagged codebase.
     xTaskCreate(serial_cmd_task, "serial_cmd", 8192, NULL, 2, NULL);
 
+#if ENABLE_PSRAM_TASK_STACKS
+    // PSRAM-backed stack — see this task's own comment above + config.h's
+    // ENABLE_PSRAM_TASK_STACKS for why this specific task is safe to move.
+    s_lv_tick_stack = (StackType_t *)heap_caps_malloc(LV_TICK_STACK_BYTES, MALLOC_CAP_SPIRAM);
+    if (s_lv_tick_stack) {
+        xTaskCreateStaticPinnedToCore(lv_tick_task, "lv_tick", LV_TICK_STACK_BYTES, NULL, 2,
+                                       s_lv_tick_stack, &s_lv_tick_tcb, tskNO_AFFINITY);
+        ESP_LOGI(TAG, "lv_tick task: stack on PSRAM (%d bytes, internal SRAM freed)", LV_TICK_STACK_BYTES);
+    } else {
+        ESP_LOGW(TAG, "lv_tick: PSRAM stack alloc failed — falling back to internal SRAM");
+        xTaskCreate(lv_tick_task, "lv_tick", 2048, NULL, 2, NULL);
+    }
+#else
     xTaskCreate(lv_tick_task, "lv_tick", 2048, NULL, 2, NULL);
+#endif
 
     // lv_timer_create(), NOT xTaskCreate() — see _dashboard_timer_cb's
     // own comment above for why this matters (LVGL thread-safety).

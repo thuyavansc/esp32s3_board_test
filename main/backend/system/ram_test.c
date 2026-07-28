@@ -169,6 +169,17 @@ static void _psram_health_task(void *arg) {
     }
 }
 
+#if ENABLE_PSRAM_TASK_STACKS
+// Phase 0 round 3 — see config.h's ENABLE_PSRAM_TASK_STACKS comment for
+// the full safety reasoning. This task's whole body is
+// heap_caps_malloc()/memset()/free() (see _run_region_test() above) —
+// never touches flash/NVS/SPIFFS — so its stack is one of the two
+// audited-safe candidates in this codebase.
+static StaticTask_t s_psram_health_tcb;
+static StackType_t *s_psram_health_stack = NULL;
+#define PSRAM_HEALTH_STACK_BYTES 4096
+#endif
+
 void ram_test_init(void) {
     bool psram_ok = esp_psram_is_initialized();
     if (psram_ok) {
@@ -179,6 +190,16 @@ void ram_test_init(void) {
                       "physical board; 'ram test psram' will fail until this is fixed");
     }
 
+#if ENABLE_PSRAM_TASK_STACKS
+    s_psram_health_stack = (StackType_t *)heap_caps_malloc(PSRAM_HEALTH_STACK_BYTES, MALLOC_CAP_SPIRAM);
+    if (s_psram_health_stack) {
+        xTaskCreateStaticPinnedToCore(_psram_health_task, "psram_health", PSRAM_HEALTH_STACK_BYTES, NULL, 1,
+                                       s_psram_health_stack, &s_psram_health_tcb, tskNO_AFFINITY);
+        ESP_LOGI(TAG, "psram_health task: stack on PSRAM (%d bytes, internal SRAM freed)", PSRAM_HEALTH_STACK_BYTES);
+        return;
+    }
+    ESP_LOGW(TAG, "psram_health: PSRAM stack alloc failed — falling back to internal SRAM");
+#endif
     xTaskCreate(_psram_health_task, "psram_health", 4096, NULL, 1, NULL);
 }
 

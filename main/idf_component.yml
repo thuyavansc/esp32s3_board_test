@@ -2,3 +2,11 @@ dependencies:
   idf: ">=5.1"
   lvgl/lvgl: "^8.3"
   espressif/esp-dsp: "*"
+
+  # PHASE 1 (doc 155/158) — USB CDC modem driver: AT commands + PPP over
+  # native USB. The SAME component esp32s3_4g_hotspotWorkingClaude
+  # (docs 14/15) already proved working on this exact board/modem —
+  # version floors match that proven project's own idf_component.yml
+  # exactly, not guessed.
+  espressif/iot_usbh_modem: ">=2.1.0"
+  espressif/iot_usbh_cdc: ">=3.0.0"
