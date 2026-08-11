@@ -1,0 +1,67 @@
+I (72092) touch: Touch: (186,342) [direct px]
+I (74071) touch: Touch: (190,317) [direct px]
+I (74108) auth: ══════════════════════════════════════
+I (74109) auth: LOGIN — user=12345 mac=A4:CB:8F:D6:98:F8
+I (74115) api_client: → POST /taxis-api/api/Authentications/Login
+I (74120) api_client:   Heap before perform()       free=8127 KB | largest free block=8064 KB
+I (76047) esp-x509-crt-bundle: Certificate validated
+I (77754) api_client:   Heap after perform()        free=8110 KB | largest free block=7936 KB
+I (77755) api_client: ← HTTP 200 (POST /taxis-api/api/Authentications/Login)
+I (77852) auth:   Login response has no vehicle info — keeping vehicle_id=105 vehicle_type_id=4
+I (77853) auth: LOGIN OK ✓ — driver_id=130 vehicle_id=105 vehicle_type_id=4
+I (77860) api_client: → GET /taxis-api/api/Driver
+I (77862) api_client:   Heap before perform()       free=8126 KB | largest free block=8064 KB
+I (78740) esp-x509-crt-bundle: Certificate validated
+I (79590) api_client:   Heap after perform()        free=8109 KB | largest free block=7936 KB
+I (79591) api_client: ← HTTP 200 (GET /taxis-api/api/Driver)
+I (79600) auth:   Driver profile: Tuyavan 
+I (79602) auth: ══════════════════════════════════════
+
+I (79609) refdata: ══════════════════════════════════════
+I (79620) refdata: REFERENCE DATA — fetching all 4 categories
+I (79776) api_client: → GET /taxis-api/api/VehicleType/4/Tarifs/v2
+I (79777) api_client:   Heap before perform()       free=8128 KB | largest free block=8064 KB
+I (80612) esp-x509-crt-bundle: Certificate validated
+I (81701) api_client:   Heap after perform()        free=8110 KB | largest free block=7936 KB
+I (81702) api_client: ← HTTP 200 (GET /taxis-api/api/VehicleType/4/Tarifs/v2)
+I (81715) api_client:   Wrote 6361 bytes to /spiffs/store/ref/tariffs.json
+I (81717) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8133 KB, largest block=8064 KB
+I (81738) refdata: tariffs: 8 rows loaded
+I (81847) api_client: → GET /taxis-api/api/FixedFares
+I (81848) api_client:   Heap before perform()       free=8127 KB | largest free block=8064 KB
+I (82742) esp-x509-crt-bundle: Certificate validated
+I (83685) api_client:   Heap after perform()        free=8110 KB | largest free block=7936 KB
+I (83686) api_client: ← HTTP 200 (GET /taxis-api/api/FixedFares)
+I (83696) api_client:   Wrote 905 bytes to /spiffs/store/ref/fixed_rates.json
+I (83697) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8133 KB, largest block=8064 KB
+I (83709) refdata: fixed_rates: 2 rows loaded
+I (83818) api_client: → GET /taxis-api/api/SpecialFare
+I (83819) api_client:   Heap before perform()       free=8127 KB | largest free block=8064 KB
+I (84693) esp-x509-crt-bundle: Certificate validated
+I (85691) api_client:   Heap after perform()        free=8110 KB | largest free block=7936 KB
+I (85692) api_client: ← HTTP 200 (GET /taxis-api/api/SpecialFare)
+I (85701) api_client:   Wrote 1930 bytes to /spiffs/store/ref/special_fares.json
+I (85703) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8133 KB, largest block=8064 KB
+I (85718) refdata: special_fares: 9 rows loaded
+I (86117) api_client: → GET /devices-api/api/PublicHolidays
+I (86118) api_client:   Heap before perform()       free=8127 KB | largest free block=8064 KB
+I (87005) esp-x509-crt-bundle: Certificate validated
+I (89767) api_client:   Heap after perform()        free=8109 KB | largest free block=7936 KB
+I (89767) api_client: ← HTTP 200 (GET /devices-api/api/PublicHolidays)
+I (89778) api_client:   Wrote 75459 bytes to /spiffs/store/ref/public_holidays.json
+I (89869) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8132 KB, largest block=8064 KB
+I (90145) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (90145) refdata: REFERENCE DATA — all 4 categories OK ✓ (fresh)
+I (90150) refdata: ══════════════════════════════════════
+
+I (90162) bgworker: Job finished: OK
+I (90172) ui: Login screen: LOGIN SUCCESSFUL -> meter
+I (90873) ui: Screen: 0
+I (91196) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2311 speed=0.0km/h sats=7 hdop=2.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (96705) touch: Touch: (168,462) [direct px]
+I (96737) ui: NAV -> TRIPS (1)
+I (96738) ui: Screen: 1
+I (96743) tripsync: ══════════════════════════════════════
+I (96744) tripsync: GET TRIP HISTORY — page 1, pageSize 10, search=Dropedoff/Status
+I (96753) api_client: → POST /taxis-api/api/Job/GetAllBySearch
+I (96758) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB

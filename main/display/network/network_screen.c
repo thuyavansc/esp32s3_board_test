@@ -115,7 +115,10 @@ static void _refresh_uplink_section(void) {
 
 static void _refresh_cellular_section(void) {
     if (!s_lbl_cell_state || !s_cell_status_valid) return;
-    char buf[64];
+    // 80, not 64: "APN: " (5) + cellular_status_t.apn's own max (63 chars +
+    // NUL, char apn[64]) = up to 69 bytes — 64 was too tight and tripped
+    // -Werror=format-truncation (this build treats it as a hard error).
+    char buf[80];
 
     snprintf(buf, sizeof(buf), "USB: %s   PPP: %s",
              s_cell_status.usb_installed ? "installed" : "not found",
@@ -150,7 +153,10 @@ static void _refresh_hotspot_section(void) {
     lv_label_set_text(s_lbl_hotspot_state, running ? "Status: ON" : "Status: OFF");
     lv_obj_set_style_text_color(s_lbl_hotspot_state, running ? C_SUCCESS : C_TEXT2, 0);
 
-    char buf[48];
+    // 56, not 48: "SSID: " (6) + cfg.ssid's own max (32 chars, char ssid[33])
+    // + " (hidden)" (9) + NUL = exactly 48 — zero margin tripped the same
+    // -Werror=format-truncation class of error as the APN buffer above.
+    char buf[56];
     snprintf(buf, sizeof(buf), "SSID: %s%s", cfg.ssid, cfg.hidden ? " (hidden)" : "");
     lv_label_set_text(s_lbl_hotspot_ssid, buf);
 
@@ -349,7 +355,7 @@ static void _kick_btn_event(lv_event_t *e) {
     snprintf(msg, sizeof(msg), "Disconnect %02X:%02X:%02X:%02X:%02X:%02X ?",
              s_kick_pending_mac[0], s_kick_pending_mac[1], s_kick_pending_mac[2],
              s_kick_pending_mac[3], s_kick_pending_mac[4], s_kick_pending_mac[5]);
-    confirm_dialog_show(s_clients_screen, msg, _on_kick_confirm, NULL);
+    confirm_dialog_show(s_clients_screen, msg, _on_kick_confirm, NULL, NULL);
 }
 
 static void _refresh_clients_list(void) {

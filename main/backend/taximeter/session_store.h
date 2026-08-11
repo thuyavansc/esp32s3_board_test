@@ -81,6 +81,28 @@ int64_t session_store_get_active_server_job_id(void);    // <=0 = not yet synced
 // port rule for the local-id mechanism).
 int32_t session_store_next_local_trip_id(void);
 
+// ── Login screen (doc 179 Phase 2) ──────────────────────────────
+// D2(c): "remember me" stores the USERNAME only, never the password —
+// on boot, login_screen.c skips straight to the meter only if
+// session_store_get_remember_me() is true AND
+// session_store_is_access_token_valid() is still true (the access
+// token itself, not the password, is what makes that safe: an expired
+// token still requires typing the password again, same as Android's
+// own offline-login fallback needing the real password to compare
+// against). NOT a substitute for a real "remember password" — this
+// device does not keep a copy of it.
+void session_store_set_remember_me(bool enable, const char *username);
+bool session_store_get_remember_me(char *out_username, size_t out_size);   // returns enabled/disabled, fills username if enabled
+
+// D1(c): login gate mode. A PRODUCTION build (config.h's
+// BUILD_IS_PRODUCTION) is ALWAYS hard-gated — no login, no app, no
+// override, ever. A DEV build defaults to SOFT (a "Skip (dev)" link is
+// visible on the login screen) but can be switched to HARD and back at
+// ANY time, at runtime, with no rebuild — via this setter or the
+// "login gate hard|soft" serial command (login_screen.c).
+bool session_store_get_login_gate_hard(void);
+void session_store_set_login_gate_hard(bool hard);   // no-op + warning on a production build
+
 // Wipes every session field back to defaults (logout). Does NOT touch
 // SETUP_VEHICLE_NO provisioning — that's per-device, not per-driver-session.
 void session_store_clear(void);

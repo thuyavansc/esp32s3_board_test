@@ -1,0 +1,683 @@
+[gui] Connected to COM9 @ 115200 baud
+e = STAGE_RUNNING
+I (6288Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x18 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f3c
+entry 0x403c8920
+I (27) boot: ESP-IDF 5.4.e = STAGE_RUNNING
+I (6288) modem_board: Modem is running
+I (24888) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs)
+I (24888) trips_api: ══════════════════════════════════════
+I (24897) trips_api: TRIPS REST API + JSON Storage Init
+I (24902) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (24909) trips_api:   Default trip ID: 12772
+I (24914) trips_api:   Storage backend: 2
+gps infoI (25017) gps: ══════════════════════════════════════
+> I (25271) trips_api: Created storage directory: /spiffs/store
+I (25271) trips_api: SPIFFS partition: 4581 KB total | 89 KB used | 4492 KB free
+I (25273) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (25279) trips_api: TRIPS API Storage — READY ✓
+I (25284) trips_api: Type 'api help' for available commands.
+I (25289) trips_api: ══════════════════════════════════════
+I (25402) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8217 KB, largest block=8064 KB
+I (25416) refdata: Reference data module ready (call 'ref fetch' or go on-duty to load data)
+I (25435) gps_gnss: ══════════════════════════════════════
+I (25447) gps_gnss: GNSS (A7670E) Init
+I (25450) gps_gnss:   A-GPS: disabled (no SIM yet — see doc 140)
+I (25456) gps_gnss: ══════════════════════════════════════
+I (25469) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (25475) gps_gnss: AT handshake...
+I (25481) gps_gnss:   AT -> OK
+I (25485) gps_gnss: Modem responding ✓
+I (25489) gps_gnss: A-GPS disabled (ENABLE_AGPS=0 in config.h) — plain GNSS only.
+I (25496) gps_gnss:   Insert a data-enabled SIM, set ENABLE_AGPS=1, rebuild — see doc 140.
+I (25504) gps_neo6m: ══════════════════════════════════════
+I (25509) gps_gnss:   AT+CGNSSPWR=1 -> OK
+I (25520) gps_neo6m: GPS NEO-6M Module Init
+I (25524) gps_neo6m:   UART:       UART2
+I (25528) gps_neo6m:   TX Pin:     GPIO1
+I (25531) gps_neo6m:   RX Pin:     GPIO2
+I (25535) gps_neo6m:   Baud:       9600
+I (25539) gps_neo6m: GPS UART init: TX=GPIO1 RX=GPIO2 9600 baud ✓
+I (25544) gps_neo6m: GPS read task STARTED — UART2 @ 9600 baud
+I (25550) gps_neo6m: NEO-6M may take 1-2 minutes for first fix (cold start)
+I (25557) gps_neo6m: Use: gps neo6m info | once | start | every <sec> [cnt]
+I (25564) gps_neo6m: GPS Module — READY ✓
+I (25568) gps_neo6m: Commands: gps neo6m on|off|info|start|stop|once|every <sec> [cnt]
+I (25575) gps_neo6m: ══════════════════════════════════════
+I (25606) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (25614) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+I (25623) chipinfo: ########################################
+I (25628) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (25634) chipinfo: ########################################
+I (25640) version: ======================================
+I (25644) version: FIRMWARE VERSION
+I (25648) version: --------------------------------------
+I (25653) version:   Project:   esp32s3_board
+I (25657) version:   Version:   26.07.23 (code 1)
+I (25661) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (25674) version:   Running from partition: factory
+I (25679) chipinfo: ======================================
+I (25684) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (25689) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (25697) chipinfo: --------------------------------------
+I (25703) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (25707) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (25713) chipinfo:   Crystal is 40 MHz
+I (25716) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (25720) chipinfo: ======================================
+I (25726) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (25732) chipinfo: --------------------------------------
+I (25738) chipinfo:   Model:       ESP32-S3
+I (25741) chipinfo:   Cores:       2
+I (25744) chipinfo:   Revision:    v0.2
+I (25748) chipinfo:   Features:    WiFi BLE External-Flash
+I (25753) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (25758) chipinfo:   IDF version: 5.4.0
+I (25762) chipinfo: ======================================
+I (25767) chipinfo: FLASH INFO  (live-probed)
+I (25771) chipinfo: --------------------------------------
+I (25776) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (25783) chipinfo:   JEDEC ID:        0x852018
+I (25787) chipinfo: ======================================
+I (25792) chipinfo: RAM / HEAP INFO  (live)
+I (25796) chipinfo: --------------------------------------
+I (25802) chipinfo:   Free heap now (all capabilities): 8401104 bytes | 8204.2 KB (8.01 MB)
+I (25810) chipinfo:   Minimum ever free:                8387272 bytes | 8190.7 KB (8.00 MB)
+I (25818) chipinfo:   --------------------------------------
+I (25823) chipinfo:   PSRAM initialized: YES
+I (25824) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (25831) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (25839) chipinfo:   SRAM  total:          198159 bytes | 193.5 KB (0.19 MB)
+I (25846) chipinfo:   SRAM  free now:       29319 bytes | 28.6 KB (0.03 MB)
+I (25853) chipinfo:   SRAM  min free ever:  17307 bytes | 16.9 KB (0.02 MB)
+I (25859) chipinfo:   SRAM  largest block:  17408 bytes | 17.0 KB (0.02 MB)
+I (25866) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (25873) chipinfo:   PSRAM free now:          8375048 bytes | 8178.8 KB (7.99 MB)
+I (25880) chipinfo:   PSRAM min free ever:     8373188 bytes | 8176.9 KB (7.99 MB)
+I (25888) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (25895) chipinfo: ======================================
+I (25900) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (25907) chipinfo: --------------------------------------
+I (25912) chipinfo:   Name       Type   SubType   Offset     Size
+I (25919) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (25927) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (25935) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (25943) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (25951) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (25960) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (25968) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (25977) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (25985) chipinfo: ======================================
+I (25990) chipinfo: NVS INFO  (live)
+I (25993) chipinfo: --------------------------------------
+I (25999) chipinfo:   Used entries:  214
+I (26002) chipinfo:   Free entries:  542
+I (26006) chipinfo:   Total entries: 756
+I (26010) chipinfo: ======================================
+I (26015) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (26021) chipinfo: --------------------------------------
+I (26026) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (26032) chipinfo:   Used:  91615 bytes | 89.5 KB (0.09 MB)
+I (26037) chipinfo:   Free:  4599826 bytes | 4492.0 KB (4.39 MB)
+I (26043) chipinfo: ########################################
+I (26048) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (26054) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (26063) display: SD_CS (TF slot) → GPIO38 HIGH (disabled)
+I (26068) display: Backlight PWM init — GPIO6, 5kHz, 10-bit
+I (26074) display: Backlight ON (GPIO6, PWM 100%)
+I (26078) display: SPI: MOSI=42 SCLK=41 CS=39 DC=40 RST=45
+I (26084) gpio: GPIO[40]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (26092) gpio: GPIO[45]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (26137) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (26137) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (26139) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (26440) display: ST7796S init complete — 320x480 RGB565
+I (26440) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (26444) display: LVGL: 320x480 | Buf: 14 rows (8960 bytes) single-buf
+I (26447) display: DISPLAY — READY ✓
+I (26451) touch: TOUCH INIT — FT6336U via I2C
+I (26456) touch: I2C init: SDA=15 SCL=7
+I (26459) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (26527) touch: FT6336U init — addr: 0x38
+I (26527) touch: Touch input registered with LVGL ✓
+W (26527) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (26531) touch: TOUCH — READY ✓
+I (26534) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (26906) net_ui: Network screen ready
+I (26914) sms_ui: SMS screen ready
+I (26945) ui: UI — READY (4 screens | teal palette | scroll fix | test menu)
+I (26945) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (26947) additional_work: Additional work module ready (try: "sms reboot")
+I (26954) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (26960) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (26968) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (26975) chipinfo: READY — Touch UI Active ✓
+I (29960) ram_test: ══════════════════════════════════════
+I (29961) ram_test: PSRAM periodic health-check
+I (29965) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (29972) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+gps infoI (30022) gps: ══════════════════════════════════════
+> I (30140) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (30141) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (30149) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (30158) ram_test: ══════════════════════════════════════
+I (31071) gps_gnss: GNSS: no fix | reads=40 [ACTIVE] (idle — waiting for satellites)
+I (31114) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (35029) gps: ══════════════════════════════════════
+> gps infoI (40036) gps: ══════════════════════════════════════
+> gps infoI (45043) gps: ══════════════════════════════════════
+> gps infoI (50100) gps: ══════════════════════════════════════
+> gps infoI (55107) gps: ══════════════════════════════════════
+> net info
+> net infoI (57464) net_diag: ══════════════════════════════════════
+I (57465) net_diag: NETWORK STATUS
+I (57469) net_diag: ──────────────────────────────────────
+I (57480) net_diag:   Device MAC (STA):  A4:CB:8F:D6:98:F8
+I (57486) net_diag:   Connected SSID:    Mobitel 4G-489E
+I (57491) net_diag:   AP BSSID:          1C:13:86:D6:48:9E
+I (57496) net_diag:   RSSI:              -65 dBm
+I (57500) net_diag:   Channel:           9
+I (57504) net_diag:   Local IP:          192.168.8.140
+I (57509) net_diag:   Netmask:           255.255.255.0
+I (57514) net_diag:   Gateway:           192.168.8.1
+I (57518) net_diag:   DNS server:        10.4.4.12
+I (57523) net_diag: ══════════════════════════════════════
+> gps infoI (60135) gps: ══════════════════════════════════════
+> I (61072) gps_gnss: GNSS: no fix | reads=283 [ACTIVE] (idle — waiting for satellites)
+I (61144) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (65142) gps: ══════════════════════════════════════
+> ATI
+> ATII (66899) chipinfo: AT> ATI
+ATI
+Manufacturer: INCORPORATED
+Model: A7670E-FASE
+Revision: A7670M7_V1.11.1
+IMEI: 862596081934709
++GCAP: +CGSM,+FCLASS,+DS
+OK
+> AT+CGMI
+> AT+CGMII (68927) chipinfo: AT> AT+CGMI
+AT+CGMI
+INCORPORATED
+OK
+> gps infoI (70133) gps: ══════════════════════════════════════
+> AT+CGMM
+> AT+CGMMI (71540) chipinfo: AT> AT+CGMM
+AT+CGMM
+A7670E-FASE
+OK
+> AT+CGMR
+> AT+CGMRI (73246) chipinfo: AT> AT+CGMR
+AT+CGMR
++CGMR: A011B05A7670M7_F
+OK
+> AT+CGSN
+> AT+CGSNI (74603) chipinfo: AT> AT+CGSN
+AT+CGSN
+862596081934709
+OK
+> gps infoI (75159) gps: ══════════════════════════════════════
+> AT+CPIN?
+> AT+CPIN?I (76316) chipinfo: AT> AT+CPIN?
+AT+CPIN?
++CPIN: READY
+OK
+> gps infoI (80172) gps: ══════════════════════════════════════
+> AT+CSQ
+> AT+CSQI (80329) chipinfo: AT> AT+CSQ
+AT+CSQ
++CSQ: 17,99
+OK
+> AT+CREG?
+> AT+CREG?I (81684) chipinfo: AT> AT+CREG?
+AT+CREG?
++CREG: 0,1
+OK
+> AT+CEREG?
+> AT+CEREG?I (83240) chipinfo: AT> AT+CEREG?
+AT+CEREG?
++CEREG: 0,1
+OK
+> AT+COPS?
+> AT+COPS?I (84946) chipinfo: AT> AT+COPS?
+AT+COPS?
++COPS: 0,2,"41308",7
+OK
+> gps infoI (85153) gps: ══════════════════════════════════════
+> AT+CIMI
+> AT+CIMII (89110) chipinfo: AT> AT+CIMI
+AT+CIMI
+413082325153823
+OK
+> gps infoI (90166) gps: ══════════════════════════════════════
+> I (91072) gps_gnss: GNSS: no fix | reads=518 [ACTIVE] (idle — waiting for satellites)
+I (91174) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+> AT+CGATT?
+AT+CGATT?I (94223) chipinfo: AT> AT+CGATT?
+AT+CGATT?
++CGATT: 1
+OK
+> gps infoI (95179) gps: ══════════════════════════════════════
+> AT+CGDCONT?
+> AT+CGDCONT?I (95736) chipinfo: AT> AT+CGDCONT?
+AT+CGDCONT?
++CGDCONT: 1,"IP","default","",0,0,,,,
+OK
+> AT+CGPADDR=1
+> AT+CGPADDR=1I (97095) chipinfo: AT> AT+CGPADDR=1
+AT+CGPADDR=1
++CGPADDR: 1,10.168.173.177
+OK
+> gps infoI (100203) gps: ══════════════════════════════════════
+> AT+CGACT?
+> AT+CGACT?I (100361) chipinfo: AT> AT+CGACT?
+AT+CGACT?
++CGACT: 1,1
+OK
+> gps infoI (105217) gps: ══════════════════════════════════════
+> AT+CNUM
+> AT+CNUMI (106925) chipinfo: AT> AT+CNUM
+AT+CNUM
+OK
+> gps infoI (110230) gps: ══════════════════════════════════════
+> AT+CMGL="ALL"
+> AT+CMGL="ALL"I (110438) chipinfo: AT> AT+CMGL="ALL"
+AT+CMGL="ALL"
++CMGL: 1,"REC READ","8<:3=7<86","","20/09/05,16:22:15+20"
+AC Bal 101.00 Dial *344# All bal
++CMGL: 2,"REC READ","8<:257884","","20/09/05,19:05:04+20"
+Offer activated. 2 GB + 30 H-Anynet Mins & 30 anynet SMS will be credited at 12 midnight. Offer,monthly for 6 months on reload of Rs10
++CMGL: 3,"REC READ","8<:257884","","20/09/05,19:05:04+20"
+0 or more
++CMGL: 4,"REC READ","1395=0","","20/09/05,19:05:04+20"
+SIM activated : 788178812, under NIC/Passport: 961250714. Thank you for using this service
+> gps infoI (115237) gps: ══════════════════════════════════════
+> gps infoI (120245) gps: ══════════════════════════════════════
+> I (121073) gps_gnss: GNSS: no fix | reads=753 [ACTIVE] (idle — waiting for satellites)
+I (121204) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+> AT+CPMS?
+AT+CPMS?I (124903) chipinfo: AT> AT+CPMS?
+AT+CPMS?
++CPMS: "SM",29,30,"SM",29,30,"SM",29,30
+OK
+> gps infoI (125223) gps: ══════════════════════════════════════
+> AT+CNUM
+> AT+CNUMI (127081) chipinfo: AT> AT+CNUM
+AT+CNUM
+OK
+> gps infoI (130236) gps: ══════════════════════════════════════
+> AT+CSCS="GSM"
+> AT+CSCS="GSM"I (130494) chipinfo: AT> AT+CSCS="GSM"
+AT+CSCS="GSM"
+OK
+> AT+CMGL="ALL"
+> AT+CMGL="ALL"I (132861) chipinfo: AT> AT+CMGL="ALL"
+AT+CMGL="ALL"
++CMGL: 1,"REC READ","8<:3=7<86","","20/09/05,16:22:15+20"
+AC Bal 101.00 Dial *344# All bal
++CMGL: 2,"REC READ","8<:257884","","20/09/05,19:05:04+20"
+Offer activated. 2 GB + 30 H-Anynet Mins & 30 anynet SMS will be credited at 12 midnight. Offer,monthly for 6 months on reload of Rs10
++CMGL: 3,"REC READ","8<:257884","","20/09/05,19:05:04+20"
+0 or more
++CMGL: 4,"REC READ","1395=0","","20/09/05,19:05:04+20"
+SIM activated : 788178812, under NIC/Passport: 961250714. Thank you for using this service
+> gps infoI (135259) gps: ══════════════════════════════════════
+> AT+CGNSSPWR?
+> AT+CGNSSPWR?I (138367) chipinfo: AT> AT+CGNSSPWR?
+AT+CGNSSPWR?
++CGNSSPWR: 1,0,1,0
+OK
+> gps infoI (140274) gps: ══════════════════════════════════════
+> gps infoI (145282) gps: ══════════════════════════════════════
+> gps infoI (150290) gps: ══════════════════════════════════════
+> I (151074) gps_gnss: GNSS: no fix | reads=988 [ACTIVE] (idle — waiting for satellites)
+I (151234) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (155298) gps: ══════════════════════════════════════
+> ram info
+> gps infoI (160306) gps: ══════════════════════════════════════
+> ram infoI (160364) ram_test: ======================================
+I (160370) ram_test: RAM INFO (live — no allocation)
+I (160375) ram_test: --------------------------------------
+I (160380) ram_test:   PSRAM initialized: YES
+I (160384) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (160391) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=198159 (193.5 KB) free=16583 (16.2 KB) min-free=14727 (14.4 KB) largest-block=7680 (7.5 KB)
+I (160404) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 (8.00 MB) free=8366628 (7.98 MB) min-free=7318048 (6.98 MB) largest-block=8257536 (7.88 MB)
+> gps infoI (165318) gps: ══════════════════════════════════════
+> gps infoI (170326) gps: ══════════════════════════════════════
+> mem
+> memI (170834) diag: ══════════════════════════════════════
+I (170835) diag: MEMORY (RAM)
+I (170838) diag: ──────────────────────────────────────
+I (170849) diag:   INTERNAL SRAM  ← the pool that actually limits this board
+I (170856) diag:     Total:                   193 KB
+I (170861) diag:     Free NOW:                 16 KB
+I (170866) diag:     Lowest EVER:              14 KB  ← how close we've come to running out
+I (170874) diag:     Largest free block:        7 KB  ← a big single alloc can't exceed this,
+I (170882) diag:                                      no matter how much total is free
+I (170890) diag:     Largest DMA block:         7 KB  (display draw buffers, WiFi, USB host)
+I (170898) diag:   PSRAM  (plentiful — but CANNOT serve DMA or <16KB allocations)
+I (170905) diag:     Total:                  8192 KB
+I (170910) diag:     Free NOW:               8170 KB
+I (170915) diag:     Largest free block:     8064 KB
+I (170920) diag:   LVGL POOL  (static, carved out of internal SRAM above)
+I (170926) diag:     Pool size:               112 KB  (= CONFIG_LV_MEM_SIZE_KILOBYTES)
+I (170934) diag:     Used now:                 72 KB  (65%)
+I (170939) diag:     PEAK used since boot:     72 KB  ← size the pool from THIS, + headroom
+I (170947) diag:     Largest free in pool:     39 KB  | fragmentation 0%
+I (170954) diag:     (visit every screen + run a trip before trusting PEAK — it only
+I (170961) diag:      reflects what the UI has actually been asked to draw so far)
+I (170969) diag: ──────────────────────────────────────
+W (170980) diag:   ⚠ Internal SRAM under 20KB — an HTTPS/TLS call may fail right now
+W (170988) diag:     (mbedTLS is on PSRAM here, but WiFi/lwIP/task stacks still need internal).
+I (170996) diag: ══════════════════════════════════════
+> gps infoI (175358) gps: ══════════════════════════════════════
+> store
+> storeI (177466) diag: ══════════════════════════════════════
+I (177467) diag: STORAGE — what's actually stored
+I (177472) diag: ──────────────────────────────────────
+I (177483) diag:   SPIFFS partition: 4581 KB total | 89 KB used | 4492 KB free
+    trips/trip_1.json                             386 bytes
+    ref/tariffs.json                             6361 bytes
+    ref/fixed_rates.json                          905 bytes
+    ref/special_fares.json                       1930 bytes
+    ref/public_holidays.json                    75459 bytes
+    trips/trip_2.json                             388 bytes
+    trips_12276.json                             3120 bytes
+  trip-fetch cache (/store):   7 file(s), 88549 bytes total
+    tariffs.json                                 6361 bytes
+    fixed_rates.json                              905 bytes
+    special_fares.json                           1930 bytes
+    public_holidays.json                        75459 bytes
+  reference data (/store/ref): 4 file(s), 84655 bytes total
+    trip_1.json                                   386 bytes
+    trip_2.json                                   388 bytes
+  local trips (/store/trips):  2 file(s), 774 bytes total
+I (178092) diag:   (use 'ref list tariffs|fixedrates|specialfares|holidays' to see PARSED reference
+I (178095) diag:    data row-by-row, and 'trip info' for the currently active trip's live totals)
+I (178104) diag: ──────────────────────────────────────
+I (178115) session: ══════════════════════════════════════
+I (178127) session: SESSION STORE (NVS namespace 'session')
+I (178132) session: ──────────────────────────────────────
+I (178144) session:   Access token:     SET (621 chars) — VALID
+I (178150) session:   Refresh token:    SET (68 chars)
+I (178155) session:   Access expiry:    1785087504 (epoch)
+I (178160) session:   Refresh expiry:   1785260304 (epoch)
+I (178165) session:   Driver:           id=130 no=12345 name=Tuyavan 
+I (178172) session:   Vehicle:          id=105 type_id=4 no=Tu001
+I (178177) session:   Network:          id=2 company=Softclient
+I (178183) session:   Tariff type:      Maxi
+I (178187) session:   Duty status:      ON DUTY
+I (178191) session:   Active trip:      local_id=2 server_job_id=0 (NOT YET SYNCED)
+I (178199) session:   Next local trip#: 3
+I (178202) session: ══════════════════════════════════════
+I (178214) diag: ══════════════════════════════════════
+> gps infoI (180376) gps: ══════════════════════════════════════
+> I (181075) gps_gnss: GNSS: no fix | reads=1231 [ACTIVE] (idle — waiting for satellites)
+I (181264) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (185384) gps: ══════════════════════════════════════
+> gps infoI (190392) gps: ══════════════════════════════════════
+> gps infoI (195400) gps: ══════════════════════════════════════
+> gps infoI (200408) gps: ══════════════════════════════════════
+> gps infoI (205416) gps: ══════════════════════════════════════
+> gps infoI (210424) gps: ══════════════════════════════════════
+> I (211076) gps_gnss: GNSS: no fix | reads=1474 [ACTIVE] (idle — waiting for satellites)
+I (211294) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (215432) gps: ══════════════════════════════════════
+> gps infoI (220440) gps: ══════════════════════════════════════
+> gps infoI (225448) gps: ══════════════════════════════════════
+> gps infoI (230456) gps: ══════════════════════════════════════
+> gps infoI (235464) gps: ══════════════════════════════════════
+> gps infoI (240472) gps: ══════════════════════════════════════
+> I (241077) gps_gnss: GNSS: no fix | reads=1717 [ACTIVE] (idle — waiting for satellites)
+I (241324) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+> api get 12276
+api get 12276I (244980) trips_api: ▶ Command: FETCH trip ID 12276
+I (244980) bgworker: Running job: TRIP FETCH #12276
+I (244981) trips_api: ══════════════════════════════════════
+I (244981) trips_api: api get: queued on background worker — watch below for progress
+I (244992) trips_api: FETCH #1 → Trip ID: 12276
+> I (245004) trips_api:   URL: https://mytaxis.softclient.com.au/taxis-api/api/Trips/12276
+I (245012) trips_api:   Storage backend: SPIFFS
+I (245016) trips_api: ──────────────────────────────────────
+I (245028) trips_api:   Heap before HTTP client init free=8185 KB | largest free block=8064 KB
+I (245053) trips_api: Storage file opened: /spiffs/store/trips_12276.json
+W (245054) trips_api:   Authorization: NOT sent (TRIPS_API_SEND_AUTH=0 in config.h)
+I (245056) trips_api:   Heap right before perform() free=8179 KB | largest free block=8064 KB
+gps infoI (245514) gps: ══════════════════════════════════════
+> gps infoI (250522) gps: ══════════════════════════════════════
+> gps infoI (255480) gps: ══════════════════════════════════════
+> api info
+> api infoI (258488) trips_api: ▶ Command: SHOW INFO
+I (258488) trips_api: ══════════════════════════════════════
+I (258494) trips_api: STORAGE INFO
+I (258497) trips_api: ──────────────────────────────────────
+I (258509) trips_api:   Backend:       SPIFFS (#2)
+I (258513) trips_api:   Mount:         /spiffs
+I (258518) trips_api:   SPIFFS:        4581 KB total | 86 KB used | 4495 KB free
+I (258525) trips_api:   Storage dir:   /store
+I (258529) trips_api:   Buffer size:   4096 bytes
+I (258533) trips_api:   HTTP timeout:  30000 ms
+I (258537) trips_api:   Permanence:    PERMANENT (Flash/SD — survives power-off)
+I (258545) trips_api: ──────────────────────────────────────
+I (258557) trips_api:   Fetch stats:   1 total | 0 OK | 0 failed
+I (258562) trips_api: ══════════════════════════════════════
+> E (259065) esp-tls: couldn't get hostname for :mytaxis.softclient.com.au: getaddrinfo() returns 202, addrinfo=0x0
+E (259065) esp-tls: Failed to open new connection
+E (259068) transport_base: Failed to open a new connection
+E (259074) HTTP_CLIENT: Connection failed, sock < 0
+E (259078) trips_api: HTTP error event
+I (259082) trips_api:   Heap right after perform() free=8179 KB | largest free block=8064 KB
+E (259090) trips_api: ✗ HTTP FAILED: ESP_ERR_HTTP_CONNECT (err=0x7002)
+E (259096) trips_api:   ESP_ERR_HTTP_CONNECT with no status code usually means the TLS
+E (259104) trips_api:   handshake itself failed (see esp-tls-mbedtls errors above, if any)
+E (259112) trips_api:   rather than the server rejecting the request. Compare the 'largest
+E (259120) trips_api:   free block' logged above against a healthy run to confirm.
+I (259128) trips_api: File saved: /spiffs/store/trips_12276.json | Size: 0 bytes (0.0 KB)
+I (259135) trips_api: ─────────────── Storage Summary ───────────────
+I (259146) trips_api:   Backend: SPIFFS
+I (259150) trips_api:   Total written: 0 bytes (0.0 KB)
+I (259155) trips_api:   Location: /spiffs/store/trips_12276.json
+I (259161) trips_api:   Permanence: PERMANENT (survives power-off) ✓
+I (259167) trips_api: ────────────────────────────────────────────────
+W (259182) trips_api: Removed incomplete file after failed fetch: /spiffs/store/trips_12276.json
+I (259190) trips_api: Stats: 1 fetches | 0 OK | 1 failed
+I (259195) trips_api: ══════════════════════════════════════
+I (259207) trips_api: HTTP disconnected
+I (259211) bgworker: Job finished: FAILED
+gps infoI (260532) gps: ══════════════════════════════════════
+> gps infoI (265540) gps: ══════════════════════════════════════
+> net test
+> net testI (269698) net_diag: ══════════════════════════════════════
+I (269700) net_diag: INTERNET CONNECTIVITY TEST
+I (269704) net_diag:   GET https://www.google.com/generate_204
+I (269709) net_diag:   (Same trick phones/laptops use to tell "connected to WiFi"
+I (269717) net_diag:    apart from "WiFi actually reaches the internet" — a real HTTPS
+I (269724) net_diag:    request to a public endpoint, not just a link/ARP check.)
+I (269732) net_diag: ──────────────────────────────────────
+I (271077) gps_gnss: GNSS: no fix | reads=1952 [ACTIVE] (idle — waiting for satellites)
+I (271354) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+> net info
+E (283745) esp-tls: couldn't get hostname for :www.google.com: getaddrinfo() returns 202, addrinfo=0x0
+E (283745) esp-tls: Failed to open new connection
+E (283747) transport_base: Failed to open a new connection
+E (283753) HTTP_CLIENT: Connection failed, sock < 0
+E (283757) net_diag:   Result:            ✗ NO INTERNET (ESP_ERR_HTTP_CONNECT)
+E (283764) net_diag:   DNS failed, TCP connect failed, or TLS handshake failed — run
+E (283772) net_diag:   'net info' first to confirm WiFi is even associated with a valid
+E (283780) net_diag:   IP before assuming this is a deeper problem.
+I (283786) net_diag: ══════════════════════════════════════
+> gps infoI (283798) gps: ══════════════════════════════════════
+> gps infoI (283867) gps: ══════════════════════════════════════
+> gps infoI (283936) gps: ══════════════════════════════════════
+> net infoI (284004) net_diag: ══════════════════════════════════════
+I (284017) net_diag: NETWORK STATUS
+I (284020) net_diag: ──────────────────────────────────────
+I (284032) net_diag:   Device MAC (STA):  A4:CB:8F:D6:98:F8
+I (284038) net_diag:   Connected SSID:    Mobitel 4G-489E
+I (284042) net_diag:   AP BSSID:          1C:13:86:D6:48:9E
+I (284048) net_diag:   RSSI:              -65 dBm
+I (284052) net_diag:   Channel:           9
+I (284056) net_diag:   Local IP:          192.168.8.140
+I (284061) net_diag:   Netmask:           255.255.255.0
+I (284066) net_diag:   Gateway:           192.168.8.1
+I (284071) net_diag:   DNS server:        10.4.4.12
+I (284075) net_diag: ══════════════════════════════════════
+> gps infoI (285537) gps: ══════════════════════════════════════
+> gps infoI (290545) gps: ══════════════════════════════════════
+> gps infoI (295553) gps: ══════════════════════════════════════
+> gps infoI (300561) gps: ══════════════════════════════════════
+> I (301079) gps_gnss: GNSS: no fix | reads=2195 [ACTIVE] (idle — waiting for satellites)
+I (301384) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (305569) gps: ══════════════════════════════════════
+> gps infoI (310577) gps: ══════════════════════════════════════
+> gps infoI (315585) gps: ══════════════════════════════════════
+
+
+> gps infoI (265540) gps: ══════════════════════════════════════
+> net test
+> net testI (269698) net_diag: ══════════════════════════════════════
+I (269700) net_diag: INTERNET CONNECTIVITY TEST
+I (269704) net_diag:   GET https://www.google.com/generate_204
+I (269709) net_diag:   (Same trick phones/laptops use to tell "connected to WiFi"
+I (269717) net_diag:    apart from "WiFi actually reaches the internet" — a real HTTPS
+I (269724) net_diag:    request to a public endpoint, not just a link/ARP check.)
+I (269732) net_diag: ──────────────────────────────────────
+I (271077) gps_gnss: GNSS: no fix | reads=1952 [ACTIVE] (idle — waiting for satellites)
+I (271354) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+> net info
+E (283745) esp-tls: couldn't get hostname for :www.google.com: getaddrinfo() returns 202, addrinfo=0x0
+E (283745) esp-tls: Failed to open new connection
+E (283747) transport_base: Failed to open a new connection
+E (283753) HTTP_CLIENT: Connection failed, sock < 0
+E (283757) net_diag:   Result:            ✗ NO INTERNET (ESP_ERR_HTTP_CONNECT)
+E (283764) net_diag:   DNS failed, TCP connect failed, or TLS handshake failed — run
+E (283772) net_diag:   'net info' first to confirm WiFi is even associated with a valid
+E (283780) net_diag:   IP before assuming this is a deeper problem.
+I (283786) net_diag: ══════════════════════════════════════
+> gps infoI (283798) gps: ══════════════════════════════════════
+> gps infoI (283867) gps: ══════════════════════════════════════
+> gps infoI (283936) gps: ══════════════════════════════════════
+> net infoI (284004) net_diag: ══════════════════════════════════════
+I (284017) net_diag: NETWORK STATUS
+I (284020) net_diag: ──────────────────────────────────────
+I (284032) net_diag:   Device MAC (STA):  A4:CB:8F:D6:98:F8
+I (284038) net_diag:   Connected SSID:    Mobitel 4G-489E
+I (284042) net_diag:   AP BSSID:          1C:13:86:D6:48:9E
+I (284048) net_diag:   RSSI:              -65 dBm
+I (284052) net_diag:   Channel:           9
+I (284056) net_diag:   Local IP:          192.168.8.140
+I (284061) net_diag:   Netmask:           255.255.255.0
+I (284066) net_diag:   Gateway:           192.168.8.1
+I (284071) net_diag:   DNS server:        10.4.4.12
+I (284075) net_diag: ══════════════════════════════════════
+> gps infoI (285537) gps: ══════════════════════════════════════
+> gps infoI (290545) gps: ══════════════════════════════════════
+> gps infoI (295553) gps: ══════════════════════════════════════
+> gps infoI (300561) gps: ══════════════════════════════════════
+> I (301079) gps_gnss: GNSS: no fix | reads=2195 [ACTIVE] (idle — waiting for satellites)
+I (301384) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (305569) gps: ══════════════════════════════════════
+> gps infoI (310577) gps: ══════════════════════════════════════
+> gps infoI (315585) gps: ══════════════════════════════════════
+> gps infoI (320593) gps: ══════════════════════════════════════
+> gps infoI (325601) gps: ══════════════════════════════════════
+> I (330170) ram_test: ══════════════════════════════════════
+I (330171) ram_test: PSRAM periodic health-check
+I (330175) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (330182) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (330330) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (330331) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (330338) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (330348) ram_test: ══════════════════════════════════════
+gps infoI (330660) gps: ══════════════════════════════════════
+> I (331080) gps_gnss: GNSS: no fix | reads=2438 [ACTIVE] (idle — waiting for satellites)
+I (331414) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (335668) gps: ══════════════════════════════════════
+[gui] Copied selection to clipboard.
+> gps infoI (340676) gps: ══════════════════════════════════════
+> gps infoI (345684) gps: ══════════════════════════════════════
+> gps infoI (350692) gps: ══════════════════════════════════════
+> gps infoI (355700) gps: ══════════════════════════════════════
+> gps infoI (360708) gps: ══════════════════════════════════════
+> I (361081) gps_gnss: GNSS: no fix | reads=2681 [ACTIVE] (idle — waiting for satellites)
+I (361444) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (365716) gps: ══════════════════════════════════════
+> gps infoI (370724) gps: ══════════════════════════════════════
+[gui] GPS log lines SHOWN in THIS GUI panel only — the device's GPS backends keep running either way. Use the GPS category's 'gps neo6m off'/'gps gnss off' to actually stop them (doc 142).
+> gps infoI (375732) gps: ══════════════════════════════════════
+I (375733) gps: GPS DISPATCHER STATUS
+I (375737) gps: ──────────────────────────────────────
+I (375748) gps:   Active source:  GNSS
+I (375751) gps:   GNSS backend:   compiled in | fix=NO
+I (375756) gps:   NEO-6M backend: compiled in | fix=NO
+I (375761) gps:   Injected fix:   NO
+I (375764) gps:   Currently feeding fare_calc: NO FIX from any source
+I (375771) gps:   Try: gps source gnss|neo6m|inject | gps gnss ... | gps neo6m ...
+I (375778) gps: ══════════════════════════════════════
+> gps infoI (380740) gps: ══════════════════════════════════════
+I (380741) gps: GPS DISPATCHER STATUS
+I (380744) gps: ──────────────────────────────────────
+I (380756) gps:   Active source:  GNSS
+I (380759) gps:   GNSS backend:   compiled in | fix=NO
+I (380764) gps:   NEO-6M backend: compiled in | fix=NO
+I (380769) gps:   Injected fix:   NO
+I (380772) gps:   Currently feeding fare_calc: NO FIX from any source
+I (380779) gps:   Try: gps source gnss|neo6m|inject | gps gnss ... | gps neo6m ...
+I (380786) gps: ══════════════════════════════════════
+> gps infoI (385698) gps: ══════════════════════════════════════
+I (385699) gps: GPS DISPATCHER STATUS
+I (385703) gps: ──────────────────────────────────────
+I (385714) gps:   Active source:  GNSS
+I (385717) gps:   GNSS backend:   compiled in | fix=NO
+I (385722) gps:   NEO-6M backend: compiled in | fix=NO
+I (385727) gps:   Injected fix:   NO
+I (385731) gps:   Currently feeding fare_calc: NO FIX from any source
+I (385737) gps:   Try: gps source gnss|neo6m|inject | gps gnss ... | gps neo6m ...
+I (385744) gps: ══════════════════════════════════════
+[gui] GPS log lines HIDDEN in THIS GUI panel only — the device's GPS backends keep running either way. Use the GPS category's 'gps neo6m off'/'gps gnss off' to actually stop them (doc 142).
+> gps infoI (390756) gps: ══════════════════════════════════════
+> I (391081) gps_gnss: GNSS: no fix | reads=2916 [ACTIVE] (idle — waiting for satellites)
+I (391474) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (395764) gps: ══════════════════════════════════════
+> gps infoI (400772) gps: ══════════════════════════════════════
+> gps infoI (405729) gps: ══════════════════════════════════════
+> gps infoI (410787) gps: ══════════════════════════════════════
+> gps gnss info
+> gps gnss infoI (413445) gps_gnss: ══════════════════════════════════════
+I (413447) gps_gnss: GNSS (A7670E) STATUS
+I (413451) gps_gnss: ──────────────────────────────────────
+I (413463) gps_gnss:   UART:        UART1 TX=GPIO18 RX=GPIO17 @ 115200 baud
+I (413469) gps_gnss:   Bring-up:    complete
+I (413473) gps_gnss:   Enabled:     yes
+I (413477) gps_gnss:   A-GPS:       disabled in config.h (no SIM yet)
+I (413483) gps_gnss:   Reads:       3094 total | 0 valid fixes
+I (413489) gps_gnss:   Fix:         NO
+I (413492) gps_gnss: ══════════════════════════════════════
+> gps infoI (415754) gps: ══════════════════════════════════════
+> gps infoI (420812) gps: ══════════════════════════════════════
+> I (421082) gps_gnss: GNSS: no fix | reads=3159 [ACTIVE] (idle — waiting for satellites)
+I (421504) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (425820) gps: ══════════════════════════════════════
+> gps infoI (430828) gps: ══════════════════════════════════════
+> gps infoI (435836) gps: ══════════════════════════════════════
+> gps infoI (440844) gps: ══════════════════════════════════════
+> gps infoI (445852) gps: ══════════════════════════════════════
+> gps infoI (450860) gps: ══════════════════════════════════════
+> I (451082) gps_gnss: GNSS: no fix | reads=3402 [ACTIVE] (idle — waiting for satellites)
+I (451534) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (455868) gps: ══════════════════════════════════════
+> gps infoI (460876) gps: ══════════════════════════════════════
+> gps infoI (465884) gps: ══════════════════════════════════════
+> gps infoI (470892) gps: ══════════════════════════════════════
+> gps infoI (475900) gps: ══════════════════════════════════════
+> gps infoI (480908) gps: ══════════════════════════════════════
+> I (481083) gps_gnss: GNSS: no fix | reads=3645 [ACTIVE] (idle — waiting for satellites)
+I (481564) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (485916) gps: ══════════════════════════════════════
+> gps infoI (490924) gps: ══════════════════════════════════════

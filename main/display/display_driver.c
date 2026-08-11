@@ -184,8 +184,15 @@ esp_err_t display_init(void) {
     ESP_LOGI(TAG, "══ DISPLAY INIT — ST7796S 320x480 ══");
 
     // ── SD_CS (TF card slot) — MUST be HIGH or display won't work ──
-    // The TF card shares the SPI bus. Floating CS pulls MISO low
-    // and corrupts all SPI communication to the LCD.
+    // The TF card shares the SPI bus. Floating CS pulls MISO low and
+    // corrupts all SPI communication to the LCD (doc 39 Bug #1 — this
+    // exact symptom, "backlight ON but nothing on screen").
+    //
+    // RESTORED to a real driven GPIO in doc 174, matching the
+    // configuration proven working in esp32s3_display_taxi_4. It had been
+    // tied to 3V3 (doc 171) while pins were scarce; a driven output is
+    // self-evidently correct, whereas a jumper to a rail is one loose
+    // contact away from floating.
     gpio_config_t sd_cfg = {
         .pin_bit_mask = (1ULL << LCD_SD_CS),
         .mode         = GPIO_MODE_OUTPUT,
@@ -209,8 +216,13 @@ esp_err_t display_init(void) {
         .max_transfer_sz = LCD_W * 100 * 2,
     };
     ESP_ERROR_CHECK(spi_bus_initialize(LCD_SPI_HOST, &bus_cfg, SPI_DMA_CH_AUTO));
-    ESP_LOGI(TAG, "SPI: MOSI=%d SCLK=%d CS=%d DC=%d RST=%d",
+#if LCD_RST >= 0
+    ESP_LOGI(TAG, "SPI: MOSI=%d SCLK=%d CS=%d DC=%d RST=%d (hardware reset)",
              LCD_MOSI, LCD_SCLK, LCD_CS, LCD_DC, LCD_RST);
+#else
+    ESP_LOGI(TAG, "SPI: MOSI=%d SCLK=%d CS=%d DC=%d RST=tied 3V3 (software reset only)",
+             LCD_MOSI, LCD_SCLK, LCD_CS, LCD_DC);
+#endif
 
     // ── Panel IO (SPI) ──
     esp_lcd_panel_io_spi_config_t io_cfg = {

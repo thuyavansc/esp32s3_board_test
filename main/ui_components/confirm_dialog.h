@@ -8,6 +8,12 @@
 typedef void (*confirm_dialog_cb_t)(void *user_data);
 
 // Shows a modal confirm popup on top of `screen`. `on_confirm` is called
-// only if the user taps the confirm button; tapping Cancel just closes it.
+// if the user taps Yes; `on_cancel` (may be NULL — most callers just
+// want tapping No to silently close the dialog) is called if the user
+// taps No. Both receive the same `user_data`. doc 184 §7.2 added
+// `on_cancel` — the trip-restore prompt needs a REAL action on decline
+// (finalize the trip, not just dismiss), which the original
+// confirm-only contract couldn't express.
 void confirm_dialog_show(lv_obj_t *screen, const char *message,
-                          confirm_dialog_cb_t on_confirm, void *user_data);
+                          confirm_dialog_cb_t on_confirm, confirm_dialog_cb_t on_cancel,
+                          void *user_data);

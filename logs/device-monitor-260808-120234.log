@@ -1,0 +1,1798 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0xb (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f3c
+entry 0x403c8920
+I (27) boot: ESP-IDF 5.4.0 2nd stage bootloader
+I (27) boot: compile time Aug  6 2026 08:44:50
+I (27) boot: Multicore bootloader
+I (27) boot: chip revision: v0.2
+I (30) boot: efuse block revision: v1.4
+I (33) boot.esp32s3: Boot SPI Speed : 80MHz
+I (37) boot.esp32s3: SPI Mode       : DIO
+I (41) boot.esp32s3: SPI Flash Size : 16MB
+I (45) boot: Enabling RNG early entropy source...
+I (49) boot: Partition Table:
+I (52) boot: ## Label            Usage          Type ST Offset   Length
+I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (65) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (71) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (78) boot:  3 factory          factory app      00 00 00020000 00300000
+I (84) boot:  4 ota_0            OTA app          00 10 00320000 00300000
+I (91) boot:  5 ota_1            OTA app          00 11 00620000 00300000
+I (97) boot:  6 storage          Unknown data     01 82 00920000 004e0000
+I (104) boot:  7 llm              Unknown data     01 82 00e00000 00200000
+I (110) boot: End of partition table
+I (114) boot: Defaulting to factory image
+I (117) esp_image: segment 0: paddr=00020020 vaddr=3c120020 size=7ef3ch (519996) map
+I (217) esp_image: segment 1: paddr=0009ef64 vaddr=3fc9ed00 size=010b4h (  4276) load
+I (218) esp_image: segment 2: paddr=000a0020 vaddr=42000020 size=115604h (1136132) map
+I (421) esp_image: segment 3: paddr=001b562c vaddr=3fc9fdb4 size=043a0h ( 17312) load
+I (425) esp_image: segment 4: paddr=001b99d4 vaddr=40374000 size=1acb4h (109748) load
+I (449) esp_image: segment 5: paddr=001d4690 vaddr=600fe100 size=0001ch (    28) load
+I (459) boot: Loaded app from partition at offset 0x20000
+I (459) boot: Disabling RNG early entropy source...
+I (470) octal_psram: vendor id    : 0x0d (AP)
+I (470) octal_psram: dev id       : 0x02 (generation 3)
+I (470) octal_psram: density      : 0x03 (64 Mbit)
+I (472) octal_psram: good-die     : 0x01 (Pass)
+I (477) octal_psram: Latency      : 0x01 (Fixed)
+I (481) octal_psram: VCC          : 0x01 (3V)
+I (485) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (490) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (495) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (499) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (505) octal_psram: DriveStrength: 0x00 (1/1)
+I (509) MSPI Timing: PSRAM timing tuning index: 5
+I (513) esp_psram: Found 8MB PSRAM device
+I (517) esp_psram: Speed: 80MHz
+I (520) cpu_start: Multicore app
+I (955) esp_psram: SPI SRAM memory test OK
+I (964) cpu_start: Pro cpu start user code
+I (964) cpu_start: cpu freq: 240000000 Hz
+I (964) app_init: Application information:
+I (964) app_init: Project name:     esp32s3_board
+I (969) app_init: App version:      5d4c9e0-dirty
+I (973) app_init: Compile time:     Aug  6 2026 08:34:47
+I (978) app_init: ELF file SHA256:  907f7410c...
+I (983) app_init: ESP-IDF:          5.4.0
+I (986) efuse_init: Min chip rev:     v0.0
+I (990) efuse_init: Max chip rev:     v0.99 
+I (994) efuse_init: Chip rev:         v0.2
+I (998) heap_init: Initializing. RAM available for dynamic allocation:
+I (1004) heap_init: At 3FCC3BF8 len 00025B18 (150 KiB): RAM
+I (1010) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1015) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1020) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (1026) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1033) spi_flash: detected chip: generic
+I (1036) spi_flash: flash io: dio
+W (1039) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
+I (1049) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1055) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1062) main_task: Started on CPU0
+I (1076) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1077) main_task: Calling app_main()
+I (1100) nvs_state: OTA state namespace 'ota_state' ready
+I (1105) session: Session store loaded from NVS (namespace 'session')
+I (1106) bgworker: Background worker task started (persistent, one-time stack allocation)
+
+Type 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all' | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help' | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store' | 'time' | 'net uplink wifi|cellular|auto' | 'cell up|status' | 'hotspot on|off|status' | 'smsc send|list|status' | 'sms <command>' | 'factory reset' | 'nvs status'
+> I (1159) pp: pp rom version: e7ae62f
+I (1160) net80211: net80211 rom version: e7ae62f
+I (1166) wifi:wifi driver task: 3fcdb174, prio:23, stack:6656, core=0
+I (1181) wifi:wifi firmware version: 48ea317a7
+I (1181) wifi:wifi certification version: v7.0
+I (1182) wifi:config NVS flash: enabled
+I (1183) wifi:config nano formatting: disabled
+I (1187) wifi:Init data frame dynamic rx buffer num: 16
+I (1192) wifi:Init static rx mgmt buffer num: 5
+I (1196) wifi:Init management short buffer num: 32
+I (1200) wifi:Init dynamic tx buffer num: 32
+I (1204) wifi:Init static tx FG buffer num: 2
+I (1209) wifi:Init static rx buffer size: 1600
+I (1213) wifi:Init static rx buffer num: 6
+I (1216) wifi:Init dynamic rx buffer num: 16
+I (1221) wifi_init: rx ba win: 6
+I (1223) wifi_init: accept mbox: 6
+I (1227) wifi_init: tcpip mbox: 32
+I (1230) wifi_init: udp mbox: 6
+I (1233) wifi_init: tcp mbox: 6
+I (1235) wifi_init: tcp tx win: 5760
+I (1239) wifi_init: tcp rx win: 5760
+I (1242) wifi_init: tcp mss: 1440
+I (1245) wifi_init: WiFi IRAM OP enabled
+I (1249) wifi_init: WiFi RX IRAM OP enabled
+I (1253) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10
+I (1290) wifi:mode : sta (a4:cb:8f:d6:98:f8)
+I (1290) wifi:enable tsf
+I (1292) wifi:Set ps type: 0, coexist: 0
+
+I (1293) wifi_sta: WiFi STA config loaded: ssid="Mobitel 4G-489E" auto_connect=yes (password not logged)
+W (1299) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1308) wifi_sta: WiFi connecting to 'Mobitel 4G-489E' (timeout 15000ms)...
+I (1321) wifi:new:<8,0>, old:<1,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (1322) wifi:state: init -> auth (0xb0)
+I (1329) wifi:state: auth -> assoc (0x0)
+I (1334) wifi:state: assoc -> run (0x10)
+I (1355) wifi:connected with Mobitel 4G-489E, aid = 11, channel 8, BW20, bssid = 1c:13:86:d6:48:9e
+I (1356) wifi:security: WPA2-PSK, phy: bgn, rssi: -68
+I (1360) wifi:pm start, type: 0
+
+I (1361) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (1369) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (1414) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (2426) esp_netif_handlers: sta ip: 192.168.8.140, mask: 255.255.255.0, gw: 192.168.8.1
+I (2426) wifi_sta: WiFi connected — IP: 192.168.8.140
+I (2428) hotspot_nvs: Hotspot config loaded: ssid="TaxiMeter-200" channel=6 max_clients=8 hidden=no enabled=yes (password not logged)
+I (2440) cellular: ══════════════════════════════════════
+I (2451) cellular: CELLULAR PPP INIT — USB CDC modem (A7670E)
+I (2457) cellular:   Requires board DIP switch USB=OFF — confirmed on this exact board that
+I (2465) cellular:   GNSS/AT/console (UART1/UART0) are unaffected by this setting (doc 155 §12.6).
+I (2474) USBH_CDC: iot usbh cdc version: 3.1.0
+I (2509) cellular: USB CDC driver installed — waiting for A7670E enumeration...
+I (2509) modem_board: iot_usbh_modem, version: 2.2.0
+I (2510) iot_eth: IoT ETH Version: 1.1.0
+I (2514) esp-modem-dte: USB PPP network interface init success
+I (2520) cellular: Modem installed — APN="default" — PPP auto-connect DISABLED (manual control)
+I (2528) cellular:   Use 'cell up' or let net_manager.c bring it up per NET_UPLINK_PREFER_CELLULAR.
+I (2537) cellular: ══════════════════════════════════════
+
+I (2549) hotspot_ap: Hotspot module ready (AP event handlers registered)
+I (2555) hotspot_ap: Hotspot was ON last time (persisted) — starting automatically
+I (2563) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 1.1.1.1 (secondary)
+I (2569) wifi:mode : sta (a4:cb:8f:d6:98:f8) + softAP (a4:cb:8f:d6:98:f9)
+I (2578) wifi:Total power save buffer number: 16
+I (2580) wifi:Init max length of beacon: 752/752
+I (2584) wifi:Init max length of beacon: 752/752
+I (2591) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (2596) wifi:Total power save buffer number: 16
+I (2601) hotspot_ap: ══════════════════════════════════════
+I (2602) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (2621) hotspot_ap: HOTSPOT STARTED — ssid="TaxiMeter-200" channel=6 ip=192.168.4.1 max_clients=8
+I (2630) hotspot_ap:   (NAT not yet enabled — net_manager.c enables it once an uplink is ready)
+I (2638) hotspot_ap: ══════════════════════════════════════
+
+I (2650) net_mgr: NET_UPLINK_PREFER_CELLULAR=1 — attempting cellular uplink in the background...
+I (2659) cellular: Dialling PPP (APN="default", timeout=30000ms)...
+I (2891) USBH_CDC: New device connected, address: 1
+I (2891) esp-modem-dte: USB CDC device connected, VID: 0x1e0e, PID: 0x9011
+I (2892) esp-modem-dte: Matched USB Modem: "SIMCOM A7670E (Waveshare)", Modem Interface: 5, AT Interface: -1
+I (2901) cdc_descriptor: Found NOTIF endpoint: 8
+I (2905) cdc_descriptor: Found OUT endpoint: 10
+I (2909) cdc_descriptor: Found IN endpoint: 1
+I (2914) modem_board: DTE connected
+I (2917) modem_board: Handling stage = STAGE_SYNC
+I (2924) modem_board: Modem manufacturer ID: INCORPORATED
+I (2927) modem_board: Modem module ID: A7670E-FASE
+I (2932) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (3036) modem_board: Handling stage = STAGE_IDLE
+I (3036) net_mgr: DNS resolver -> 8.8.8.8
+I (3037) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (3041) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (3048) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (3055) net_mgr: Active uplink -> CELLULAR
+I (3058) bgworker: Job finished: OK
+I (3136) modem_board: Handling stage = STAGE_START_PPP
+I (3136) modem_board: Check SIM card state...
+I (3137) modem_board: Check signal quality...
+I (3141) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (3144) modem_board: Check network registration...
+I (3150) modem_board: Check PDP context...
+I (3153) modem_board: Set PDP context: cid=1, type=IP, apn=default
+I (3163) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (3166) modem_board: PPP Dial up...
+I (3771) iot_eth: Ethernet link up
+W (3772) iot_eth: Driver does not support get_addr
+I (3871) modem_board: Handling stage = STAGE_RUNNING
+I (3871) modem_board: Modem is running
+I (9781) esp-netif_lwip-ppp: Connected
+I (9781) cellular: ══════════════════════════════════════
+I (9785) cellular: PPP CONNECTED — carrier IP: 10.178.11.117
+I (9791) cellular: ══════════════════════════════════════
+
+I (9803) iot_eth.netif_glue: netif "USB PPP" Got IP Address
+I (9808) iot_eth.netif_glue: ~~~~~~~~~~~
+I (9812) iot_eth.netif_glue: ETHIP:10.178.11.117
+I (9816) iot_eth.netif_glue: ETHMASK:255.255.255.255
+I (9821) iot_eth.netif_glue: ETHGW:10.64.64.64
+I (9825) iot_eth.netif_glue: Main DNS: 10.4.4.12
+I (9829) iot_eth.netif_glue: Backup DNS: 8.8.8.8
+I (9833) iot_eth.netif_glue: ~~~~~~~~~~~
+I (22565) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs; try 'time' to check current status)
+I (22565) trips_api: ══════════════════════════════════════
+I (22577) trips_api: TRIPS REST API + JSON Storage Init
+I (22582) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (22590) trips_api:   Default trip ID: 12772
+I (22594) trips_api:   Storage backend: 2
+I (22894) trips_api: Created storage directory: /spiffs/store
+I (22895) trips_api: SPIFFS partition: 4581 KB total | 90 KB used | 4490 KB free
+I (22896) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (22902) trips_api: TRIPS API Storage — READY ✓
+I (22907) trips_api: Type 'api help' for available commands.
+I (22912) trips_api: ══════════════════════════════════════
+
+I (23032) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8216 KB, largest block=8064 KB
+I (23045) refdata: tariffs: 8 rows loaded
+I (23046) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8215 KB, largest block=8064 KB
+I (23050) refdata: fixed_rates: 2 rows loaded
+I (23053) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8215 KB, largest block=8064 KB
+I (23067) refdata: special_fares: 9 rows loaded
+I (23160) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8215 KB, largest block=8064 KB
+I (23411) refdata: public_holidays: 0 rows loaded (year window 1969-1971; 450 out-of-window rows skipped)
+I (23411) refdata: Reference data restored from cache: tariffs=8 fixed_rates=2 special_fares=9 holidays=0
+I (23419) gps: ══════════════════════════════════════
+I (23430) gps: GPS Client Init — default active source: GNSS
+I (23436) gps:   Starting GNSS backend (A7670E, UART1)...
+I (23441) gps_gnss: ══════════════════════════════════════
+I (23452) gps_gnss: GNSS (A7670E) Init
+I (23456) gps_gnss:   A-GPS: ENABLED in config.h
+I (23460) gps_gnss: ══════════════════════════════════════
+I (23473) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (23479) gps_gnss: AT handshake...
+I (23482) gps:   NEO-6M backend NOT compiled in (ENABLE_GPS_NEO6M=0)
+I (23485) gps_gnss:   AT -> OK
+I (23491) gps_gnss: Modem responding ✓
+I (23494) gps:   Injection ('gps set ...') always available regardless of the above.
+I (23500) gps_gnss:   AT+CGNSSPWR=1,1 -> OK
+I (23506) gps: ══════════════════════════════════════
+
+I (23518) farecalc: fare_calc_init: state (35648 bytes) allocated in PSRAM, internal SRAM untouched
+W (23530) trip: ══════════════════════════════════════
+W (23537) trip: RESTORE: trip #7 was still running before this reboot — $17.55 accrued so far
+W (23546) trip:   Waiting for driver confirmation before resuming — see 'trip restore yes|no'
+W (23554) trip: ══════════════════════════════════════
+
+I (23566) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (23573) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (23582) chipinfo: ########################################
+I (23588) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (23594) chipinfo: ########################################
+I (23599) version: ======================================
+I (23604) version: FIRMWARE VERSION
+I (23607) version: --------------------------------------
+I (23612) version:   Project:   esp32s3_board
+I (23617) version:   Version:   26.07.23 (code 1)
+I (23621) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (23634) version:   Running from partition: factory
+I (23639) chipinfo: ======================================
+I (23644) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (23646) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (23657) chipinfo: --------------------------------------
+I (23662) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (23667) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (23673) chipinfo:   Crystal is 40 MHz
+I (23676) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (23680) chipinfo: ======================================
+I (23685) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (23692) chipinfo: --------------------------------------
+I (23697) chipinfo:   Model:       ESP32-S3
+I (23701) chipinfo:   Cores:       2
+I (23704) chipinfo:   Revision:    v0.2
+I (23708) chipinfo:   Features:    WiFi BLE External-Flash
+I (23713) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (23718) chipinfo:   IDF version: 5.4.0
+I (23722) chipinfo: ======================================
+I (23726) chipinfo: FLASH INFO  (live-probed)
+I (23731) chipinfo: --------------------------------------
+I (23736) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (23743) chipinfo:   JEDEC ID:        0x852018
+I (23747) chipinfo: ======================================
+I (23752) chipinfo: RAM / HEAP INFO  (live)
+I (23756) chipinfo: --------------------------------------
+I (23762) chipinfo:   Free heap now (all capabilities): 8361460 bytes | 8165.5 KB (7.97 MB)
+I (23769) chipinfo:   Minimum ever free:                8117352 bytes | 7927.1 KB (7.74 MB)
+I (23777) chipinfo:   --------------------------------------
+I (23783) chipinfo:   PSRAM initialized: YES
+I (23787) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (23795) chipinfo:   SRAM  total:          250119 bytes | 244.3 KB (0.24 MB)
+I (23802) chipinfo:   SRAM  free now:       77623 bytes | 75.8 KB (0.07 MB)
+I (23809) chipinfo:   SRAM  min free ever:  32047 bytes | 31.3 KB (0.03 MB)
+I (23815) chipinfo:   SRAM  largest block:  31744 bytes | 31.0 KB (0.03 MB)
+I (23817) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (23826) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (23833) chipinfo:   PSRAM free now:          8315868 bytes | 8121.0 KB (7.93 MB)
+I (23840) chipinfo:   PSRAM min free ever:     8117336 bytes | 7927.1 KB (7.74 MB)
+I (23848) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (23855) chipinfo: ======================================
+I (23860) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (23867) chipinfo: --------------------------------------
+I (23872) chipinfo:   Name       Type   SubType   Offset     Size
+I (23878) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (23886) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (23894) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (23903) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (23911) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (23919) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (23928) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (23936) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (23945) chipinfo: ======================================
+I (23950) chipinfo: NVS INFO  (live)
+I (23953) chipinfo: --------------------------------------
+I (23958) chipinfo:   Used entries:  216
+I (23962) chipinfo:   Free entries:  540
+I (23966) chipinfo:   Total entries: 756
+I (23969) chipinfo: ======================================
+I (23975) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (23980) chipinfo: --------------------------------------
+I (23986) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (23992) chipinfo:   Used:  93121 bytes | 90.9 KB (0.09 MB)
+I (23997) chipinfo:   Free:  4598320 bytes | 4490.5 KB (4.39 MB)
+I (24002) chipinfo: ########################################
+
+I (24008) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (24014) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (24022) display: SD_CS (TF slot) → GPIO9 HIGH (disabled)
+I (24028) display: Backlight PWM init — GPIO5, 5kHz, 10-bit
+I (24033) display: Backlight ON (GPIO5, PWM 100%)
+I (24038) display: SPI: MOSI=11 SCLK=12 CS=10 DC=14 RST=21 (hardware reset)
+I (24045) gpio: GPIO[14]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (24053) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (24131) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (24132) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (24133) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (24152) gps_gnss: A-GPS preconditions OK — SIM ready, network registered.
+I (24152) gps_gnss:   A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...
+I (24401) display: ST7796S init complete — 320x480 RGB565
+I (24401) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (24405) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (24408) display: DISPLAY — READY ✓
+I (24412) touch: TOUCH INIT — FT6336U via I2C
+I (24416) touch: I2C init: SDA=6 SCL=4
+I (24420) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (24488) touch: FT6336U reset pulsed on GPIO1
+I (24488) touch: FT6336U init — addr: 0x38
+I (24488) touch: Touch input registered with LVGL ✓
+W (24490) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (24496) touch: TOUCH — READY ✓
+I (24499) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (24893) ui: UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)
+I (24894) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (24898) additional_work: Additional work module ready (try: "sms reboot")
+I (24904) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (24910) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (24918) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (24926) chipinfo: READY — Touch UI Active ✓
+I (26085) gps_gnss:   AT+CAGPS -> +AGPS: success.
+I (26086) gps_gnss: A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular
+I (26087) gps_gnss:   connection (not WiFi — see doc 140). Cold fix should now be faster.
+I (27910) ram_test: ══════════════════════════════════════
+I (27911) ram_test: PSRAM periodic health-check
+I (27915) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (27922) ram_test:   Before: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (28072) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (28073) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7258868 bytes (6.92 MB)
+I (28080) ram_test:   After free: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (28090) ram_test: ══════════════════════════════════════
+I (31090) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=8.4km/h sats=10 hdop=2.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (61093) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.5km/h sats=9 hdop=3.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (91099) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (93578) touch: Touch: (168,323) [direct px]
+I (93704) auth: ══════════════════════════════════════
+I (93705) auth: LOGIN — user=12345 mac=A4:CB:8F:D6:98:F8
+I (93711) api_client: → POST /taxis-api/api/Authentications/Login
+I (93717) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (95152) esp-x509-crt-bundle: Certificate validated
+I (97051) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (97052) api_client: ← HTTP 200 (POST /taxis-api/api/Authentications/Login)
+I (97070) auth:   Login response has no vehicle info — keeping vehicle_id=105 vehicle_type_id=4
+I (97070) auth: LOGIN OK ✓ — driver_id=130 vehicle_id=105 vehicle_type_id=4
+I (97076) api_client: → GET /taxis-api/api/Driver
+I (97080) api_client:   Heap before perform()       free=8145 KB | largest free block=8064 KB
+I (97894) esp-x509-crt-bundle: Certificate validated
+I (98771) api_client:   Heap after perform()        free=8128 KB | largest free block=8064 KB
+I (98772) api_client: ← HTTP 200 (GET /taxis-api/api/Driver)
+I (98781) auth:   Driver profile: Tuyavan 
+I (98781) auth: ══════════════════════════════════════
+
+I (98790) refdata: ══════════════════════════════════════
+I (98801) refdata: REFERENCE DATA — fetching all 4 categories
+I (98937) api_client: → GET /taxis-api/api/VehicleType/4/Tarifs/v2
+I (98938) api_client:   Heap before perform()       free=8147 KB | largest free block=8064 KB
+I (99823) esp-x509-crt-bundle: Certificate validated
+I (100934) api_client:   Heap after perform()        free=8130 KB | largest free block=8064 KB
+I (100934) api_client: ← HTTP 200 (GET /taxis-api/api/VehicleType/4/Tarifs/v2)
+I (100947) api_client:   Wrote 6361 bytes to /spiffs/store/ref/tariffs.json
+I (100949) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8153 KB, largest block=8064 KB
+I (100971) refdata: tariffs: 8 rows loaded
+I (101080) api_client: → GET /taxis-api/api/FixedFares
+I (101081) api_client:   Heap before perform()       free=8147 KB | largest free block=8064 KB
+I (101942) esp-x509-crt-bundle: Certificate validated
+I (102978) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (102979) api_client: ← HTTP 200 (GET /taxis-api/api/FixedFares)
+I (102987) api_client:   Wrote 905 bytes to /spiffs/store/ref/fixed_rates.json
+I (102990) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8152 KB, largest block=8064 KB
+I (103002) refdata: fixed_rates: 2 rows loaded
+I (103111) api_client: → GET /taxis-api/api/SpecialFare
+I (103112) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (103927) esp-x509-crt-bundle: Certificate validated
+I (104971) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (104971) api_client: ← HTTP 200 (GET /taxis-api/api/SpecialFare)
+I (104980) api_client:   Wrote 1930 bytes to /spiffs/store/ref/special_fares.json
+I (104982) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8152 KB, largest block=8064 KB
+I (104998) refdata: special_fares: 9 rows loaded
+I (105402) api_client: → GET /devices-api/api/PublicHolidays
+I (105402) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (106261) esp-x509-crt-bundle: Certificate validated
+I (108670) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (108670) api_client: ← HTTP 200 (GET /devices-api/api/PublicHolidays)
+I (108680) api_client:   Wrote 75459 bytes to /spiffs/store/ref/public_holidays.json
+I (108774) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8152 KB, largest block=8064 KB
+I (109049) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (109050) refdata: REFERENCE DATA — all 4 categories OK ✓ (fresh)
+I (109054) refdata: ══════════════════════════════════════
+
+I (109066) bgworker: Job finished: OK
+I (109186) ui: Login screen: LOGIN SUCCESSFUL -> meter
+I (109887) ui: Screen: 0
+I (116628) touch: Touch: (235,286) [direct px]
+I (116693) farecalc: TimeFrame opened: status=2 (odometer carry-in=70.7m)
+I (116694) farecalc: ══════════════════════════════════════
+I (116701) farecalc: METER RESTORED after reboot — tariff #5 "Maxi Day Rate(06:00-21:59)" (Maxi), carried forward 1754.50¢ ($17.55) and 0.071km from before the reboot
+I (116716) farecalc:   (per-segment TimeFrame history before the reboot could not be recovered — only
+I (116725) farecalc:   the aggregate totals; the fare total above is exact, sync detail for that portion is not)
+I (116735) farecalc: ══════════════════════════════════════
+
+I (116863) trip: TRIP #7 RESUMED after reboot — driver confirmed
+I (117566) farecalc: GPS trust: INACTIVE (HDOP too high)
+I (117566) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=0s inactiveT=0s fare=0.00¢
+I (117569) farecalc: TimeFrame opened: status=1 (odometer carry-in=70.7m)
+I (121157) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2311 speed=0.0km/h sats=7 hdop=5.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (125033) touch: Touch: (246,383) [direct px]
+I (125066) ui: METER: END TRIP tapped
+I (135536) touch: Touch: (242,293) [direct px]
+I (135740) directions: -> GET graphhopper.com/route (from=9.825633,80.231261 to=9.825633,80.231261)
+I (136681) esp-x509-crt-bundle: Certificate validated
+I (137654) directions:    heap before=8141KB after=8124KB
+I (137658) directions: get_route: OK — road distance=0.0m, 2 shape point(s)
+I (137659) bgworker: Job finished: OK
+I (137659) farecalc: TimeFrame reconciled: gap=18s road_dist=0.0m avgSpeed=0.0km/h -> active=18s (was: dist=0.0m activeT=20s inactiveT=0s)
+I (137671) farecalc: TimeFrame closed: status=1 distance=0.0m activeT=18s inactiveT=0s fare=50.85¢
+I (137680) farecalc: METER STOPPED — distance=0.07km total=1805.35¢ (2 TimeFrame segment(s))
+I (137798) trip: TRIP #7 STOPPED (not yet synced to server)
+I (137805) tripsync: ══════════════════════════════════════
+I (137806) tripsync: UPDATE TRIP — server job id 12812, meterStatus=5, body=1662 bytes
+I (137808) trip: TRIP #7 FINALIZE queued — watch below for ADD JOB/UPDATE TRIP/SAVE JOB FARES logs
+I (137814) api_client:   Heap before Trips POST      free=8142 KB | largest free block=8064 KB
+I (137833) api_client: → POST /taxis-api/api/Trips
+I (137836) api_client:   Heap before perform()       free=8136 KB | largest free block=8064 KB
+I (138600) esp-x509-crt-bundle: Certificate validated
+I (139580) api_client:   Heap after perform()        free=8119 KB | largest free block=8064 KB
+I (139580) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (139585) api_client:   Heap after Trips POST       free=8142 KB | largest free block=8064 KB
+I (139593) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (139596) tripsync: ══════════════════════════════════════
+
+I (139611) tripsync: ══════════════════════════════════════
+I (139620) tripsync: SAVE JOB FARES — server job id 12812, total=1805.35¢, cancelled=no
+I (139629) api_client: → POST /taxis-api/api/Job/SaveJobFares
+I (139634) api_client:   Heap before perform()       free=8136 KB | largest free block=8064 KB
+I (140428) esp-x509-crt-bundle: Certificate validated
+I (142276) api_client:   Heap after perform()        free=8119 KB | largest free block=8064 KB
+I (142277) api_client: ← HTTP 200 (POST /taxis-api/api/Job/SaveJobFares)
+I (142289) tripsync: SAVE JOB FARES OK ✓ (HTTP 200)
+I (142292) tripsync: ══════════════════════════════════════
+
+I (142300) trip: TRIP FINALIZED ✓ and synced — ready for a new 'trip start'
+I (142304) bgworker: Job finished: OK
+I (151219) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2312 speed=0.0km/h sats=6 hdop=3.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (157070) touch: Touch: (224,391) [direct px]
+I (159021) touch: Touch: (254,380) [direct px]
+I (167188) touch: Touch: (161,468) [direct px]
+I (167279) ui: NAV -> TRIPS (1)
+I (167280) ui: Screen: 1
+I (168224) touch: Touch: (263,445) [direct px]
+I (168286) ui: NAV -> SETTINGS (2)
+I (168287) ui: Screen: 2
+I (169228) touch: Touch: (58,453) [direct px]
+I (169316) ui: NAV -> METER (0)
+I (169316) ui: Screen: 0
+I (173368) touch: Touch: (72,377) [direct px]
+I (173395) ui: METER: START TRIP tapped
+I (175018) touch: Touch: (210,281) [direct px]
+I (176240) touch: Touch: (60,252) [direct px]
+I (177836) touch: Touch: (278,425) [direct px]
+W (178015) farecalc:   No GPS fix yet at trip start — billing plain time until the first fix arrives (D2, doc 151 §7.1)
+I (178016) farecalc: TimeFrame opened: status=2 (odometer carry-in=0.0m)
+I (178022) farecalc: ══════════════════════════════════════
+I (178034) farecalc: METER STARTED — tariff #5 "Maxi Day Rate(06:00-21:59)" (Maxi) flagfall=775.00¢ distRate=391.00¢/km distRate2=355.00¢/km@12.0km timeRate=169.50¢/min
+I (178049) farecalc: ══════════════════════════════════════
+
+W (178061) trip:   No GPS fix yet at trip start — pickup location will be missing until one arrives
+I (178071) trip:   Auto-added special fare: Levy Fare (132.00¢)
+I (178076) trip: TRIP #8 STARTED — customer="q"
+I (178388) bgworker: Job finished: OK
+W (178388) tripsync: add_job: no pickup GPS fix recorded yet — sending 0,0 (server may reject this, matching Android's own "Invalid pickup location" guard for the same case)
+I (178398) tripsync: ══════════════════════════════════════
+I (178407) tripsync: ADD JOB — local trip #8, pickup=0.000000,0.000000
+I (178415) api_client: → POST /taxis-api/api/Job/AddJobByDriver
+I (178420) api_client:   Heap before perform()       free=8136 KB | largest free block=8064 KB
+I (179241) esp-x509-crt-bundle: Certificate validated
+I (180578) api_client:   Heap after perform()        free=8119 KB | largest free block=8064 KB
+I (180578) api_client: ← HTTP 200 (POST /taxis-api/api/Job/AddJobByDriver)
+I (180591) tripsync: ADD JOB OK ✓ — local #8 -> server job id 12813
+I (180593) tripsync: ══════════════════════════════════════
+
+I (180600) bgworker: Job finished: OK
+I (181221) gps_gnss: GNSS: no fix | reads=2346 [ACTIVE] (idle — waiting for satellites)
+I (211224) gps_gnss: GNSS: no fix | reads=2786 [ACTIVE] (idle — waiting for satellites)
+I (218210) tripsync: ══════════════════════════════════════
+I (218212) tripsync: UPDATE TRIP — server job id 12813, meterStatus=1, body=1022 bytes
+I (218220) api_client:   Heap before Trips POST      free=8142 KB | largest free block=8064 KB
+I (218229) api_client: → POST /taxis-api/api/Trips
+I (218233) api_client:   Heap before perform()       free=8136 KB | largest free block=8064 KB
+I (219091) esp-x509-crt-bundle: Certificate validated
+I (220120) api_client:   Heap after perform()        free=8119 KB | largest free block=8064 KB
+I (220120) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (220126) api_client:   Heap after Trips POST       free=8142 KB | largest free block=8064 KB
+I (220133) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (220136) tripsync: ══════════════════════════════════════
+
+I (220148) bgworker: Job finished: OK
+I (241231) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2315 speed=11.3km/h sats=7 hdop=2.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (271300) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2315 speed=12.5km/h sats=7 hdop=3.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (272742) farecalc: GPS trust: INACTIVE (HDOP too high)
+I (272742) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=92s inactiveT=0s fare=259.90¢
+I (272745) farecalc: TimeFrame opened: status=1 (odometer carry-in=75.3m)
+I (278871) tripsync: ══════════════════════════════════════
+I (278872) tripsync: UPDATE TRIP — server job id 12813, meterStatus=1, body=3941 bytes
+I (278880) api_client:   Heap before Trips POST      free=8140 KB | largest free block=8064 KB
+I (278890) api_client: → POST /taxis-api/api/Trips
+I (278893) api_client:   Heap before perform()       free=8134 KB | largest free block=8064 KB
+I (279801) esp-x509-crt-bundle: Certificate validated
+I (281025) api_client:   Heap after perform()        free=8117 KB | largest free block=8064 KB
+I (281025) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (281031) api_client:   Heap after Trips POST       free=8140 KB | largest free block=8064 KB
+I (281038) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (281041) tripsync: ══════════════════════════════════════
+
+I (281053) bgworker: Job finished: OK
+I (301361) gps_gnss: GNSS: fix OK | lat=9.8260 lon=80.2317 speed=0.0km/h sats=6 hdop=6.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (328101) ram_test: ══════════════════════════════════════
+I (328102) ram_test: PSRAM periodic health-check
+I (328106) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (328113) ram_test:   Before: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (328262) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (328263) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7258868 bytes (6.92 MB)
+I (328270) ram_test:   After free: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (328280) ram_test: ══════════════════════════════════════
+I (331371) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2315 speed=15.0km/h sats=8 hdop=4.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (339508) tripsync: ══════════════════════════════════════
+I (339509) tripsync: UPDATE TRIP — server job id 12813, meterStatus=1, body=3942 bytes
+I (339518) api_client:   Heap before Trips POST      free=8140 KB | largest free block=8064 KB
+I (339527) api_client: → POST /taxis-api/api/Trips
+I (339531) api_client:   Heap before perform()       free=8134 KB | largest free block=8064 KB
+I (340354) esp-x509-crt-bundle: Certificate validated
+I (341601) api_client:   Heap after perform()        free=8117 KB | largest free block=8064 KB
+I (341602) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (341609) api_client:   Heap after Trips POST       free=8140 KB | largest free block=8064 KB
+I (341615) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (341618) tripsync: ══════════════════════════════════════
+
+I (341630) bgworker: Job finished: OK
+I (361377) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (361711) farecalc: GPS trust: ACTIVE (reactivation streak complete)
+I (361712) directions: -> GET graphhopper.com/route (from=9.825688,80.231444 to=9.825681,80.231324)
+I (362193) esp-x509-crt-bundle: Certificate validated
+I (363026) directions:    heap before=8142KB after=8125KB
+I (363030) directions: get_route: OK — road distance=12.4m, 2 shape point(s)
+I (363031) bgworker: Job finished: OK
+I (363031) farecalc: TimeFrame reconciled: gap=89s road_dist=12.4m avgSpeed=0.5km/h -> active=89s (was: dist=0.0m activeT=88s inactiveT=0s)
+I (363043) farecalc: TimeFrame closed: status=1 distance=12.4m activeT=89s inactiveT=0s fare=256.28¢
+I (363052) farecalc: TimeFrame opened: status=2 (odometer carry-in=87.7m)
+I (381164) farecalc: GPS trust: INACTIVE (HDOP too high)
+I (381164) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=18s inactiveT=0s fare=50.85¢
+I (381167) farecalc: TimeFrame opened: status=1 (odometer carry-in=100.8m)
+I (391377) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.7km/h sats=9 hdop=5.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (401516) tripsync: ══════════════════════════════════════
+I (401517) tripsync: UPDATE TRIP — server job id 12813, meterStatus=1, body=6038 bytes
+I (401525) api_client:   Heap before Trips POST      free=8138 KB | largest free block=8064 KB
+I (401534) api_client: → POST /taxis-api/api/Trips
+I (401538) api_client:   Heap before perform()       free=8132 KB | largest free block=8064 KB
+Guru Meditation Error: Core  0 panic'ed (Interrupt wdt timeout on CPU0). 
+
+Core  0 register dump:
+PC      : 0x4037cb71  PS      : 0x00060434  A0      : 0x8038190c  A1      : 0x3fcd2e80  
+A2      : 0x3fccc9a0  A3      : 0xb33fffff  A4      : 0x0000cdcd  A5      : 0x00060123  
+A6      : 0x3fcd2f30  A7      : 0x0000abab  A8      : 0x03ccc9a0  A9      : 0x01ffffff  
+A10     : 0x3fccc9a0  A11     : 0xffffffff  A12     : 0x00060123  A13     : 0x00060123  
+A14     : 0x3fcd3050  A15     : 0x0000abab  SAR     : 0x00000012  EXCCAUSE: 0x00000005  
+EXCVADDR: 0x00000000  LBEG    : 0x40056f5c  LEND    : 0x40056f72  LCOUNT  : 0xffffffff  
+
+
+Backtrace: 0x4037cb6e:0x3fcd2e80 0x40381909:0x3fcd2ea0 0x40381240:0x3fcd2ed0 0x4207f212:0x3fcd2f10 0x420716f5:0x3fcd2f30 0x42081d21:0x3fcd2f60 0x42108479:0x3fcd2fa0 0x421024f9:0x3fcd2fe0 0x4210283f:0x3fcd3040 0x42102b06:0x3fcd30b0 0x42102df1:0x3fcd30f0 0x4208ce9d:0x3fcd3120 0x4210d0f9:0x3fcd3150 0x42061845:0x3fcd3170 0x420624f3:0x3fcd31a0 0x42007a75:0x3fcd31d0 0x42007b9d:0x3fcd3ff0 0x4200e2b9:0x3fcd4050 0x4200ef5d:0x3fcd4090 0x4200c900:0x3fcd40e0 0x4200515a:0x3fcd4100 0x403816cd:0x3fcd4140
+  #0  0x4037cb6e in esp_cpu_compare_and_set at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/esp_hw_support/cpu.c:205
+  #1  0x40381909 in spinlock_acquire at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp_hw_support\include/spinlock.h:132
+      (inlined by) xPortEnterCriticalTimeout at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa/port.c:479
+  #2  0x40381240 in vPortEnterCritical at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa\include\freertos/portmacro.h:567
+      (inlined by) xQueueSemaphoreTake at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel/queue.c:1727
+  #3  0x4207f212 in sys_arch_sem_wait at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\port\freertos/sys_arch.c:165
+  #4  0x420716f5 in tcpip_send_msg_wait_sem at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/tcpip.c:461
+  #5  0x42081d21 in netconn_gethostbyname at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/api_lib.c:1333
+  #6  0x42108479 in lwip_getaddrinfo at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/netdb.c:495
+  #7  0x421024f9 in getaddrinfo at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\include/lwip/netdb.h:23
+      (inlined by) esp_tls_hostname_to_fd at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp-tls/esp_tls.c:210
+  #8  0x4210283f in tcp_connect at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp-tls/esp_tls.c:359
+  #9  0x42102b06 in esp_tls_low_level_conn at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp-tls/esp_tls.c:456
+  #10 0x42102df1 in esp_tls_conn_new_sync at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp-tls/esp_tls.c:544
+  #11 0x4208ce9d in ssl_connect at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/tcp_transport/transport_ssl.c:117 (discriminator 1)
+  #12 0x4210d0f9 in esp_transport_connect at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/tcp_transport/transport.c:123
+  #13 0x42061845 in esp_http_client_connect at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/esp_http_client/esp_http_client.c:1482
+  #14 0x420624f3 in esp_http_client_perform at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/esp_http_client/esp_http_client.c:1308
+  #15 0x42007a75 in _perform at main/backend/taximeter/api_client.c:151
+  #16 0x42007b9d in api_client_request at main/backend/taximeter/api_client.c:184
+  #17 0x4200e2b9 in _request_with_reauth at main/backend/taximeter/trip_sync.c:61
+  #18 0x4200ef5d in trip_sync_update_trip at main/backend/taximeter/trip_sync.c:362
+  #19 0x4200c900 in _job_periodic_trip_update at main/backend/taximeter/trip_manager.c:246 (discriminator 1)
+  #20 0x4200515a in _worker_task at main/backend/bg_worker.c:53 (discriminator 1)
+  #21 0x403816cd in vPortTaskWrapper at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa/port.c:139
+
+
+
+Core  1 register dump:
+PC      : 0x4037cca6  PS      : 0x00060b34  A0      : 0x82067625  A1      : 0x3fcc9450  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x80381a69  A5      : 0x3fcc9380  
+A6      : 0x00060023  A7      : 0x00000003  A8      : 0x82067e0a  A9      : 0x3fcc9410  
+A10     : 0x00000000  A11     : 0x00000001  A12     : 0x80381a69  A13     : 0x3fcc4f50  
+A14     : 0x00060023  A15     : 0x3fcc9624  SAR     : 0x00000000  EXCCAUSE: 0x00000005  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037cca3:0x3fcc9450 0x42067622:0x3fcc9470 0x40382619:0x3fcc9490 0x403816cd:0x3fcc94b0
+  #0  0x4037cca3 in xt_utils_wait_for_intr at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/xtensa/include/xt_utils.h:82
+      (inlined by) esp_cpu_wait_for_intr at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/esp_hw_support/cpu.c:55
+  #1  0x42067622 in esp_vApplicationIdleHook at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp_system/freertos_hooks.c:58
+  #2  0x40382619 in prvIdleTask at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel/tasks.c:4353 (discriminator 1)
+  #3  0x403816cd in vPortTaskWrapper at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa/port.c:139
+
+
+
+
+
+ELF file SHA256: 907f7410c
+
+Rebooting...
+���ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0xb (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40378531
+  #0  0x40378531 in esp_restart_noos at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp_system\port\soc\esp32s3/system_internal.c:160
+
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f3c
+entry 0x403c8920
+I (31) boot: ESP-IDF 5.4.0 2nd stage bootloader
+I (31) boot: compile time Aug  6 2026 08:44:50
+I (31) boot: Multicore bootloader
+I (31) boot: chip revision: v0.2
+I (34) boot: efuse block revision: v1.4
+I (38) boot.esp32s3: Boot SPI Speed : 80MHz
+I (42) boot.esp32s3: SPI Mode       : DIO
+I (45) boot.esp32s3: SPI Flash Size : 16MB
+I (49) boot: Enabling RNG early entropy source...
+I (54) boot: Partition Table:
+I (56) boot: ## Label            Usage          Type ST Offset   Length
+I (63) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (69) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (76) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (82) boot:  3 factory          factory app      00 00 00020000 00300000
+I (89) boot:  4 ota_0            OTA app          00 10 00320000 00300000
+I (95) boot:  5 ota_1            OTA app          00 11 00620000 00300000
+I (102) boot:  6 storage          Unknown data     01 82 00920000 004e0000
+I (108) boot:  7 llm              Unknown data     01 82 00e00000 00200000
+I (115) boot: End of partition table
+I (118) boot: Defaulting to factory image
+I (122) esp_image: segment 0: paddr=00020020 vaddr=3c120020 size=7ef3ch (519996) map
+I (221) esp_image: segment 1: paddr=0009ef64 vaddr=3fc9ed00 size=010b4h (  4276) load
+I (222) esp_image: segment 2: paddr=000a0020 vaddr=42000020 size=115604h (1136132) map
+I (425) esp_image: segment 3: paddr=001b562c vaddr=3fc9fdb4 size=043a0h ( 17312) load
+I (429) esp_image: segment 4: paddr=001b99d4 vaddr=40374000 size=1acb4h (109748) load
+I (453) esp_image: segment 5: paddr=001d4690 vaddr=600fe100 size=0001ch (    28) load
+I (464) boot: Loaded app from partition at offset 0x20000
+I (464) boot: Disabling RNG early entropy source...
+I (475) octal_psram: vendor id    : 0x0d (AP)
+I (475) octal_psram: dev id       : 0x02 (generation 3)
+I (475) octal_psram: density      : 0x03 (64 Mbit)
+I (477) octal_psram: good-die     : 0x01 (Pass)
+I (481) octal_psram: Latency      : 0x01 (Fixed)
+I (485) octal_psram: VCC          : 0x01 (3V)
+I (489) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (494) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (499) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (504) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (509) octal_psram: DriveStrength: 0x00 (1/1)
+I (514) MSPI Timing: PSRAM timing tuning index: 5
+I (518) esp_psram: Found 8MB PSRAM device
+I (521) esp_psram: Speed: 80MHz
+I (524) cpu_start: Multicore app
+I (960) esp_psram: SPI SRAM memory test OK
+I (969) cpu_start: Pro cpu start user code
+I (969) cpu_start: cpu freq: 240000000 Hz
+I (969) app_init: Application information:
+I (969) app_init: Project name:     esp32s3_board
+I (973) app_init: App version:      5d4c9e0-dirty
+I (978) app_init: Compile time:     Aug  6 2026 08:34:47
+I (983) app_init: ELF file SHA256:  907f7410c...
+I (987) app_init: ESP-IDF:          5.4.0
+I (991) efuse_init: Min chip rev:     v0.0
+I (995) efuse_init: Max chip rev:     v0.99 
+I (999) efuse_init: Chip rev:         v0.2
+I (1003) heap_init: Initializing. RAM available for dynamic allocation:
+I (1009) heap_init: At 3FCC3BF8 len 00025B18 (150 KiB): RAM
+I (1014) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1019) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1025) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (1030) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1038) spi_flash: detected chip: generic
+I (1040) spi_flash: flash io: dio
+W (1044) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
+I (1053) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1060) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1067) main_task: Started on CPU0
+I (1081) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1082) main_task: Calling app_main()
+I (1105) nvs_state: OTA state namespace 'ota_state' ready
+I (1111) session: Session store loaded from NVS (namespace 'session')
+I (1111) bgworker: Background worker task started (persistent, one-time stack allocation)
+
+Type 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all' | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help' | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store' | 'time' | 'net uplink wifi|cellular|auto' | 'cell up|status' | 'hotspot on|off|status' | 'smsc send|list|status' | 'sms <command>' | 'factory reset' | 'nvs status'
+> I (1164) pp: pp rom version: e7ae62f
+I (1166) net80211: net80211 rom version: e7ae62f
+I (1171) wifi:wifi driver task: 3fcdb174, prio:23, stack:6656, core=0
+I (1186) wifi:wifi firmware version: 48ea317a7
+I (1187) wifi:wifi certification version: v7.0
+I (1187) wifi:config NVS flash: enabled
+I (1188) wifi:config nano formatting: disabled
+I (1192) wifi:Init data frame dynamic rx buffer num: 16
+I (1197) wifi:Init static rx mgmt buffer num: 5
+I (1201) wifi:Init management short buffer num: 32
+I (1206) wifi:Init dynamic tx buffer num: 32
+I (1210) wifi:Init static tx FG buffer num: 2
+I (1214) wifi:Init static rx buffer size: 1600
+I (1218) wifi:Init static rx buffer num: 6
+I (1222) wifi:Init dynamic rx buffer num: 16
+I (1226) wifi_init: rx ba win: 6
+I (1229) wifi_init: accept mbox: 6
+I (1232) wifi_init: tcpip mbox: 32
+I (1235) wifi_init: udp mbox: 6
+I (1238) wifi_init: tcp mbox: 6
+I (1241) wifi_init: tcp tx win: 5760
+I (1244) wifi_init: tcp rx win: 5760
+I (1247) wifi_init: tcp mss: 1440
+I (1250) wifi_init: WiFi IRAM OP enabled
+I (1254) wifi_init: WiFi RX IRAM OP enabled
+I (1260) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10
+I (1296) wifi:mode : sta (a4:cb:8f:d6:98:f8)
+I (1297) wifi:enable tsf
+I (1298) wifi:Set ps type: 0, coexist: 0
+
+I (1299) wifi_sta: WiFi STA config loaded: ssid="Mobitel 4G-489E" auto_connect=yes (password not logged)
+W (1306) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1315) wifi_sta: WiFi connecting to 'Mobitel 4G-489E' (timeout 15000ms)...
+I (1327) wifi:new:<8,0>, old:<1,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (1328) wifi:state: init -> auth (0xb0)
+I (1334) wifi:state: auth -> assoc (0x0)
+I (1340) wifi:state: assoc -> run (0x10)
+I (1341) wifi:state: run -> init (0x3a0)
+I (1344) wifi:new:<8,0>, old:<8,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+W (1350) wifi_sta: WiFi disconnected — reconnecting (auto-connect is on)...
+W (3765) wifi_sta: WiFi disconnected — reconnecting (auto-connect is on)...
+I (3772) wifi:new:<8,0>, old:<8,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (3773) wifi:state: init -> auth (0xb0)
+I (3776) wifi:state: auth -> assoc (0x0)
+I (3781) wifi:state: assoc -> run (0x10)
+I (3800) wifi:connected with Mobitel 4G-489E, aid = 13, channel 8, BW20, bssid = 1c:13:86:d6:48:9e
+I (3801) wifi:security: WPA2-PSK, phy: bgn, rssi: -71
+I (3805) wifi:pm start, type: 0
+
+I (3806) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (3814) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (3853) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (4905) esp_netif_handlers: sta ip: 192.168.8.140, mask: 255.255.255.0, gw: 192.168.8.1
+I (4905) wifi_sta: WiFi connected — IP: 192.168.8.140
+I (4907) hotspot_nvs: Hotspot config loaded: ssid="TaxiMeter-200" channel=6 max_clients=8 hidden=no enabled=yes (password not logged)
+I (4919) cellular: ══════════════════════════════════════
+I (4930) cellular: CELLULAR PPP INIT — USB CDC modem (A7670E)
+I (4936) cellular:   Requires board DIP switch USB=OFF — confirmed on this exact board that
+I (4944) cellular:   GNSS/AT/console (UART1/UART0) are unaffected by this setting (doc 155 §12.6).
+I (4953) USBH_CDC: iot usbh cdc version: 3.1.0
+I (4988) cellular: USB CDC driver installed — waiting for A7670E enumeration...
+I (4988) modem_board: iot_usbh_modem, version: 2.2.0
+I (4989) iot_eth: IoT ETH Version: 1.1.0
+I (4993) esp-modem-dte: USB PPP network interface init success
+I (4999) cellular: Modem installed — APN="default" — PPP auto-connect DISABLED (manual control)
+I (5007) cellular:   Use 'cell up' or let net_manager.c bring it up per NET_UPLINK_PREFER_CELLULAR.
+I (5016) cellular: ══════════════════════════════════════
+
+I (5028) hotspot_ap: Hotspot module ready (AP event handlers registered)
+I (5034) hotspot_ap: Hotspot was ON last time (persisted) — starting automatically
+I (5042) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 1.1.1.1 (secondary)
+I (5048) wifi:mode : sta (a4:cb:8f:d6:98:f8) + softAP (a4:cb:8f:d6:98:f9)
+I (5057) wifi:Total power save buffer number: 16
+I (5059) wifi:Init max length of beacon: 752/752
+I (5063) wifi:Init max length of beacon: 752/752
+I (5070) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (5076) wifi:Total power save buffer number: 16
+I (5080) hotspot_ap: ══════════════════════════════════════
+I (5081) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (5100) hotspot_ap: HOTSPOT STARTED — ssid="TaxiMeter-200" channel=6 ip=192.168.4.1 max_clients=8
+I (5108) hotspot_ap:   (NAT not yet enabled — net_manager.c enables it once an uplink is ready)
+I (5117) hotspot_ap: ══════════════════════════════════════
+
+I (5129) net_mgr: NET_UPLINK_PREFER_CELLULAR=1 — attempting cellular uplink in the background...
+I (5138) cellular: Dialling PPP (APN="default", timeout=30000ms)...
+I (5370) USBH_CDC: New device connected, address: 1
+I (5370) esp-modem-dte: USB CDC device connected, VID: 0x1e0e, PID: 0x9011
+I (5371) esp-modem-dte: Matched USB Modem: "SIMCOM A7670E (Waveshare)", Modem Interface: 5, AT Interface: -1
+I (5380) cdc_descriptor: Found NOTIF endpoint: 8
+I (5384) cdc_descriptor: Found OUT endpoint: 10
+I (5388) cdc_descriptor: Found IN endpoint: 1
+I (5393) modem_board: DTE connected
+I (5396) modem_board: Handling stage = STAGE_SYNC
+E (7400) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (7400) esp-modem-dte: Retry 1/5 failed. Retrying in 2000 milliseconds...
+I (7744) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs; try 'time' to check current status)
+I (7744) trips_api: ══════════════════════════════════════
+I (7756) trips_api: TRIPS REST API + JSON Storage Init
+I (7761) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (7768) trips_api:   Default trip ID: 12772
+I (7772) trips_api:   Storage backend: 2
+I (8072) trips_api: Created storage directory: /spiffs/store
+I (8073) trips_api: SPIFFS partition: 4581 KB total | 91 KB used | 4489 KB free
+I (8074) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (8080) trips_api: TRIPS API Storage — READY ✓
+I (8085) trips_api: Type 'api help' for available commands.
+I (8090) trips_api: ══════════════════════════════════════
+
+I (8214) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8232 KB, largest block=8064 KB
+I (8226) refdata: tariffs: 8 rows loaded
+I (8227) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8232 KB, largest block=8064 KB
+I (8231) refdata: fixed_rates: 2 rows loaded
+I (8234) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8232 KB, largest block=8064 KB
+I (8248) refdata: special_fares: 9 rows loaded
+I (8342) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8232 KB, largest block=8064 KB
+I (8593) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (8593) refdata: Reference data restored from cache: tariffs=8 fixed_rates=2 special_fares=9 holidays=22
+I (8601) gps: ══════════════════════════════════════
+I (8612) gps: GPS Client Init — default active source: GNSS
+I (8617) gps:   Starting GNSS backend (A7670E, UART1)...
+I (8622) gps_gnss: ══════════════════════════════════════
+I (8634) gps_gnss: GNSS (A7670E) Init
+I (8638) gps_gnss:   A-GPS: ENABLED in config.h
+I (8642) gps_gnss: ══════════════════════════════════════
+I (8654) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (8660) gps_gnss: AT handshake...
+I (8661) gps:   NEO-6M backend NOT compiled in (ENABLE_GPS_NEO6M=0)
+I (8666) gps_gnss:   AT -> OK
+I (8672) gps_gnss: Modem responding ✓
+I (8675) gps:   Injection ('gps set ...') always available regardless of the above.
+I (8680) gps_gnss:   AT+CGNSSPWR=1,1 -> OK
+I (8687) gps: ══════════════════════════════════════
+
+I (8699) farecalc: fare_calc_init: state (35648 bytes) allocated in PSRAM, internal SRAM untouched
+W (8711) trip: ══════════════════════════════════════
+W (8718) trip: RESTORE: trip #8 was still running before this reboot — $15.36 accrued so far
+W (8726) trip:   Waiting for driver confirmation before resuming — see 'trip restore yes|no'
+W (8735) trip: ══════════════════════════════════════
+
+I (8746) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (8754) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (8762) chipinfo: ########################################
+I (8768) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (8774) chipinfo: ########################################
+I (8779) version: ======================================
+I (8784) version: FIRMWARE VERSION
+I (8787) version: --------------------------------------
+I (8792) version:   Project:   esp32s3_board
+I (8796) version:   Version:   26.07.23 (code 1)
+I (8800) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (8813) version:   Running from partition: factory
+I (8818) chipinfo: ======================================
+I (8823) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (8829) chipinfo: --------------------------------------
+I (8835) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (8839) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (8842) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (8851) chipinfo:   Crystal is 40 MHz
+I (8855) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (8859) chipinfo: ======================================
+I (8864) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (8870) chipinfo: --------------------------------------
+I (8875) chipinfo:   Model:       ESP32-S3
+I (8879) chipinfo:   Cores:       2
+I (8882) chipinfo:   Revision:    v0.2
+I (8886) chipinfo:   Features:    WiFi BLE External-Flash
+I (8891) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (8896) chipinfo:   IDF version: 5.4.0
+I (8900) chipinfo: ======================================
+I (8904) chipinfo: FLASH INFO  (live-probed)
+I (8908) chipinfo: --------------------------------------
+I (8913) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (8920) chipinfo:   JEDEC ID:        0x852018
+I (8924) chipinfo: ======================================
+I (8929) chipinfo: RAM / HEAP INFO  (live)
+I (8933) chipinfo: --------------------------------------
+I (8939) chipinfo:   Free heap now (all capabilities): 8378324 bytes | 8182.0 KB (7.99 MB)
+I (8946) chipinfo:   Minimum ever free:                8134280 bytes | 7943.6 KB (7.76 MB)
+I (8954) chipinfo:   --------------------------------------
+I (8960) chipinfo:   PSRAM initialized: YES
+I (8964) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (8972) chipinfo:   SRAM  total:          250119 bytes | 244.3 KB (0.24 MB)
+I (8979) chipinfo:   SRAM  free now:       78099 bytes | 76.3 KB (0.07 MB)
+I (8985) chipinfo:   SRAM  min free ever:  32047 bytes | 31.3 KB (0.03 MB)
+I (8992) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (8995) chipinfo:   SRAM  largest block:  31744 bytes | 31.0 KB (0.03 MB)
+I (9002) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (9009) chipinfo:   PSRAM free now:          8332256 bytes | 8137.0 KB (7.95 MB)
+I (9016) chipinfo:   PSRAM min free ever:     8134264 bytes | 7943.6 KB (7.76 MB)
+I (9024) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (9031) chipinfo: ======================================
+I (9036) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (9043) chipinfo: --------------------------------------
+I (9048) chipinfo:   Name       Type   SubType   Offset     Size
+I (9054) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (9062) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (9070) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (9078) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (9086) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (9094) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (9103) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (9111) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (9120) chipinfo: ======================================
+I (9125) chipinfo: NVS INFO  (live)
+I (9128) chipinfo: --------------------------------------
+I (9133) chipinfo:   Used entries:  216
+I (9137) chipinfo:   Free entries:  540
+I (9140) chipinfo:   Total entries: 756
+I (9144) chipinfo: ======================================
+I (9149) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (9155) chipinfo: --------------------------------------
+I (9160) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (9166) chipinfo:   Used:  93874 bytes | 91.7 KB (0.09 MB)
+I (9171) chipinfo:   Free:  4597567 bytes | 4489.8 KB (4.38 MB)
+I (9176) chipinfo: ########################################
+
+I (9182) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (9188) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (9196) display: SD_CS (TF slot) → GPIO9 HIGH (disabled)
+I (9201) display: Backlight PWM init — GPIO5, 5kHz, 10-bit
+I (9207) display: Backlight ON (GPIO5, PWM 100%)
+I (9211) display: SPI: MOSI=11 SCLK=12 CS=10 DC=14 RST=21 (hardware reset)
+I (9218) gpio: GPIO[14]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (9226) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (9301) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (9302) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (9303) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (9322) gps_gnss: A-GPS preconditions OK — SIM ready, network registered.
+I (9322) gps_gnss:   A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...
+I (9574) display: ST7796S init complete — 320x480 RGB565
+I (9574) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (9578) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (9581) display: DISPLAY — READY ✓
+I (9584) touch: TOUCH INIT — FT6336U via I2C
+I (9589) touch: I2C init: SDA=6 SCL=4
+I (9592) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (9660) touch: FT6336U reset pulsed on GPIO1
+I (9660) touch: FT6336U init — addr: 0x38
+I (9660) touch: Touch input registered with LVGL ✓
+W (9662) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (9668) touch: TOUCH — READY ✓
+I (9671) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (10058) ui: UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)
+I (10058) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (10062) additional_work: Additional work module ready (try: "sms reboot")
+I (10069) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (10075) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (10083) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (10090) chipinfo: READY — Touch UI Active ✓
+I (11352) gps_gnss:   AT+CAGPS -> +AGPS: success.
+I (11352) gps_gnss: A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular
+I (11353) gps_gnss:   connection (not WiFi — see doc 140). Cold fix should now be faster.
+E (11402) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (11402) esp-modem-dte: Retry 2/5 failed. Retrying in 2000 milliseconds...
+I (13075) ram_test: ══════════════════════════════════════
+I (13076) ram_test: PSRAM periodic health-check
+I (13080) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (13087) ram_test:   Before: free=8323836 bytes (7.94 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13236) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (13237) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7275256 bytes (6.94 MB)
+I (13244) ram_test:   After free: free=8323836 bytes (7.94 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13253) ram_test: ══════════════════════════════════════
+I (14968) touch: Touch: (183,324) [direct px]
+E (15404) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (15404) esp-modem-dte: Retry 3/5 failed. Retrying in 2000 milliseconds...
+E (19406) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (19406) esp-modem-dte: Retry 4/5 failed. Retrying in 2000 milliseconds...
+E (23408) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (23408) esp-modem-dte: Retry 5/5 failed. Retrying in 2000 milliseconds...
+W (25410) esp-modem-dte: Operation failed.
+W (25410) esp-modem-dte: Failed to sync with modem DCE, trying to exit data mode
+I (25440) modem_board: Modem manufacturer ID: INCORPORATED
+I (25442) modem_board: Modem module ID: A7670E-FASE
+I (25444) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (25546) modem_board: Handling stage = STAGE_IDLE
+I (25546) net_mgr: DNS resolver -> 8.8.8.8
+I (25547) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (25551) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (25559) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (25565) net_mgr: Active uplink -> CELLULAR
+I (25569) bgworker: Job finished: OK
+I (25573) auth: ══════════════════════════════════════
+I (25584) auth: LOGIN — user=12345 mac=A4:CB:8F:D6:98:F8
+I (25591) api_client: → POST /taxis-api/api/Authentications/Login
+I (25595) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (25646) modem_board: Handling stage = STAGE_START_PPP
+I (25646) modem_board: Check SIM card state...
+I (25647) modem_board: Check signal quality...
+I (25652) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (25655) modem_board: Check network registration...
+I (25661) modem_board: Check PDP context...
+I (25663) modem_board: Set PDP context: cid=1, type=IP, apn=default
+I (25674) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (25677) modem_board: PPP Dial up...
+E (26182) esp-modem-dte: esp_modem_dte_dial_up(326): dial up failed
+I (26182) modem_board: Handling stage = STAGE_ERROR
+E (26182) modem_board: Modem in error state
+I (31109) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.0km/h sats=9 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+W (35144) net_mgr: Health check: active uplink was CELLULAR but it silently dropped — falling back to WiFi automatically (doc 162 §4)
+I (35146) net_mgr: DNS resolver -> 8.8.8.8
+I (35149) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (35157) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (35164) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (35171) net_mgr: Active uplink -> WIFI
+I (37255) esp-x509-crt-bundle: Certificate validated
+I (38685) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (38685) api_client: ← HTTP 200 (POST /taxis-api/api/Authentications/Login)
+I (38702) auth:   Login response has no vehicle info — keeping vehicle_id=105 vehicle_type_id=4
+I (38703) auth: LOGIN OK ✓ — driver_id=130 vehicle_id=105 vehicle_type_id=4
+I (38709) api_client: → GET /taxis-api/api/Driver
+I (38712) api_client:   Heap before perform()       free=8145 KB | largest free block=8064 KB
+I (39368) esp-x509-crt-bundle: Certificate validated
+I (40126) api_client:   Heap after perform()        free=8128 KB | largest free block=8064 KB
+I (40126) api_client: ← HTTP 200 (GET /taxis-api/api/Driver)
+I (40134) auth:   Driver profile: Tuyavan 
+I (40135) auth: ══════════════════════════════════════
+
+I (40144) refdata: ══════════════════════════════════════
+I (40156) refdata: REFERENCE DATA — fetching all 4 categories
+I (40288) api_client: → GET /taxis-api/api/VehicleType/4/Tarifs/v2
+I (40289) api_client:   Heap before perform()       free=8147 KB | largest free block=8064 KB
+W (40412) Modem AT: AT parser handle_line is NULL but receive: "
++PPPD: DISCONNECTED
+"
+I (40956) esp-x509-crt-bundle: Certificate validated
+I (41649) wifi:<ba-add>idx:0 (ifx:0, 1c:13:86:d6:48:9e), tid:0, ssn:29, winSize:64
+I (41734) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (41735) api_client: ← HTTP 200 (GET /taxis-api/api/VehicleType/4/Tarifs/v2)
+I (41747) api_client:   Wrote 6361 bytes to /spiffs/store/ref/tariffs.json
+I (41748) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8153 KB, largest block=8064 KB
+I (41769) refdata: tariffs: 8 rows loaded
+I (41807) touch: Touch: (205,329) [direct px]
+I (41875) api_client: → GET /taxis-api/api/FixedFares
+I (41875) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (42732) esp-x509-crt-bundle: Certificate validated
+I (43564) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (43565) api_client: ← HTTP 200 (GET /taxis-api/api/FixedFares)
+I (43573) api_client:   Wrote 905 bytes to /spiffs/store/ref/fixed_rates.json
+I (43575) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8152 KB, largest block=8064 KB
+I (43588) refdata: fixed_rates: 2 rows loaded
+I (43697) api_client: → GET /taxis-api/api/SpecialFare
+I (43698) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (44500) esp-x509-crt-bundle: Certificate validated
+I (45299) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (45299) api_client: ← HTTP 200 (GET /taxis-api/api/SpecialFare)
+I (45307) api_client:   Wrote 1930 bytes to /spiffs/store/ref/special_fares.json
+I (45310) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8152 KB, largest block=8064 KB
+I (45326) refdata: special_fares: 9 rows loaded
+I (45728) api_client: → GET /devices-api/api/PublicHolidays
+I (45729) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (46497) esp-x509-crt-bundle: Certificate validated
+I (48234) api_client:   Heap after perform()        free=8128 KB | largest free block=8064 KB
+I (48235) api_client: ← HTTP 200 (GET /devices-api/api/PublicHolidays)
+I (48244) api_client:   Wrote 75459 bytes to /spiffs/store/ref/public_holidays.json
+I (48337) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8152 KB, largest block=8064 KB
+I (48613) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (48614) refdata: REFERENCE DATA — all 4 categories OK ✓ (fresh)
+I (48618) refdata: ══════════════════════════════════════
+
+I (48630) bgworker: Job finished: OK
+I (48634) auth: ══════════════════════════════════════
+I (48645) auth: LOGIN — user=12345 mac=A4:CB:8F:D6:98:F8
+I (48652) api_client: → POST /taxis-api/api/Authentications/Login
+I (48657) api_client:   Heap before perform()       free=8144 KB | largest free block=8064 KB
+I (48753) ui: Login screen: LOGIN SUCCESSFUL -> meter
+I (49368) esp-x509-crt-bundle: Certificate validated
+I (49456) ui: Screen: 0
+I (50736) api_client:   Heap after perform()        free=8127 KB | largest free block=8064 KB
+I (50736) api_client: ← HTTP 200 (POST /taxis-api/api/Authentications/Login)
+I (50816) auth:   Login response has no vehicle info — keeping vehicle_id=105 vehicle_type_id=4
+I (50817) auth: LOGIN OK ✓ — driver_id=130 vehicle_id=105 vehicle_type_id=4
+I (50822) api_client: → GET /taxis-api/api/Driver
+I (50826) api_client:   Heap before perform()       free=8144 KB | largest free block=8064 KB
+I (51549) esp-x509-crt-bundle: Certificate validated
+I (52276) api_client:   Heap after perform()        free=8127 KB | largest free block=8064 KB
+I (52277) api_client: ← HTTP 200 (GET /taxis-api/api/Driver)
+I (52284) auth:   Driver profile: Tuyavan 
+I (52285) auth: ══════════════════════════════════════
+
+I (52295) refdata: Reference data still fresh (4s old, refetch after 43200s) — skipping fetch
+I (52303) bgworker: Job finished: OK
+I (53763) touch: Touch: (210,289) [direct px]
+I (53916) farecalc: TimeFrame opened: status=2 (odometer carry-in=100.8m)
+I (53917) farecalc: ══════════════════════════════════════
+I (53924) farecalc: METER RESTORED after reboot — tariff #5 "Maxi Day Rate(06:00-21:59)" (Maxi), carried forward 1536.18¢ ($15.36) and 0.101km from before the reboot
+I (53938) farecalc:   (per-segment TimeFrame history before the reboot could not be recovered — only
+I (53948) farecalc:   the aggregate totals; the fare total above is exact, sync detail for that portion is not)
+I (53957) farecalc: ══════════════════════════════════════
+
+I (54076) trip: TRIP #8 RESUMED after reboot — driver confirmed
+I (54746) farecalc: GPS trust: INACTIVE (HDOP too high)
+I (54746) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=0s inactiveT=0s fare=0.00¢
+I (54748) farecalc: TimeFrame opened: status=1 (odometer carry-in=100.8m)
+I (61178) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (91179) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=2.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (93072) farecalc: GPS trust: ACTIVE (reactivation streak complete)
+I (93074) directions: -> GET graphhopper.com/route (from=9.825623,80.231291 to=9.825662,80.231284)
+I (93770) esp-x509-crt-bundle: Certificate validated
+I (94825) directions:    heap before=8141KB after=8124KB
+I (94830) directions: get_route: OK — road distance=1.9m, 2 shape point(s)
+I (94831) bgworker: Job finished: OK
+I (94831) farecalc: TimeFrame reconciled: gap=39s road_dist=1.9m avgSpeed=0.2km/h -> active=39s (was: dist=0.0m activeT=38s inactiveT=0s)
+I (94842) farecalc: TimeFrame closed: status=1 distance=1.9m activeT=39s inactiveT=0s fare=110.94¢
+I (94850) farecalc: TimeFrame opened: status=2 (odometer carry-in=102.7m)
+I (115187) tripsync: ══════════════════════════════════════
+I (115188) tripsync: UPDATE TRIP — server job id 12813, meterStatus=1, body=3395 bytes
+I (115196) api_client:   Heap before Trips POST      free=8140 KB | largest free block=8064 KB
+I (115205) api_client: → POST /taxis-api/api/Trips
+I (115209) api_client:   Heap before perform()       free=8134 KB | largest free block=8064 KB
+I (115909) esp-x509-crt-bundle: Certificate validated
+I (116758) api_client:   Heap after perform()        free=8116 KB | largest free block=8064 KB
+I (116758) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (116763) api_client:   Heap after Trips POST       free=8139 KB | largest free block=8064 KB
+I (116771) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (116774) tripsync: ══════════════════════════════════════
+
+I (116786) bgworker: Job finished: OK
+I (121180) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (151245) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2315 speed=5.8km/h sats=9 hdop=4.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+W (173707) farecalc: TimeFrame's point buffer full (40) — extra GPS points this segment dropped (fare is unaffected; only the synced polyline loses detail)
+I (175839) tripsync: ══════════════════════════════════════
+I (175840) tripsync: UPDATE TRIP — server job id 12813, meterStatus=1, body=6171 bytes
+I (175848) api_client:   Heap before Trips POST      free=8138 KB | largest free block=8064 KB
+I (175857) api_client: → POST /taxis-api/api/Trips
+I (175861) api_client:   Heap before perform()       free=8132 KB | largest free block=8064 KB
+I (176581) esp-x509-crt-bundle: Certificate validated
+I (177410) api_client:   Heap after perform()        free=8115 KB | largest free block=8064 KB
+I (177411) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (177416) api_client:   Heap after Trips POST       free=8138 KB | largest free block=8064 KB
+I (177423) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (177427) tripsync: ══════════════════════════════════════
+
+I (177438) bgworker: Job finished: OK
+I (181251) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (187923) farecalc: GPS trust: INACTIVE (HDOP too high)
+I (187923) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=92s inactiveT=0s fare=259.90¢
+I (187926) farecalc: TimeFrame opened: status=1 (odometer carry-in=130.8m)
+I (204038) farecalc: GPS trust: ACTIVE (reactivation streak complete)
+I (204039) directions: -> GET graphhopper.com/route (from=9.825546,80.231320 to=9.825608,80.231253)
+I (204575) esp-x509-crt-bundle: Certificate validated
+I (205599) directions:    heap before=8142KB after=8124KB
+I (205603) directions: get_route: OK — road distance=9.0m, 2 shape point(s)
+I (205604) bgworker: Job finished: OK
+I (205604) farecalc: TimeFrame reconciled: gap=16s road_dist=9.0m avgSpeed=2.0km/h -> active=16s (was: dist=0.0m activeT=16s inactiveT=0s)
+I (205616) farecalc: TimeFrame closed: status=1 distance=9.0m activeT=16s inactiveT=0s fare=48.71¢
+I (205624) farecalc: TimeFrame opened: status=2 (odometer carry-in=139.8m)
+I (207631) farecalc: GPS trust: INACTIVE (HDOP too high)
+I (207631) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=2s inactiveT=0s fare=5.65¢
+I (207634) farecalc: TimeFrame opened: status=1 (odometer carry-in=150.9m)
+I (211252) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=0.0km/h sats=10 hdop=2.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (217746) farecalc: GPS trust: ACTIVE (reactivation streak complete)
+I (217747) directions: -> GET graphhopper.com/route (from=9.825606,80.231238 to=9.825594,80.231291)
+I (218337) esp-x509-crt-bundle: Certificate validated
+I (219479) directions:    heap before=8142KB after=8124KB
+I (219484) directions: get_route: OK — road distance=5.9m, 2 shape point(s)
+I (219485) bgworker: Job finished: OK
+I (219485) farecalc: TimeFrame reconciled: gap=10s road_dist=5.9m avgSpeed=2.1km/h -> active=10s (was: dist=0.0m activeT=10s inactiveT=0s)
+I (219496) farecalc: TimeFrame closed: status=1 distance=5.9m activeT=10s inactiveT=0s fare=30.58¢
+I (219505) farecalc: TimeFrame opened: status=2 (odometer carry-in=156.8m)
+I (231732) farecalc: GPS trust: INACTIVE (HDOP too high)
+I (231732) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=12s inactiveT=0s fare=33.90¢
+I (231735) farecalc: TimeFrame opened: status=1 (odometer carry-in=164.9m)
+I (239881) tripsync: ══════════════════════════════════════
+I (239882) tripsync: UPDATE TRIP — server job id 12813, meterStatus=1, body=9541 bytes
+I (239890) api_client:   Heap before Trips POST      free=8135 KB | largest free block=8064 KB
+I (239899) api_client: → POST /taxis-api/api/Trips
+I (239903) api_client:   Heap before perform()       free=8129 KB | largest free block=8064 KB
+Guru Meditation Error: Core  1 panic'ed (Interrupt wdt timeout on CPU1). 
+
+Core  1 register dump:
+PC      : 0x4037cb64  PS      : 0x00060d34  A0      : 0x80380de2  A1      : 0x3fcd7410  
+A2      : 0x3fccc9a0  A3      : 0xffffffff  A4      : 0x5e9d718c  A5      : 0x00060d23  
+A6      : 0xb33fffff  A7      : 0x0000abab  A8      : 0x8038190c  A9      : 0x3fcd73f0  
+A10     : 0x3fccc9a0  A11     : 0xb33fffff  A12     : 0x0000abab  A13     : 0x00060a23  
+A14     : 0x00000000  A15     : 0x0000cdcd  SAR     : 0x00000012  EXCCAUSE: 0x00000006  
+EXCVADDR: 0x00000000  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffff9  
+
+
+Backtrace: 0x4037cb61:0x3fcd7410 0x40380ddf:0x3fcd7440 0x4207f1c6:0x3fcd7480 0x42082f2d:0x3fcd74a0 0x420714d1:0x3fcd74c0 0x4207158c:0x3fcd74e0 0x403816cd:0x3fcd7510
+  #0  0x4037cb61 in esp_coex_common_env_is_chip_wrapper at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/esp_coex/esp32s3/esp_coex_adapter.c:44
+  #1  0x40380ddf in vPortEnterCritical at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa\include\freertos/portmacro.h:567
+      (inlined by) xQueueGenericSend at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel/queue.c:950
+  #2  0x4207f1c6 in sys_sem_signal at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\port\freertos/sys_arch.c:134
+  #3  0x42082f2d in lwip_netconn_do_gethostbyname at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/api_msg.c:2254
+  #4  0x420714d1 in tcpip_thread_handle_msg at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/tcpip.c:162
+  #5  0x4207158c in tcpip_thread at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/tcpip.c:148
+  #6  0x403816cd in vPortTaskWrapper at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa/port.c:139
+
+
+
+Core  0 register dump:
+PC      : 0x4037cb69  PS      : 0x00060234  A0      : 0x8038190c  A1      : 0x3fcd2e80  
+A2      : 0x3fccc9a0  A3      : 0xb33fffff  A4      : 0x0000cdcd  A5      : 0x00060923  
+A6      : 0x3fcd2f30  A7      : 0x0000abab  A8      : 0x03ccc9a0  A9      : 0x01ffffff  
+A10     : 0x3fccc9a0  A11     : 0xffffffff  A12     : 0x00060923  A13     : 0x00060923  
+A14     : 0x3fcd3050  A15     : 0x0000abab  SAR     : 0x0000001d  EXCCAUSE: 0x00000006  
+EXCVADDR: 0x00000000  LBEG    : 0x40056f5c  LEND    : 0x40056f72  LCOUNT  : 0xffffffff  
+
+
+Backtrace: 0x4037cb66:0x3fcd2e80 0x40381909:0x3fcd2ea0 0x40381240:0x3fcd2ed0 0x4207f212:0x3fcd2f10 0x420716f5:0x3fcd2f30 0x42081d21:0x3fcd2f60 0x42108479:0x3fcd2fa0 0x421024f9:0x3fcd2fe0 0x4210283f:0x3fcd3040 0x42102b06:0x3fcd30b0 0x42102df1:0x3fcd30f0 0x4208ce9d:0x3fcd3120 0x4210d0f9:0x3fcd3150 0x42061845:0x3fcd3170 0x420624f3:0x3fcd31a0 0x42007a75:0x3fcd31d0 0x42007b9d:0x3fcd3ff0 0x4200e2b9:0x3fcd4050 0x4200ef5d:0x3fcd4090 0x4200c900:0x3fcd40e0 0x4200515a:0x3fcd4100 0x403816cd:0x3fcd4140
+  #0  0x4037cb66 in esp_cpu_compare_and_set at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/esp_hw_support/cpu.c:200
+  #1  0x40381909 in spinlock_acquire at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp_hw_support\include/spinlock.h:132
+      (inlined by) xPortEnterCriticalTimeout at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa/port.c:479
+  #2  0x40381240 in vPortEnterCritical at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa\include\freertos/portmacro.h:567
+      (inlined by) xQueueSemaphoreTake at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel/queue.c:1727
+  #3  0x4207f212 in sys_arch_sem_wait at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\port\freertos/sys_arch.c:165
+  #4  0x420716f5 in tcpip_send_msg_wait_sem at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/tcpip.c:461
+  #5  0x42081d21 in netconn_gethostbyname at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/api_lib.c:1333
+  #6  0x42108479 in lwip_getaddrinfo at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\lwip\src\api/netdb.c:495
+  #7  0x421024f9 in getaddrinfo at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\lwip\include/lwip/netdb.h:23
+      (inlined by) esp_tls_hostname_to_fd at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp-tls/esp_tls.c:210
+  #8  0x4210283f in tcp_connect at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp-tls/esp_tls.c:359
+  #9  0x42102b06 in esp_tls_low_level_conn at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp-tls/esp_tls.c:456
+  #10 0x42102df1 in esp_tls_conn_new_sync at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp-tls/esp_tls.c:544
+  #11 0x4208ce9d in ssl_connect at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/tcp_transport/transport_ssl.c:117 (discriminator 1)
+  #12 0x4210d0f9 in esp_transport_connect at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/tcp_transport/transport.c:123
+  #13 0x42061845 in esp_http_client_connect at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/esp_http_client/esp_http_client.c:1482
+  #14 0x420624f3 in esp_http_client_perform at C:/Users/Kingston/.platformio/packages/framework-espidf@3.50400.0/components/esp_http_client/esp_http_client.c:1308
+  #15 0x42007a75 in _perform at main/backend/taximeter/api_client.c:151
+  #16 0x42007b9d in api_client_request at main/backend/taximeter/api_client.c:184
+  #17 0x4200e2b9 in _request_with_reauth at main/backend/taximeter/trip_sync.c:61
+  #18 0x4200ef5d in trip_sync_update_trip at main/backend/taximeter/trip_sync.c:362
+  #19 0x4200c900 in _job_periodic_trip_update at main/backend/taximeter/trip_manager.c:246 (discriminator 1)
+  #20 0x4200515a in _worker_task at main/backend/bg_worker.c:53 (discriminator 1)
+  #21 0x403816cd in vPortTaskWrapper at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\freertos\FreeRTOS-Kernel\portable\xtensa/port.c:139
+
+
+
+
+
+ELF file SHA256: 907f7410c
+
+Rebooting...
+���ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0xb (SPI_FAST_FLASH_BOOT)
+Saved PC:0x420682b2
+  #0  0x420682b2 in panic_handler at C:\Users\Kingston\.platformio\packages\framework-espidf@3.50400.0\components\esp_system\port/panic_handler.c:154 (discriminator 1)
+
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f3c
+entry 0x403c8920
+I (31) boot: ESP-IDF 5.4.0 2nd stage bootloader
+I (31) boot: compile time Aug  6 2026 08:44:50
+I (31) boot: Multicore bootloader
+I (31) boot: chip revision: v0.2
+I (34) boot: efuse block revision: v1.4
+I (38) boot.esp32s3: Boot SPI Speed : 80MHz
+I (42) boot.esp32s3: SPI Mode       : DIO
+I (45) boot.esp32s3: SPI Flash Size : 16MB
+I (49) boot: Enabling RNG early entropy source...
+I (54) boot: Partition Table:
+I (56) boot: ## Label            Usage          Type ST Offset   Length
+I (63) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (69) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (76) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (82) boot:  3 factory          factory app      00 00 00020000 00300000
+I (89) boot:  4 ota_0            OTA app          00 10 00320000 00300000
+I (95) boot:  5 ota_1            OTA app          00 11 00620000 00300000
+I (102) boot:  6 storage          Unknown data     01 82 00920000 004e0000
+I (108) boot:  7 llm              Unknown data     01 82 00e00000 00200000
+I (115) boot: End of partition table
+I (118) boot: Defaulting to factory image
+I (122) esp_image: segment 0: paddr=00020020 vaddr=3c120020 size=7ef3ch (519996) map
+I (222) esp_image: segment 1: paddr=0009ef64 vaddr=3fc9ed00 size=010b4h (  4276) load
+I (223) esp_image: segment 2: paddr=000a0020 vaddr=42000020 size=115604h (1136132) map
+I (427) esp_image: segment 3: paddr=001b562c vaddr=3fc9fdb4 size=043a0h ( 17312) load
+I (431) esp_image: segment 4: paddr=001b99d4 vaddr=40374000 size=1acb4h (109748) load
+I (455) esp_image: segment 5: paddr=001d4690 vaddr=600fe100 size=0001ch (    28) load
+I (465) boot: Loaded app from partition at offset 0x20000
+I (465) boot: Disabling RNG early entropy source...
+I (476) octal_psram: vendor id    : 0x0d (AP)
+I (476) octal_psram: dev id       : 0x02 (generation 3)
+I (476) octal_psram: density      : 0x03 (64 Mbit)
+I (478) octal_psram: good-die     : 0x01 (Pass)
+I (483) octal_psram: Latency      : 0x01 (Fixed)
+I (487) octal_psram: VCC          : 0x01 (3V)
+I (491) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (496) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (501) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (505) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (511) octal_psram: DriveStrength: 0x00 (1/1)
+I (515) MSPI Timing: PSRAM timing tuning index: 5
+I (519) esp_psram: Found 8MB PSRAM device
+I (523) esp_psram: Speed: 80MHz
+I (526) cpu_start: Multicore app
+I (961) esp_psram: SPI SRAM memory test OK
+I (970) cpu_start: Pro cpu start user code
+I (970) cpu_start: cpu freq: 240000000 Hz
+I (970) app_init: Application information:
+I (970) app_init: Project name:     esp32s3_board
+I (975) app_init: App version:      5d4c9e0-dirty
+I (979) app_init: Compile time:     Aug  6 2026 08:34:47
+I (984) app_init: ELF file SHA256:  907f7410c...
+I (989) app_init: ESP-IDF:          5.4.0
+I (992) efuse_init: Min chip rev:     v0.0
+I (996) efuse_init: Max chip rev:     v0.99 
+I (1000) efuse_init: Chip rev:         v0.2
+I (1004) heap_init: Initializing. RAM available for dynamic allocation:
+I (1011) heap_init: At 3FCC3BF8 len 00025B18 (150 KiB): RAM
+I (1016) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1021) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1026) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (1032) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1039) spi_flash: detected chip: generic
+I (1042) spi_flash: flash io: dio
+W (1045) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
+I (1055) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1061) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1068) main_task: Started on CPU0
+I (1082) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1083) main_task: Calling app_main()
+I (1106) nvs_state: OTA state namespace 'ota_state' ready
+I (1111) session: Session store loaded from NVS (namespace 'session')
+I (1111) bgworker: Background worker task started (persistent, one-time stack allocation)
+
+Type 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all' | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help' | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store' | 'time' | 'net uplink wifi|cellular|auto' | 'cell up|status' | 'hotspot on|off|status' | 'smsc send|list|status' | 'sms <command>' | 'factory reset' | 'nvs status'
+> I (1164) pp: pp rom version: e7ae62f
+I (1166) net80211: net80211 rom version: e7ae62f
+I (1171) wifi:wifi driver task: 3fcdb174, prio:23, stack:6656, core=0
+I (1186) wifi:wifi firmware version: 48ea317a7
+I (1187) wifi:wifi certification version: v7.0
+I (1187) wifi:config NVS flash: enabled
+I (1188) wifi:config nano formatting: disabled
+I (1192) wifi:Init data frame dynamic rx buffer num: 16
+I (1197) wifi:Init static rx mgmt buffer num: 5
+I (1201) wifi:Init management short buffer num: 32
+I (1206) wifi:Init dynamic tx buffer num: 32
+I (1210) wifi:Init static tx FG buffer num: 2
+I (1214) wifi:Init static rx buffer size: 1600
+I (1218) wifi:Init static rx buffer num: 6
+I (1222) wifi:Init dynamic rx buffer num: 16
+I (1227) wifi_init: rx ba win: 6
+I (1229) wifi_init: accept mbox: 6
+I (1232) wifi_init: tcpip mbox: 32
+I (1235) wifi_init: udp mbox: 6
+I (1238) wifi_init: tcp mbox: 6
+I (1241) wifi_init: tcp tx win: 5760
+I (1244) wifi_init: tcp rx win: 5760
+I (1247) wifi_init: tcp mss: 1440
+I (1250) wifi_init: WiFi IRAM OP enabled
+I (1254) wifi_init: WiFi RX IRAM OP enabled
+I (1260) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10
+I (1295) wifi:mode : sta (a4:cb:8f:d6:98:f8)
+I (1296) wifi:enable tsf
+I (1298) wifi:Set ps type: 0, coexist: 0
+
+I (1299) wifi_sta: WiFi STA config loaded: ssid="Mobitel 4G-489E" auto_connect=yes (password not logged)
+W (1305) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1314) wifi_sta: WiFi connecting to 'Mobitel 4G-489E' (timeout 15000ms)...
+I (1326) wifi:new:<8,0>, old:<1,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (1327) wifi:state: init -> auth (0xb0)
+I (1334) wifi:state: auth -> assoc (0x0)
+I (1337) wifi:state: assoc -> init (0x3a0)
+I (1340) wifi:new:<8,0>, old:<8,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+W (1346) wifi_sta: WiFi disconnected — reconnecting (auto-connect is on)...
+W (3761) wifi_sta: WiFi disconnected — reconnecting (auto-connect is on)...
+I (3768) wifi:new:<8,0>, old:<8,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (3769) wifi:state: init -> auth (0xb0)
+I (3772) wifi:state: auth -> assoc (0x0)
+I (3777) wifi:state: assoc -> run (0x10)
+I (3799) wifi:connected with Mobitel 4G-489E, aid = 15, channel 8, BW20, bssid = 1c:13:86:d6:48:9e
+I (3800) wifi:security: WPA2-PSK, phy: bgn, rssi: -67
+I (3804) wifi:pm start, type: 0
+
+I (3805) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (3813) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (3869) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (4864) esp_netif_handlers: sta ip: 192.168.8.140, mask: 255.255.255.0, gw: 192.168.8.1
+I (4864) wifi_sta: WiFi connected — IP: 192.168.8.140
+I (4866) hotspot_nvs: Hotspot config loaded: ssid="TaxiMeter-200" channel=6 max_clients=8 hidden=no enabled=yes (password not logged)
+I (4878) cellular: ══════════════════════════════════════
+I (4889) cellular: CELLULAR PPP INIT — USB CDC modem (A7670E)
+I (4895) cellular:   Requires board DIP switch USB=OFF — confirmed on this exact board that
+I (4903) cellular:   GNSS/AT/console (UART1/UART0) are unaffected by this setting (doc 155 §12.6).
+I (4912) USBH_CDC: iot usbh cdc version: 3.1.0
+I (4947) cellular: USB CDC driver installed — waiting for A7670E enumeration...
+I (4947) modem_board: iot_usbh_modem, version: 2.2.0
+I (4948) iot_eth: IoT ETH Version: 1.1.0
+I (4952) esp-modem-dte: USB PPP network interface init success
+I (4958) cellular: Modem installed — APN="default" — PPP auto-connect DISABLED (manual control)
+I (4966) cellular:   Use 'cell up' or let net_manager.c bring it up per NET_UPLINK_PREFER_CELLULAR.
+I (4975) cellular: ══════════════════════════════════════
+
+I (4987) hotspot_ap: Hotspot module ready (AP event handlers registered)
+I (4993) hotspot_ap: Hotspot was ON last time (persisted) — starting automatically
+I (5001) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 1.1.1.1 (secondary)
+I (5007) wifi:mode : sta (a4:cb:8f:d6:98:f8) + softAP (a4:cb:8f:d6:98:f9)
+I (5016) wifi:Total power save buffer number: 16
+I (5018) wifi:Init max length of beacon: 752/752
+I (5022) wifi:Init max length of beacon: 752/752
+I (5029) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (5034) wifi:Total power save buffer number: 16
+I (5039) hotspot_ap: ══════════════════════════════════════
+I (5040) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (5059) hotspot_ap: HOTSPOT STARTED — ssid="TaxiMeter-200" channel=6 ip=192.168.4.1 max_clients=8
+I (5067) hotspot_ap:   (NAT not yet enabled — net_manager.c enables it once an uplink is ready)
+I (5076) hotspot_ap: ══════════════════════════════════════
+
+I (5088) net_mgr: NET_UPLINK_PREFER_CELLULAR=1 — attempting cellular uplink in the background...
+I (5097) cellular: Dialling PPP (APN="default", timeout=30000ms)...
+I (5329) USBH_CDC: New device connected, address: 1
+I (5329) esp-modem-dte: USB CDC device connected, VID: 0x1e0e, PID: 0x9011
+I (5329) esp-modem-dte: Matched USB Modem: "SIMCOM A7670E (Waveshare)", Modem Interface: 5, AT Interface: -1
+I (5339) cdc_descriptor: Found NOTIF endpoint: 8
+I (5343) cdc_descriptor: Found OUT endpoint: 10
+I (5347) cdc_descriptor: Found IN endpoint: 1
+I (5352) modem_board: DTE connected
+I (5355) modem_board: Handling stage = STAGE_SYNC
+I (5361) modem_board: Modem manufacturer ID: INCORPORATED
+I (5365) modem_board: Modem module ID: A7670E-FASE
+I (5369) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (5474) modem_board: Handling stage = STAGE_IDLE
+I (5474) net_mgr: DNS resolver -> 8.8.8.8
+I (5475) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (5479) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (5486) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (5492) net_mgr: Active uplink -> CELLULAR
+I (5496) bgworker: Job finished: OK
+I (5574) modem_board: Handling stage = STAGE_START_PPP
+I (5574) modem_board: Check SIM card state...
+I (5575) modem_board: Check signal quality...
+I (5579) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (5582) modem_board: Check network registration...
+I (5588) modem_board: Check PDP context...
+I (5591) modem_board: Set PDP context: cid=1, type=IP, apn=default
+I (5601) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (5604) modem_board: PPP Dial up...
+I (6209) iot_eth: Ethernet link up
+W (6210) iot_eth: Driver does not support get_addr
+I (6309) modem_board: Handling stage = STAGE_RUNNING
+I (6309) modem_board: Modem is running
+I (12219) esp-netif_lwip-ppp: Connected
+I (12219) cellular: ══════════════════════════════════════
+I (12223) cellular: PPP CONNECTED — carrier IP: 10.178.11.117
+I (12229) cellular: ══════════════════════════════════════
+
+I (12241) iot_eth.netif_glue: netif "USB PPP" Got IP Address
+I (12246) iot_eth.netif_glue: ~~~~~~~~~~~
+I (12250) iot_eth.netif_glue: ETHIP:10.178.11.117
+I (12254) iot_eth.netif_glue: ETHMASK:255.255.255.255
+I (12259) iot_eth.netif_glue: ETHGW:10.64.64.64
+I (12264) iot_eth.netif_glue: Main DNS: 10.4.4.12
+I (12268) iot_eth.netif_glue: Backup DNS: 8.8.8.8
+I (12272) iot_eth.netif_glue: ~~~~~~~~~~~
+I (12803) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs; try 'time' to check current status)
+I (12803) trips_api: ══════════════════════════════════════
+I (12815) trips_api: TRIPS REST API + JSON Storage Init
+I (12820) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (12828) trips_api:   Default trip ID: 12772
+I (12832) trips_api:   Storage backend: 2
+I (13133) trips_api: Created storage directory: /spiffs/store
+I (13133) trips_api: SPIFFS partition: 4581 KB total | 91 KB used | 4489 KB free
+I (13135) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (13141) trips_api: TRIPS API Storage — READY ✓
+I (13145) trips_api: Type 'api help' for available commands.
+I (13151) trips_api: ══════════════════════════════════════
+
+I (13277) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8216 KB, largest block=8064 KB
+I (13290) refdata: tariffs: 8 rows loaded
+I (13291) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8216 KB, largest block=8064 KB
+I (13295) refdata: fixed_rates: 2 rows loaded
+I (13298) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8216 KB, largest block=8064 KB
+I (13312) refdata: special_fares: 9 rows loaded
+I (13405) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8216 KB, largest block=8064 KB
+I (13656) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (13656) refdata: Reference data restored from cache: tariffs=8 fixed_rates=2 special_fares=9 holidays=22
+I (13664) gps: ══════════════════════════════════════
+I (13675) gps: GPS Client Init — default active source: GNSS
+I (13681) gps:   Starting GNSS backend (A7670E, UART1)...
+I (13686) gps_gnss: ══════════════════════════════════════
+I (13698) gps_gnss: GNSS (A7670E) Init
+I (13701) gps_gnss:   A-GPS: ENABLED in config.h
+I (13706) gps_gnss: ══════════════════════════════════════
+I (13718) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (13724) gps_gnss: AT handshake...
+I (13727) gps:   NEO-6M backend NOT compiled in (ENABLE_GPS_NEO6M=0)
+I (13730) gps_gnss:   AT -> OK
+I (13736) gps_gnss: Modem responding ✓
+I (13740) gps:   Injection ('gps set ...') always available regardless of the above.
+I (13745) gps_gnss:   AT+CGNSSPWR=1,1 -> OK
+I (13751) gps: ══════════════════════════════════════
+
+I (13763) farecalc: fare_calc_init: state (35648 bytes) allocated in PSRAM, internal SRAM untouched
+W (13775) trip: ══════════════════════════════════════
+W (13783) trip: RESTORE: trip #8 was still running before this reboot — $20.54 accrued so far
+W (13791) trip:   Waiting for driver confirmation before resuming — see 'trip restore yes|no'
+W (13800) trip: ══════════════════════════════════════
+
+I (13811) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (13819) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (13828) chipinfo: ########################################
+I (13833) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (13839) chipinfo: ########################################
+I (13844) version: ======================================
+I (13849) version: FIRMWARE VERSION
+I (13853) version: --------------------------------------
+I (13858) version:   Project:   esp32s3_board
+I (13862) version:   Version:   26.07.23 (code 1)
+I (13866) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (13879) version:   Running from partition: factory
+I (13884) chipinfo: ======================================
+I (13889) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (13893) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (13903) chipinfo: --------------------------------------
+I (13908) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (13913) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (13918) chipinfo:   Crystal is 40 MHz
+I (13921) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (13925) chipinfo: ======================================
+I (13931) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (13937) chipinfo: --------------------------------------
+I (13942) chipinfo:   Model:       ESP32-S3
+I (13946) chipinfo:   Cores:       2
+I (13949) chipinfo:   Revision:    v0.2
+I (13953) chipinfo:   Features:    WiFi BLE External-Flash
+I (13958) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (13963) chipinfo:   IDF version: 5.4.0
+I (13967) chipinfo: ======================================
+I (13972) chipinfo: FLASH INFO  (live-probed)
+I (13976) chipinfo: --------------------------------------
+I (13981) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (13988) chipinfo:   JEDEC ID:        0x852018
+I (13992) chipinfo: ======================================
+I (13997) chipinfo: RAM / HEAP INFO  (live)
+I (14001) chipinfo: --------------------------------------
+I (14007) chipinfo:   Free heap now (all capabilities): 8361484 bytes | 8165.5 KB (7.97 MB)
+I (14015) chipinfo:   Minimum ever free:                8117448 bytes | 7927.2 KB (7.74 MB)
+I (14023) chipinfo:   --------------------------------------
+I (14028) chipinfo:   PSRAM initialized: YES
+I (14032) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (14040) chipinfo:   SRAM  total:          250119 bytes | 244.3 KB (0.24 MB)
+I (14047) chipinfo:   SRAM  free now:       77647 bytes | 75.8 KB (0.07 MB)
+I (14054) chipinfo:   SRAM  min free ever:  32047 bytes | 31.3 KB (0.03 MB)
+I (14056) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (14064) chipinfo:   SRAM  largest block:  31744 bytes | 31.0 KB (0.03 MB)
+I (14071) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (14078) chipinfo:   PSRAM free now:          8315868 bytes | 8121.0 KB (7.93 MB)
+I (14085) chipinfo:   PSRAM min free ever:     8117432 bytes | 7927.2 KB (7.74 MB)
+I (14093) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (14100) chipinfo: ======================================
+I (14105) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (14112) chipinfo: --------------------------------------
+I (14117) chipinfo:   Name       Type   SubType   Offset     Size
+I (14124) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (14132) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (14140) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (14148) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (14156) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (14165) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (14173) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (14182) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (14190) chipinfo: ======================================
+I (14195) chipinfo: NVS INFO  (live)
+I (14199) chipinfo: --------------------------------------
+I (14204) chipinfo:   Used entries:  216
+I (14207) chipinfo:   Free entries:  540
+I (14211) chipinfo:   Total entries: 756
+I (14215) chipinfo: ======================================
+I (14220) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (14226) chipinfo: --------------------------------------
+I (14231) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (14237) chipinfo:   Used:  93874 bytes | 91.7 KB (0.09 MB)
+I (14242) chipinfo:   Free:  4597567 bytes | 4489.8 KB (4.38 MB)
+I (14248) chipinfo: ########################################
+
+I (14253) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (14259) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (14268) display: SD_CS (TF slot) → GPIO9 HIGH (disabled)
+I (14273) display: Backlight PWM init — GPIO5, 5kHz, 10-bit
+I (14278) display: Backlight ON (GPIO5, PWM 100%)
+I (14283) display: SPI: MOSI=11 SCLK=12 CS=10 DC=14 RST=21 (hardware reset)
+I (14290) gpio: GPIO[14]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (14298) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (14375) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (14376) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (14377) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (14396) gps_gnss: A-GPS preconditions OK — SIM ready, network registered.
+I (14396) gps_gnss:   A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...
+I (14647) display: ST7796S init complete — 320x480 RGB565
+I (14647) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (14651) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (14654) display: DISPLAY — READY ✓
+I (14658) touch: TOUCH INIT — FT6336U via I2C
+I (14662) touch: I2C init: SDA=6 SCL=4
+I (14666) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (14734) touch: FT6336U reset pulsed on GPIO1
+I (14734) touch: FT6336U init — addr: 0x38
+I (14734) touch: Touch input registered with LVGL ✓
+W (14736) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (14742) touch: TOUCH — READY ✓
+I (14745) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (15123) ui: UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)
+I (15123) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (15127) additional_work: Additional work module ready (try: "sms reboot")
+I (15134) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (15140) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (15148) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (15155) chipinfo: READY — Touch UI Active ✓
+I (16481) gps_gnss:   AT+CAGPS -> +AGPS: success.
+I (16481) gps_gnss: A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular
+I (16483) gps_gnss:   connection (not WiFi — see doc 140). Cold fix should now be faster.
+I (18140) ram_test: ══════════════════════════════════════
+I (18141) ram_test: PSRAM periodic health-check
+I (18145) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (18152) ram_test:   Before: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (18301) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (18302) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7258868 bytes (6.92 MB)
+I (18309) ram_test:   After free: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (18318) ram_test: ══════════════════════════════════════
+I (24447) touch: Touch: (173,342) [direct px]
+I (26066) touch: Touch: (163,325) [direct px]
+I (26158) auth: ══════════════════════════════════════
+I (26158) auth: LOGIN — user=12345 mac=A4:CB:8F:D6:98:F8
+I (26165) api_client: → POST /taxis-api/api/Authentications/Login
+I (26170) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (27130) esp-x509-crt-bundle: Certificate validated
+I (28698) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (28699) api_client: ← HTTP 200 (POST /taxis-api/api/Authentications/Login)
+I (28715) auth:   Login response has no vehicle info — keeping vehicle_id=105 vehicle_type_id=4
+I (28716) auth: LOGIN OK ✓ — driver_id=130 vehicle_id=105 vehicle_type_id=4
+I (28722) api_client: → GET /taxis-api/api/Driver
+I (28725) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (29669) esp-x509-crt-bundle: Certificate validated
+I (30798) api_client:   Heap after perform()        free=8128 KB | largest free block=8064 KB
+I (30799) api_client: ← HTTP 200 (GET /taxis-api/api/Driver)
+I (30806) auth:   Driver profile: Tuyavan 
+I (30807) auth: ══════════════════════════════════════
+
+I (30817) refdata: ══════════════════════════════════════
+I (30828) refdata: REFERENCE DATA — fetching all 4 categories
+I (30969) api_client: → GET /taxis-api/api/VehicleType/4/Tarifs/v2
+I (30970) api_client:   Heap before perform()       free=8147 KB | largest free block=8064 KB
+I (31088) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2313 speed=0.0km/h sats=6 hdop=2.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (31858) esp-x509-crt-bundle: Certificate validated
+I (33024) api_client:   Heap after perform()        free=8130 KB | largest free block=8064 KB
+I (33025) api_client: ← HTTP 200 (GET /taxis-api/api/VehicleType/4/Tarifs/v2)
+I (33037) api_client:   Wrote 6361 bytes to /spiffs/store/ref/tariffs.json
+I (33038) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8153 KB, largest block=8064 KB
+I (33064) refdata: tariffs: 8 rows loaded
+I (33172) api_client: → GET /taxis-api/api/FixedFares
+I (33172) api_client:   Heap before perform()       free=8147 KB | largest free block=8064 KB
+I (34019) esp-x509-crt-bundle: Certificate validated
+I (34969) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (34970) api_client: ← HTTP 200 (GET /taxis-api/api/FixedFares)
+I (34978) api_client:   Wrote 905 bytes to /spiffs/store/ref/fixed_rates.json
+I (34980) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8152 KB, largest block=8064 KB
+I (34992) refdata: fixed_rates: 2 rows loaded
+I (35103) api_client: → GET /taxis-api/api/SpecialFare
+I (35104) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (36001) esp-x509-crt-bundle: Certificate validated
+I (37051) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (37051) api_client: ← HTTP 200 (GET /taxis-api/api/SpecialFare)
+I (37060) api_client:   Wrote 1930 bytes to /spiffs/store/ref/special_fares.json
+I (37062) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8152 KB, largest block=8064 KB
+I (37077) refdata: special_fares: 9 rows loaded
+I (37481) api_client: → GET /devices-api/api/PublicHolidays
+I (37482) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (38334) esp-x509-crt-bundle: Certificate validated
+I (40943) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (40944) api_client: ← HTTP 200 (GET /devices-api/api/PublicHolidays)
+I (40955) api_client:   Wrote 75459 bytes to /spiffs/store/ref/public_holidays.json
+I (41047) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8152 KB, largest block=8064 KB
+I (41318) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (41319) refdata: REFERENCE DATA — all 4 categories OK ✓ (fresh)
+I (41323) refdata: ══════════════════════════════════════
+
+I (41335) bgworker: Job finished: OK
+I (41447) ui: Login screen: LOGIN SUCCESSFUL -> meter
+I (42150) ui: Screen: 0
+I (61154) gps_gnss: GNSS: no fix | reads=616 [ACTIVE] (idle — waiting for satellites)
+I (67273) touch: Touch: (216,285) [direct px]
+W (67488) farecalc:   No GPS fix yet at restore — billing plain time until the first fix arrives (same D2 rule as a fresh start)
+I (67488) farecalc: TimeFrame opened: status=2 (odometer carry-in=164.9m)
+I (67495) farecalc: ══════════════════════════════════════
+I (67507) farecalc: METER RESTORED after reboot — tariff #5 "Maxi Day Rate(06:00-21:59)" (Maxi), carried forward 2054.10¢ ($20.54) and 0.165km from before the reboot
+I (67522) farecalc:   (per-segment TimeFrame history before the reboot could not be recovered — only
+I (67531) farecalc:   the aggregate totals; the fare total above is exact, sync detail for that portion is not)
+I (67540) farecalc: ══════════════════════════════════════
+
+I (67660) trip: TRIP #8 RESUMED after reboot — driver confirmed
+I (91157) gps_gnss: GNSS: no fix | reads=1063 [ACTIVE] (idle — waiting for satellites)
+I (121157) gps_gnss: GNSS: no fix | reads=1513 [ACTIVE] (idle — waiting for satellites)
+I (126451) tripsync: ══════════════════════════════════════
+I (126452) tripsync: UPDATE TRIP — server job id 12813, meterStatus=1, body=1048 bytes
+I (126460) api_client:   Heap before Trips POST      free=8143 KB | largest free block=8064 KB
+I (126469) api_client: → POST /taxis-api/api/Trips
+I (126473) api_client:   Heap before perform()       free=8137 KB | largest free block=8064 KB
+I (127443) esp-x509-crt-bundle: Certificate validated
+I (128017) touch: Touch: (245,378) [direct px]
+I (128108) ui: METER: END TRIP tapped
+I (128687) api_client:   Heap after perform()        free=8119 KB | largest free block=8064 KB
+I (128687) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (128693) api_client:   Heap after Trips POST       free=8142 KB | largest free block=8064 KB
+I (128700) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (128703) tripsync: ══════════════════════════════════════
+
+I (128715) bgworker: Job finished: OK
+I (129539) touch: Touch: (226,277) [direct px]
+I (129572) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=62s inactiveT=0s fare=175.15¢
+I (129573) farecalc: METER STOPPED — distance=0.16km total=2229.25¢ (1 TimeFrame segment(s))
+I (129687) trip: TRIP #8 STOPPED (not yet synced to server)
+I (129691) tripsync: ══════════════════════════════════════
+I (129693) tripsync: UPDATE TRIP — server job id 12813, meterStatus=5, body=1067 bytes
+I (129701) api_client:   Heap before Trips POST      free=8143 KB | largest free block=8064 KB
+I (129710) api_client: → POST /taxis-api/api/Trips
+I (129714) api_client:   Heap before perform()       free=8136 KB | largest free block=8064 KB
+I (129719) trip: TRIP #8 FINALIZE queued — watch below for ADD JOB/UPDATE TRIP/SAVE JOB FARES logs
+I (130495) esp-x509-crt-bundle: Certificate validated
+I (132847) api_client:   Heap after perform()        free=8119 KB | largest free block=8064 KB
+I (132848) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (132853) api_client:   Heap after Trips POST       free=8142 KB | largest free block=8064 KB
+I (132860) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (132863) tripsync: ══════════════════════════════════════
+
+I (132879) tripsync: ══════════════════════════════════════
+I (132887) tripsync: SAVE JOB FARES — server job id 12813, total=2229.25¢, cancelled=no
+I (132896) api_client: → POST /taxis-api/api/Job/SaveJobFares
+I (132901) api_client:   Heap before perform()       free=8136 KB | largest free block=8064 KB
+I (133575) touch: Touch: (161,452) [direct px]
+I (133639) ui: NAV -> TRIPS (1)
+I (133641) ui: Screen: 1
+I (133753) esp-x509-crt-bundle: Certificate validated
+I (135669) api_client:   Heap after perform()        free=8119 KB | largest free block=8064 KB
+I (135669) api_client: ← HTTP 200 (POST /taxis-api/api/Job/SaveJobFares)
+I (135682) tripsync: SAVE JOB FARES OK ✓ (HTTP 200)
+I (135684) tripsync: ══════════════════════════════════════
+
+I (135692) trip: TRIP FINALIZED ✓ and synced — ready for a new 'trip start'
+I (135697) bgworker: Job finished: OK
+I (136156) touch: Touch: (49,264) [direct px]
+I (137390) touch: Touch: (259,437) [direct px]
+I (137451) ui: NAV -> SETTINGS (2)
+I (137452) ui: Screen: 2
+I (138746) touch: Touch: (56,369) [direct px]
+I (139679) touch: Touch: (48,343) [direct px]
+I (140786) touch: Touch: (67,232) [direct px]
+I (141551) touch: Touch: (38,223) [direct px]
+I (145445) touch: Touch: (97,290) [direct px]
+I (149060) touch: Touch: (255,187) [direct px]
+I (151158) gps_gnss: GNSS: no fix | reads=1948 [ACTIVE] (idle — waiting for satellites)

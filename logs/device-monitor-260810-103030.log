@@ -1,0 +1,172 @@
+W (10724) Modem AT: AT parser handle_line is NULL but receive: "
++CPIN: READY
+
+SMS DONE
+"
+I (10942) display: ST7796S init complete — 320x480 RGB565
+I (10942) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (10946) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (10949) display: DISPLAY — READY ✓
+I (10953) touch: TOUCH INIT — FT6336U via I2C
+I (10957) touch: I2C init: SDA=6 SCL=4
+I (10960) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (11029) touch: FT6336U reset pulsed on GPIO1
+I (11029) touch: FT6336U init — addr: 0x38
+I (11029) touch: Touch input registered with LVGL ✓
+W (11031) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (11037) touch: TOUCH — READY ✓
+I (11041) ui: ══ UI INIT — TaxiMeter 320x480 ══
+W (11247) Modem AT: AT parser handle_line is NULL but receive: "
++CPIN: READY
+
+SMS DONE
+
++CGEV: EPS PDN ACT 1
+"
+I (11261) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (11262) gps_gnss:     raw: 
++CGEV: EPS PDN ACT 1
+AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (11265) gps_gnss:   AT+CGNSSPORTSWITCH attempt 1/6 failed — retrying in 2000ms (likely raced with
+W (11274) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (11425) ui: UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)
+I (11425) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (11429) additional_work: Additional work module ready (try: "sms reboot")
+I (11436) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (11442) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (11450) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (11457) chipinfo: READY — Touch UI Active ✓
+I (11608) modem_board: Modem manufacturer ID: INCORPORATED
+I (11610) modem_board: Modem module ID: A7670E-FASE
+I (11611) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (11713) modem_board: Handling stage = STAGE_IDLE
+I (11713) net_mgr: DNS resolver -> 8.8.8.8
+I (11714) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (11718) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (11726) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (11732) net_mgr: Active uplink -> CELLULAR
+I (11736) bgworker: Job finished: OK
+I (11813) modem_board: Handling stage = STAGE_START_PPP
+I (11813) modem_board: Check SIM card state...
+I (11814) modem_board: Check signal quality...
+I (11818) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (11822) modem_board: Check network registration...
+I (11828) modem_board: Check PDP context...
+I (11830) modem_board: Set PDP context: cid=1, type=IP, apn=default
+I (11840) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (11844) modem_board: PPP Dial up...
+I (12448) iot_eth: Ethernet link up
+W (12450) iot_eth: Driver does not support get_addr
+I (12461) esp-netif_lwip-ppp: Connected
+I (12461) cellular: ══════════════════════════════════════
+I (12466) cellular: PPP CONNECTED — carrier IP: 10.206.72.217
+I (12471) cellular: ══════════════════════════════════════
+
+I (12483) iot_eth.netif_glue: netif "USB PPP" Got IP Address
+I (12489) iot_eth.netif_glue: ~~~~~~~~~~~
+I (12493) iot_eth.netif_glue: ETHIP:10.206.72.217
+I (12497) iot_eth.netif_glue: ETHMASK:255.255.255.255
+I (12502) iot_eth.netif_glue: ETHGW:10.64.64.64
+I (12506) iot_eth.netif_glue: Main DNS: 10.4.4.12
+I (12510) iot_eth.netif_glue: Backup DNS: 8.8.8.8
+I (12515) iot_eth.netif_glue: ~~~~~~~~~~~
+I (12548) modem_board: Handling stage = STAGE_RUNNING
+I (12548) modem_board: Modem is running
+I (13288) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (13289) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (13290) gps_gnss:   AT+CGNSSPORTSWITCH attempt 2/6 failed — retrying in 2000ms (likely raced with
+W (13299) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (14442) ram_test: ══════════════════════════════════════
+I (14443) ram_test: PSRAM periodic health-check
+I (14447) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (14454) ram_test:   Before: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (14603) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (14604) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7258868 bytes (6.92 MB)
+I (14611) ram_test:   After free: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (14620) ram_test: ══════════════════════════════════════
+I (15314) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (15315) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (15316) gps_gnss:   AT+CGNSSPORTSWITCH attempt 3/6 failed — retrying in 2000ms (likely raced with
+W (15325) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (17340) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (17341) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (17342) gps_gnss:   AT+CGNSSPORTSWITCH attempt 4/6 failed — retrying in 2000ms (likely raced with
+W (17351) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (19366) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (19367) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (19368) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (19387) gps_gnss: A-GPS preconditions OK — SIM ready, network registered.
+I (19387) gps_gnss:   A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...
+I (23357) gps_gnss:   AT+CAGPS -> +AGPS: success.
+I (23358) gps_gnss: A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular
+I (23359) gps_gnss:   connection (not WiFi — see doc 140). Cold fix should now be faster.
+I (31060) gps_gnss: GNSS: no fix | reads=64 [ACTIVE] (idle — waiting for satellites)
+I (50690) touch: Touch: (158,324) [direct px]
+I (50811) auth: ══════════════════════════════════════
+I (50812) auth: LOGIN — user=12345 mac=A4:CB:8F:D6:98:F8
+I (50818) api_client: → POST /taxis-api/api/Authentications/Login
+I (50823) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (52313) esp-x509-crt-bundle: Certificate validated
+I (54167) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (54168) api_client: ← HTTP 200 (POST /taxis-api/api/Authentications/Login)
+I (54187) auth:   Login response has no vehicle info — keeping vehicle_id=105 vehicle_type_id=4
+I (54187) auth: LOGIN OK ✓ — driver_id=130 vehicle_id=105 vehicle_type_id=4
+I (54193) api_client: → GET /taxis-api/api/Driver
+I (54196) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (55157) esp-x509-crt-bundle: Certificate validated
+I (56136) api_client:   Heap after perform()        free=8128 KB | largest free block=8064 KB
+I (56137) api_client: ← HTTP 200 (GET /taxis-api/api/Driver)
+I (56146) auth:   Driver profile: Tuyavan 
+I (56147) auth: ══════════════════════════════════════
+
+I (56155) refdata: ══════════════════════════════════════
+I (56167) refdata: REFERENCE DATA — fetching all 4 categories
+I (56311) api_client: → GET /taxis-api/api/VehicleType/4/Tarifs/v2
+I (56312) api_client:   Heap before perform()       free=8147 KB | largest free block=8064 KB
+I (57239) esp-x509-crt-bundle: Certificate validated
+I (58484) api_client:   Heap after perform()        free=8130 KB | largest free block=8064 KB
+I (58485) api_client: ← HTTP 200 (GET /taxis-api/api/VehicleType/4/Tarifs/v2)
+I (58497) api_client:   Wrote 6361 bytes to /spiffs/store/ref/tariffs.json
+I (58498) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8153 KB, largest block=8064 KB
+I (58519) refdata: tariffs: 8 rows loaded
+I (58629) api_client: → GET /taxis-api/api/FixedFares
+I (58630) api_client:   Heap before perform()       free=8147 KB | largest free block=8064 KB
+I (59538) esp-x509-crt-bundle: Certificate validated
+I (60655) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (60656) api_client: ← HTTP 200 (GET /taxis-api/api/FixedFares)
+I (60664) api_client:   Wrote 905 bytes to /spiffs/store/ref/fixed_rates.json
+I (60667) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8152 KB, largest block=8064 KB
+I (60678) refdata: fixed_rates: 2 rows loaded
+I (60788) api_client: → GET /taxis-api/api/SpecialFare
+I (60789) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (61065) gps_gnss: GNSS: no fix | reads=304 [ACTIVE] (idle — waiting for satellites)
+I (61736) esp-x509-crt-bundle: Certificate validated
+I (62902) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (62903) api_client: ← HTTP 200 (GET /taxis-api/api/SpecialFare)
+I (62912) api_client:   Wrote 1930 bytes to /spiffs/store/ref/special_fares.json
+I (62914) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8152 KB, largest block=8064 KB
+I (62929) refdata: special_fares: 9 rows loaded
+I (63331) api_client: → GET /devices-api/api/PublicHolidays
+I (63332) api_client:   Heap before perform()       free=8146 KB | largest free block=8064 KB
+I (64236) esp-x509-crt-bundle: Certificate validated
+I (67279) api_client:   Heap after perform()        free=8129 KB | largest free block=8064 KB
+I (67280) api_client: ← HTTP 200 (GET /devices-api/api/PublicHolidays)
+I (67288) api_client:   Wrote 75459 bytes to /spiffs/store/ref/public_holidays.json
+I (67382) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8152 KB, largest block=8064 KB
+I (67659) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (67660) refdata: REFERENCE DATA — all 4 categories OK ✓ (fresh)
+I (67664) refdata: ══════════════════════════════════════
+
+I (67676) bgworker: Job finished: OK
+I (67731) ui: Login screen: LOGIN SUCCESSFUL -> meter
+I (68433) ui: Screen: 0
+I (74784) touch: Touch: (120,385) [direct px]
+I (74938) ui: METER: START TRIP tapped

@@ -1,0 +1,34 @@
+Good question — let's go through the confirmed hardware answer, straight from this project's own docs (0_2026-07-04_project_master_context.md and 155_...two_phase_plan.md §12.6, the latter empirically verified on your actual board).
+
+The confirmed, working configuration is:
+
+
+CAM = OFF
+HUB = ON
+4G  = ON
+USB = OFF
+What each one does:
+
+4G — powers the A7670E modem chip itself. Must be ON, or the modem doesn't even power up (no AT responses, no signal, nothing).
+USB — routes the A7670E's own USB data lines. OFF = routed internally to the ESP32-S3's native USB-OTG pins (GPIO 19/20), which is what lets the ESP32 talk USB CDC/PPP to the modem — this is what our cellular internet code needs. ON would instead route the modem's USB out to the physical Type-C port, e.g. so a PC could talk to the modem directly (firmware tools, etc.) — not what we want here.
+HUB — enables the onboard CH334 USB hub chip. This is what actually completes the internal path from step above: with USB=OFF, the modem's USB signal goes through this hub into the ESP32's native USB-OTG. Needs to be ON for that internal routing to work at all.
+CAM — routes power/data to the board's camera connector header. This project has no camera and doesn't use it — should be OFF.
+Separately, your PC console/flashing always goes over UART0 via the CH343 USB-UART bridge (a completely different physical USB port on the board) — none of these 4 switches affect that, which is why flashing and the serial monitor work no matter how these are set.
+
+Your current setup — 3 of 4 are right, one is wrong:
+
+You said 3 are ON and USB is OFF. Since USB=OFF matches, the three ON ones must be CAM, HUB, 4G — meaning CAM is ON when it should be OFF.
+
+What to do: flip CAM to OFF. HUB, 4G, and USB are already correct. This also matches exactly the configuration all of this session's real-hardware cellular/GNSS testing (including the logs I just analyzed) was actually run on — so getting CAM to match too keeps you on the same proven baseline rather than an untested variant.
+
+
+
+
+Confirmed — that's exactly it: CAM=OFF → Camera not used (saves power).
+
+Short answer: no, CAM=ON won't break anything. It's just an independent power/routing switch for the board's camera module (which this project doesn't have plugged in and doesn't use in code at all). It doesn't share a bus or interfere with the HUB/4G/USB routing — those three are the ones that actually matter for cellular/PPP, and you already have them exactly right:
+
+HUB=ON ✓ — required, powers/enables the internal USB hub that carries the modem's USB to the ESP32
+USB=OFF ✓ — required, routes the modem's USB internally instead of out to the physical port
+4G=ON ✓ — required, powers the modem chip
+CAM=ON just means a little extra power draw for an unused camera header — functionally harmless. The only reason I'd suggest flipping it to OFF is to exactly match the documented/tested baseline (docs/TestFunctionalities/12_...md, 15_...md, 0_...md all record CAM=OFF) and save a bit of power — not because it's expected to cause a problem. You're fine either way for what you're testing right now.

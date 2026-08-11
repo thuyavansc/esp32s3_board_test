@@ -16,10 +16,12 @@
 #include "driver/uart.h"
 #include "driver/gpio.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 #include "config.h"
 #include "gps_client.h"
 #include "gps_nmea.h"
 #include "gps_backend_gnss.h"
+#include "taximeter/diag.h"
 
 static const char *TAG = "gps_gnss";
 
@@ -120,11 +122,20 @@ static void _pulse_pwrkey(void) {
 #endif
 
 // ═══════════════════════════════════════════════════════════════
-//  A-GPS / SUPL setup — staged behind ENABLE_AGPS (config.h), OFF by
-//  default until a data-enabled SIM is inserted (doc 140). Checks SIM +
+//  A-GPS setup — staged behind ENABLE_AGPS (config.h). Checks SIM +
 //  network registration FIRST and skips cleanly — falling back to plain
-//  GNSS — rather than sending SUPL triggers that would just fail/timeout
+//  GNSS — rather than sending a trigger that would just fail/timeout
 //  with nothing to show for it.
+//
+//  doc 180/182 Fix F(b) (2026-08-06) — this used to send FOUR commands
+//  that do not exist on this A76XX chip at all (AT+CGPSURL, AT+
+//  CGNSSCMD=10/20/30,1 — verified against SIMCom's own 652-page A76XX
+//  AT Command Manual V1.09, doc 180 §4). The correct command is ONE
+//  line with no server to configure — SIMCom hard-codes its own AGNSS
+//  server — and MUST run AFTER GNSS is powered on (the old code ran it
+//  BEFORE AT+CGNSSPWR=1, which alone would have broken even a correct
+//  command — doc 180 §4.3 point 3). See _bring_up_gnss()'s call site
+//  below for the new ordering.
 // ═══════════════════════════════════════════════════════════════
 #if ENABLE_AGPS
 static bool _agps_preconditions_ok(void) {
@@ -148,28 +159,136 @@ static bool _agps_preconditions_ok(void) {
     return true;
 }
 
+// A76XX AT Command Manual V1.09 §24.2.15: AT+CAGPS's real result does
+// NOT arrive with the initial "OK" — it arrives on its OWN line up to
+// ~9000ms later (the manual's documented max response time), as
+// "+AGPS: success." or "+AGPS: <error code>." (101=couldn't open
+// socket, 102=couldn't resolve the AGNSS server, 103=couldn't connect,
+// 104/105=socket write/read failed). The old _at_ok() helper returned
+// the instant it saw "OK" and discarded everything after — it would
+// have reported success on a failed download. This reads line-by-line
+// (same NMEA-filtering shape as gps_backend_gnss_send_raw_at() below)
+// until the real "+AGPS:" line shows up or timeout_ms elapses.
+static bool _agps_cmd_await_result(const char *cmd, int timeout_ms) {
+    if (xSemaphoreTake(s_uart_mutex, pdMS_TO_TICKS(2000)) != pdTRUE) {
+        ESP_LOGW(TAG, "  A-GPS: UART1 busy — '%s' skipped", cmd);
+        return false;
+    }
+
+    uart_flush_input(GNSS_UART_NUM);
+    uart_write_bytes(GNSS_UART_NUM, cmd, strlen(cmd));
+    uart_write_bytes(GNSS_UART_NUM, "\r\n", 2);
+
+    char line[96];
+    int  lpos = 0;
+    bool got_ok = false;
+    bool got_result = false;
+    bool success = false;
+    char result_line[96] = {0};
+    TickType_t start = xTaskGetTickCount();
+
+    while (!got_result && (xTaskGetTickCount() - start) < pdMS_TO_TICKS(timeout_ms)) {
+        uint8_t c;
+        if (uart_read_bytes(GNSS_UART_NUM, &c, 1, pdMS_TO_TICKS(50)) <= 0) continue;
+        if (c == '\n') {
+            line[lpos] = '\0';
+            bool is_nmea = (lpos > 0 && line[0] == '$');
+            if (!is_nmea && lpos > 0) {
+                if (strcmp(line, "OK") == 0) {
+                    got_ok = true;
+                } else if (strncmp(line, "+AGPS:", 6) == 0) {
+                    strlcpy(result_line, line, sizeof(result_line));
+                    success = strstr(line, "success") != NULL;
+                    got_result = true;
+                } else if (strncmp(line, "ERROR", 5) == 0) {
+                    strlcpy(result_line, line, sizeof(result_line));
+                    got_result = true;   // rejected outright, no OK at all — command not accepted
+                }
+            }
+            lpos = 0;
+        } else if (c != '\r' && lpos < (int)sizeof(line) - 1) {
+            line[lpos++] = (char)c;
+        }
+    }
+
+    xSemaphoreGive(s_uart_mutex);
+
+    if (!got_ok && !got_result) {
+        ESP_LOGW(TAG, "  %s -> no response within %dms", cmd, timeout_ms);
+        return false;
+    }
+    if (!got_result) {
+        ESP_LOGW(TAG, "  %s -> got OK but no '+AGPS:' result line within %dms", cmd, timeout_ms);
+        ESP_LOGW(TAG, "  (manual's own max response time is 9000ms — this firmware may not implement CAGPS)");
+        return false;
+    }
+    ESP_LOGI(TAG, "  %s -> %s", cmd, result_line);
+    if (!success) {
+        ESP_LOGW(TAG, "  A-GPS failed: %s — see A76XX manual §24.2.15 (101=socket open failed,", result_line);
+        ESP_LOGW(TAG, "  102=AGNSS server lookup failed, 103=connect failed, 104/105=socket write/read failed)");
+    }
+    return success;
+}
+
 static void _agps_setup(void) {
     if (!_agps_preconditions_ok()) return;
 
-    char cmd[96];
-    snprintf(cmd, sizeof(cmd), "AT+SUPLSERVER=\"%s\",%d", AGPS_SUPL_SERVER, AGPS_SUPL_PORT);
-    _at_ok(cmd, 2000);
-
-    if (AGPS_ENABLE_XTRA)     _at_ok("AT+CGNSSCMD=10,1", 2000);   // XTRA — predicted ephemeris
-    if (AGPS_ENABLE_SUPL)     _at_ok("AT+CGNSSCMD=20,1", 2000);   // standard OMA SUPL A-GPS
-    if (AGPS_ENABLE_HOTSTILL) _at_ok("AT+CGNSSCMD=30,1", 2000);   // fast re-acquisition
-
-    ESP_LOGI(TAG, "A-GPS configured (%s:%d) — assist data downloads over the MODEM'S OWN",
-             AGPS_SUPL_SERVER, AGPS_SUPL_PORT);
-    ESP_LOGI(TAG, "  cellular connection (not WiFi — see doc 140). Cold fix should now be");
-    ESP_LOGI(TAG, "  much faster (~1-5s instead of 35-90s) once assist data arrives.");
+    ESP_LOGI(TAG, "  A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...");
+    if (_agps_cmd_await_result("AT+CAGPS", 20000)) {
+        ESP_LOGI(TAG, "A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular");
+        ESP_LOGI(TAG, "  connection (not WiFi — see doc 140). Cold fix should now be faster.");
+    } else {
+        ESP_LOGW(TAG, "A-GPS did not succeed (see warning above) — plain GNSS still works,");
+        ESP_LOGW(TAG, "  cold-fix time just won't benefit from assist data this session.");
+        ESP_LOGW(TAG, "  Try 'gps gnss agps' to retry.");
+    }
 }
 #else
 static void _agps_setup(void) {
     ESP_LOGI(TAG, "A-GPS disabled (ENABLE_AGPS=0 in config.h) — plain GNSS only.");
-    ESP_LOGI(TAG, "  Insert a data-enabled SIM, set ENABLE_AGPS=1, rebuild — see doc 140.");
 }
 #endif
+
+// AT+CGNSSPORTSWITCH is the ONE command that actually turns on NMEA
+// output — every other bring-up command can silently no-op and NMEA
+// would still never start if THIS one fails. Real hardware (2026-07-30,
+// doc 161) showed it CAN fail with a bare "ERROR" on a boot where
+// cellular_ppp's own PPP dial + PDP-context activation were racing on
+// the SAME physical modem chip's AT parser at nearly the same moment
+// (this UART1 command and the USB-side "Modem AT" traffic are on
+// electrically separate channels, but both ultimately reach the SAME
+// modem firmware's single command processor — see doc 158 §8's
+// "architectural advantage" claim, which holds for STEADY-STATE queries
+// once things have settled, but not necessarily during two subsystems'
+// concurrent bring-up). Retried a few times with a short gap — cheap,
+// and gives the race a chance to clear — instead of the previous
+// behavior of sending it once, discarding the result, and printing
+// "bring-up complete" regardless of whether it actually worked (exactly
+// the kind of unchecked-critical-operation bug doc 161 §5 already found
+// once this session, in a completely different subsystem).
+// Widened from 3 attempts/1s apart to 6/2s apart (doc 162 §5) — the
+// Dialog SIM log showed the 3x/1s budget was still not enough to
+// outlast cellular_ppp's own dial-time AT contention; cellular_ppp.c's
+// OWN retry budget for its dial preconditions is 5 attempts x 2000ms
+// (Kconfig MODEM_OPERATION_RETRY_TIMES/_DELAY_MS defaults), so this is
+// sized to span at least that same worst-case window.
+#define GNSS_PORTSWITCH_MAX_ATTEMPTS   6
+#define GNSS_PORTSWITCH_RETRY_DELAY_MS 2000
+
+static bool _cgnssportswitch_with_retry(void) {
+    char portcmd[48];
+    snprintf(portcmd, sizeof(portcmd), "AT+CGNSSPORTSWITCH=%s", GNSS_CGNSSPORTSWITCH_ARGS);
+    for (int attempt = 1; attempt <= GNSS_PORTSWITCH_MAX_ATTEMPTS; attempt++) {
+        if (_at_ok(portcmd, 5000)) return true;
+        if (attempt < GNSS_PORTSWITCH_MAX_ATTEMPTS) {
+            ESP_LOGW(TAG, "  AT+CGNSSPORTSWITCH attempt %d/%d failed — retrying in %dms (likely raced with",
+                     attempt, GNSS_PORTSWITCH_MAX_ATTEMPTS, GNSS_PORTSWITCH_RETRY_DELAY_MS);
+            ESP_LOGW(TAG, "  concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)");
+            vTaskDelay(pdMS_TO_TICKS(GNSS_PORTSWITCH_RETRY_DELAY_MS));
+        }
+    }
+    return false;
+}
 
 // ═══════════════════════════════════════════════════════════════
 //  One-time bring-up: AT handshake, (A-GPS), power GNSS, start NMEA,
@@ -192,34 +311,70 @@ static bool _bring_up_gnss(void) {
     }
     ESP_LOGI(TAG, "Modem responding \xE2\x9C\x93");
 
-    _agps_setup();
-
-    _at_ok("AT+CGNSSPWR=1", 5000);
+    // doc 180 §4.3 point 3 / doc 182 Fix F(b): A-GPS moved to run AFTER
+    // GNSS is powered on and NMEA routing is set up, not before — the
+    // manual documents AT+CAGPS as only valid once the GNSS engine has
+    // finished its own internal bring-up (the "+CGNSSPWR: READY!" URC,
+    // which this codebase doesn't currently catch — doc 180 §7.5,
+    // separate follow-up). Running it before power-on, as the old code
+    // did, would have made even a CORRECT A-GPS command fail.
+    //
+    // doc 180 §6.3/§7.4 / doc 182 10.6: "=1,1" (not plain "=1") turns on
+    // AP-Flash fast hot start — the modem restores previously-stored REAL
+    // ephemeris (satellite orbit data it genuinely downloaded from actual
+    // satellites in an earlier session) from its own flash instead of
+    // waiting to re-download the same real data over the air. This
+    // doesn't change or fabricate anything about the position eventually
+    // reported — it only shortens how long the receiver has to listen
+    // before it has enough real data to compute one, and unlike A-GPS it
+    // needs no cellular connection at all.
+    _at_ok("AT+CGNSSPWR=1,1", 5000);
     vTaskDelay(pdMS_TO_TICKS(300));
     _at_ok("AT+CGNSSTST=1", 5000);
     vTaskDelay(pdMS_TO_TICKS(300));
 
-    char portcmd[48];
-    snprintf(portcmd, sizeof(portcmd), "AT+CGNSSPORTSWITCH=%s", GNSS_CGNSSPORTSWITCH_ARGS);
-    _at_ok(portcmd, 5000);
+    if (_cgnssportswitch_with_retry()) {
+        ESP_LOGI(TAG, "GNSS bring-up complete — NMEA streaming should begin shortly (cold start:");
+        ESP_LOGI(TAG, "  35-90s typical outdoors, faster if A-GPS assist data was downloaded).");
+    } else {
+        // Deliberately still return true (below) — AT handshake/power-on
+        // DID succeed, only the final NMEA-routing step didn't stick.
+        // Returning false here would vTaskDelete() the whole read task
+        // permanently (see the caller) with no way to recover short of a
+        // reboot; staying alive lets 'gps gnss off' then 'gps gnss on'
+        // (_resume_gnss(), same retry logic) try again once whatever it
+        // raced with has settled.
+        ESP_LOGE(TAG, "GNSS bring-up: NMEA routing FAILED after %d attempts — GNSS will show 'no fix'", GNSS_PORTSWITCH_MAX_ATTEMPTS);
+        ESP_LOGE(TAG, "  indefinitely until this is retried. Try 'gps gnss off' then 'gps gnss on'.");
+    }
 
-    ESP_LOGI(TAG, "GNSS bring-up complete — NMEA streaming should begin shortly (cold start:");
-    ESP_LOGI(TAG, "  35-90s typical outdoors, faster if A-GPS assist data was downloaded).");
+    _agps_setup();
+
     return true;
 }
 
 static void _resume_gnss(void) {
-    _at_ok("AT+CGNSSPWR=1", 5000);
+    _at_ok("AT+CGNSSPWR=1,1", 5000);   // doc 182 10.6 — AP-Flash, same reasoning as _bring_up_gnss() above
     vTaskDelay(pdMS_TO_TICKS(300));
     _at_ok("AT+CGNSSTST=1", 5000);
     vTaskDelay(pdMS_TO_TICKS(300));
-    char portcmd[48];
-    snprintf(portcmd, sizeof(portcmd), "AT+CGNSSPORTSWITCH=%s", GNSS_CGNSSPORTSWITCH_ARGS);
-    _at_ok(portcmd, 5000);
+    if (!_cgnssportswitch_with_retry()) {
+        ESP_LOGE(TAG, "GNSS resume: NMEA routing FAILED after 3 attempts — try 'gps gnss off'/'on' again.");
+    }
 }
 
 static void _power_down_gnss(void) {
-    _at_ok("AT+CGNSSPWR=0", 3000);
+    // doc 180 §6.3: "the module needs AT+CGNSSPWR=0,1 to STORE the
+    // positioning data... after GNSS is set to the upper position for
+    // the first time" — the ",1" here is what actually saves the real
+    // ephemeris to flash for _resume_gnss()/_bring_up_gnss()'s "=1,1" to
+    // load back next time. Only takes effect on a graceful power-down
+    // through THIS function (i.e. 'gps gnss off', or a clean reboot that
+    // reaches it) — an abrupt power loss (ignition cut with no graceful
+    // shutdown) doesn't call this and doesn't get to store anything;
+    // that's a real limitation of the feature itself, not something this
+    // change works around.
+    _at_ok("AT+CGNSSPWR=0,1", 3000);
 }
 
 // Doc 142 §4.2 — lets a periodic status log say whether ITS OWN backend
@@ -276,6 +431,13 @@ static void _gnss_read_task(void *arg) {
                     if (s_enabled) {
                         gps_data_t tmp = {0};
                         if (gps_nmea_parse_gga(line, &tmp)) {
+                            // doc 180 §7.1 / doc 182 10.7: this branch now
+                            // runs on a genuine "no fix" report too (tmp.
+                            // has_fix=false), not just a real fix — see
+                            // gps_nmea.h. Timestamped here, regardless of
+                            // fix/no-fix, because it marks "we genuinely
+                            // heard from the receiver right now" — the
+                            // signal gps_client.c's staleness check needs.
                             s_gnss_data.lat         = tmp.lat;
                             s_gnss_data.lon         = tmp.lon;
                             s_gnss_data.alt         = tmp.alt;
@@ -283,13 +445,20 @@ static void _gnss_read_task(void *arg) {
                             s_gnss_data.hdop        = tmp.hdop;
                             s_gnss_data.fix_quality = tmp.fix_quality;
                             s_gnss_data.has_fix     = tmp.has_fix;
+                            s_gnss_data.fix_time_us = esp_timer_get_time();
                         }
                         gps_nmea_parse_rmc(line, &s_gnss_data);
 
-                        if (s_gnss_data.has_fix) {
-                            s_valid_reads++;
-                            gps_client_publish_gnss_fix(&s_gnss_data);
-                        }
+                        // doc 180 §7.1 point 4 / doc 182 10.7: publish
+                        // UNCONDITIONALLY, not just when has_fix — the old
+                        // "only publish on has_fix" gate meant the
+                        // DISPATCHER's own cached fix (gps_client.c)
+                        // stayed stuck at its last published true value
+                        // forever once has_fix genuinely went false,
+                        // undoing the parser-level fix above one layer
+                        // higher up.
+                        gps_client_publish_gnss_fix(&s_gnss_data);
+                        if (s_gnss_data.has_fix) s_valid_reads++;
                         s_total_reads++;
                     }
                     pos = 0;
@@ -305,7 +474,7 @@ static void _gnss_read_task(void *arg) {
         // logged anything after the one-time bring-up sequence unless you
         // ran "gps gnss info" yourself — from the serial monitor it looked
         // silent/dead even though it was running fine. Gated on the same
-        // real s_enabled flag "gps gnss off" already sets (AT+CGNSSPWR=0),
+        // real s_enabled flag "gps gnss off" already sets (AT+CGNSSPWR=0,1),
         // so this never claims activity that isn't actually happening.
         if (s_enabled) {
             static unsigned long last_status = 0;
@@ -342,7 +511,9 @@ esp_err_t gps_backend_gnss_init(void) {
 #if ENABLE_GNSS_PWRKEY
     _pulse_pwrkey();
 #endif
-    xTaskCreate(_gnss_read_task, "gnss_read", 4096, NULL, 3, NULL);
+    TaskHandle_t h = NULL;
+    xTaskCreate(_gnss_read_task, "gnss_read", 4096, NULL, 3, &h);
+    diag_register_task(h, "gnss_read");   // doc 184 §10.2 — see 'stacks'
     return ESP_OK;
 }
 
@@ -352,7 +523,7 @@ void gps_backend_gnss_set_enabled(bool enable) {
 
     if (!enable) {
         _power_down_gnss();
-        ESP_LOGI(TAG, "GNSS backend DISABLED — AT+CGNSSPWR=0 sent (engine actually powered down)");
+        ESP_LOGI(TAG, "GNSS backend DISABLED — AT+CGNSSPWR=0,1 sent (engine powered down, ephemeris stored for next hot start)");
     } else {
         ESP_LOGI(TAG, "GNSS backend RE-ENABLED — powering GNSS back on");
         _resume_gnss();
@@ -372,7 +543,7 @@ bool gps_backend_gnss_process_command(const char *args) {
         ESP_LOGI(TAG, "  UART:        UART%d TX=GPIO%d RX=GPIO%d @ %d baud",
                  GNSS_UART_NUM, GNSS_UART_TX, GNSS_UART_RX, GNSS_UART_BAUD);
         ESP_LOGI(TAG, "  Bring-up:    %s", s_at_ready ? "complete" : "in progress / modem not responding yet");
-        ESP_LOGI(TAG, "  Enabled:     %s", s_enabled ? "yes" : "no (AT+CGNSSPWR=0 sent)");
+        ESP_LOGI(TAG, "  Enabled:     %s", s_enabled ? "yes" : "no (AT+CGNSSPWR=0,1 sent)");
         ESP_LOGI(TAG, "  A-GPS:       %s", ENABLE_AGPS ? "enabled in config.h" : "disabled in config.h (no SIM yet)");
         ESP_LOGI(TAG, "  Reads:       %d total | %d valid fixes", s_total_reads, s_valid_reads);
         ESP_LOGI(TAG, "  Fix:         %s", s_gnss_data.has_fix ? "YES \xE2\x9C\x93" : "NO");
@@ -518,21 +689,48 @@ bool gps_backend_gnss_send_sms(const char *number, const char *message, int time
     // Second stage: wait for "+CMGS: <mr>\r\nOK\r\n" (sent) or "ERROR"/
     // "+CMS ERROR: <n>" (network-side failure) — this IS the over-the-
     // air leg, hence the caller-supplied timeout_ms here.
-    char resp[96] = {0};
-    size_t rpos = 0;
+    //
+    // Line-by-line with NMEA filtering (doc 162 §6) — this used to
+    // accumulate raw bytes into a small fixed buffer and strstr() it for
+    // "OK"/"ERROR". GNSS streaming shares this same UART and can interleave
+    // '$'-prefixed sentences at any time; once enough of them landed here
+    // the buffer filled up (rpos pinned at sizeof(resp)-1) BEFORE the
+    // modem's real "OK" arrived, so it was silently dropped and the call
+    // timed out and reported FAILED even though the SMS had actually sent.
+    // Filtering NMEA lines out line-by-line (same approach already used by
+    // gps_backend_gnss_send_raw_at() above) fixes this.
+    char resp_line[128];
+    int  lpos2 = 0;
+    char last_line[128] = {0};   // last non-NMEA line seen, for the FAILED log — same size as resp_line, it's a straight copy
     bool ok = false;
+    bool failed = false;
     start = xTaskGetTickCount();
-    while ((xTaskGetTickCount() - start) < pdMS_TO_TICKS(timeout_ms)) {
+    while (!ok && !failed && (xTaskGetTickCount() - start) < pdMS_TO_TICKS(timeout_ms)) {
         uint8_t c;
         if (uart_read_bytes(GNSS_UART_NUM, &c, 1, pdMS_TO_TICKS(50)) <= 0) continue;
-        if (rpos < sizeof(resp) - 1) resp[rpos++] = (char)c;
-        resp[rpos] = '\0';
-        if (strstr(resp, "OK\r\n")) { ok = true; break; }
-        if (strstr(resp, "ERROR")) break;
+
+        if (c == '\n') {
+            resp_line[lpos2] = '\0';
+            bool is_nmea  = (lpos2 > 0 && resp_line[0] == '$');
+            bool is_blank = (lpos2 == 0);
+            if (!is_nmea && !is_blank) {
+                snprintf(last_line, sizeof(last_line), "%s", resp_line);
+                if (strcmp(resp_line, "OK") == 0) {
+                    ok = true;
+                } else if (strncmp(resp_line, "ERROR", 5) == 0 || strncmp(resp_line, "+CMS ERROR", 10) == 0) {
+                    failed = true;
+                }
+                // "+CMGS: <mr>" lines fall through — just noted via
+                // last_line, the terminal "OK" on its own line decides it.
+            }
+            lpos2 = 0;
+        } else if (c != '\r' && lpos2 < (int)sizeof(resp_line) - 1) {
+            resp_line[lpos2++] = (char)c;
+        }
     }
 
     xSemaphoreGive(s_uart_mutex);
     ESP_LOGI(TAG, "send_sms to %s: %s", number, ok ? "OK" : "FAILED");
-    if (!ok) ESP_LOGW(TAG, "  raw: %.90s", resp);
+    if (!ok) ESP_LOGW(TAG, "  raw: %.90s", last_line);
     return ok;
 }

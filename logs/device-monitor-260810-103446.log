@@ -1,0 +1,8 @@
+I (7582) USBH_CDC: New device connected, address: 1
+I (7583) esp-modem-dte: USB CDC device connected, VID: 0x1e0e, PID: 0x9011
+I (7583) esp-modem-dte: Matched USB Modem: "SIMCOM A7670E (Waveshare)", Modem Interface: 5, AT Interface: -1
+I (7593) cdc_descriptor: Found NOTIF endpoint: 8
+I (7597) cdc_descriptor: Found OUT endpoint: 10
+I (7601) cdc_descriptor: Found IN endpoint: 1
+I (7606) modem_board: DTE connected
+I (7608) modem_board: Hand

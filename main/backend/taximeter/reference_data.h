@@ -45,7 +45,22 @@
 #define REF_MAX_TARIFFS         10
 #define REF_MAX_FIXED_RATES     12
 #define REF_MAX_SPECIAL_FARES   24     // flat list only — see file header
-#define REF_MAX_PUBLIC_HOLIDAYS 16
+
+// doc 184 §3.1/§7.3: the server returns EVERY public holiday it has on
+// record, not just upcoming ones — a real capture showed a 75459-byte
+// response (~700+ rows) against the old REF_MAX_PUBLIC_HOLIDAYS=16,
+// which kept whichever 16 rows the server happened to list first. If
+// those weren't the current year's, holiday-rate selection silently
+// never fired — undercharging on every real public holiday, with no
+// error anywhere. Fixed two ways together: reference_data.c now filters
+// to a window around the CURRENT year (not by list position) before
+// this cap is even checked, so 128 is generous headroom for a single
+// year's worth of holidays, not an attempt to hold the whole multi-year
+// dataset. The array itself lives in PSRAM (reference_data.c's
+// s_holidays, allocated in reference_data_init() — same reasoning as
+// doc 181's fare_calc_state_t move), so raising this costs no internal
+// SRAM.
+#define REF_MAX_PUBLIC_HOLIDAYS 128
 
 typedef struct {
     int64_t tariff_id;
@@ -98,6 +113,14 @@ esp_err_t reference_data_fetch_all(void);
 // Fetch only if stale — call this on go-on-duty rather than
 // reference_data_fetch_all() directly.
 void reference_data_fetch_all_if_stale(void);
+
+// doc 182 Fix C: true if tariffs are already loaded; if not, attempts
+// ONE synchronous reference_data_fetch_all() right now and returns
+// whether that made data available. MUST be called from bg_worker (or
+// another task with real HTTPS/TLS stack depth) — never the LVGL
+// thread or the serial-command task. This is the self-healing check
+// trip_manager.c's start-trip path runs before ever billing a fare.
+bool reference_data_ensure_loaded(void);
 
 // ── Lookups (the exact GetTariffByTimeUseCase port) ──
 // Returns NULL if no tariff data is loaded at all; otherwise always

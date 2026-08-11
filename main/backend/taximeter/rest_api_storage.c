@@ -1327,3 +1327,35 @@ esp_err_t rest_api_storage_delete(int trip_id) {
     _delete_file(trip_id, false);
     return ESP_OK;
 }
+
+esp_err_t rest_api_storage_write(int trip_id, const char *json, size_t len) {
+    if (!json || len == 0) return ESP_ERR_INVALID_ARG;
+    if (!s_backend_ready) {
+        ESP_LOGE(TAG, "Storage backend NOT ready. Check config.");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    #if STORAGE_BACKEND == 1 || STORAGE_BACKEND == 2
+        char path[256];
+        snprintf(path, sizeof(path), "%s%s/trips_%d.json", s_storage_mount, STORAGE_DIR, trip_id);
+
+        FILE *fp = fopen(path, "w");
+        if (!fp) {
+            ESP_LOGE(TAG, "rest_api_storage_write: failed to open %s for writing", path);
+            return ESP_FAIL;
+        }
+        size_t written = fwrite(json, 1, len, fp);
+        fclose(fp);
+        if (written != len) {
+            ESP_LOGE(TAG, "rest_api_storage_write: short write (%u/%u bytes) for trip %d",
+                     (unsigned)written, (unsigned)len, trip_id);
+            remove(path);
+            return ESP_FAIL;
+        }
+        ESP_LOGI(TAG, "rest_api_storage_write: cached trip %d (%u bytes) -> %s", trip_id, (unsigned)len, path);
+        return ESP_OK;
+    #else
+        (void)trip_id; (void)json; (void)len;
+        return ESP_ERR_NOT_SUPPORTED;
+    #endif
+}

@@ -13,6 +13,7 @@
 #include "bg_worker.h"
 #include "sms_commands.h"
 #include "sms_client.h"
+#include "taximeter/diag.h"
 
 static const char *TAG = "sms_client";
 
@@ -205,7 +206,9 @@ esp_err_t sms_client_init(void) {
         return ESP_ERR_NO_MEM;
     }
     gps_client_register_sms_urc_handler(_on_urc_line);
-    xTaskCreate(_sms_task, "sms_client", 4096, NULL, 3, NULL);
+    TaskHandle_t h = NULL;
+    xTaskCreate(_sms_task, "sms_client", 4096, NULL, 3, &h);
+    diag_register_task(h, "sms_client");   // doc 184 §10.2 — see 'stacks'
     ESP_LOGI(TAG, "SMS client task started (modem setup runs asynchronously — see 'smsc status')");
     return ESP_OK;
 }
@@ -216,8 +219,105 @@ esp_err_t sms_client_init(void) {
 static void _print_help(void) {
     printf("\n  smsc send <number> <message...>   Send an SMS (real cellular, backgrounded)\n");
     printf("  smsc list                          Last %d received SMS (sender + body)\n", SMS_INBOX_CAPACITY);
+    printf("  smsc storage                        List EVERY SMS on the SIM (not just our own\n");
+    printf("                                       processed inbox above) + used/total capacity\n");
+    printf("  smsc delete <index>                 Delete one SMS off the SIM by its storage index\n");
+    printf("                                       (the IDX column from 'smsc storage')\n");
+    printf("  smsc delete all                     Delete EVERY SMS on the SIM\n");
     printf("  smsc status                         Ready state, counts, whitelist size\n");
     printf("  smsc help\n\n");
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  "smsc storage" — list EVERY message actually sitting on the SIM
+//  (doc 162 §2: the reliability sweep only ever looks at "REC UNREAD",
+//  so old already-read messages from years ago can silently fill the
+//  SIM's storage and are otherwise invisible to this firmware). AT+CPMS?
+//  gives used/total capacity; AT+CMGL="ALL" gives every message with its
+//  real storage index (needed for "smsc delete <index>").
+//
+//  Output is a stable, single-line-per-record format the PC GUI parses
+//  by regex (see SerialManager.pde) — deliberately not a human "pretty
+//  table" like 'smsc list' uses, so column alignment changes here can't
+//  silently break GUI parsing.
+// ═══════════════════════════════════════════════════════════════
+static void _cmd_storage(void) {
+    char cpms_resp[128] = {0};
+    int used = -1, total = -1;
+    if (gps_client_send_raw_at("AT+CPMS?", cpms_resp, sizeof(cpms_resp), 5000)) {
+        const char *p = strstr(cpms_resp, "+CPMS:");
+        char mem[8] = {0};
+        if (p) sscanf(p, "+CPMS: \"%7[^\"]\",%d,%d", mem, &used, &total);
+    }
+    printf("SMSSTORAGE_CAP %d %d\n", used, total);
+
+    // Heap-allocated — a full SIM (30-45+ messages, each header+body line
+    // running ~150-200 bytes) can legitimately need several KB, too big
+    // for a task stack (this handler runs on serial_cmd_task).
+    const size_t LIST_BUF_SIZE = 12288;
+    char *resp = malloc(LIST_BUF_SIZE);
+    if (!resp) {
+        printf("smsc storage: malloc failed — out of heap right now (see 'mem')\n");
+        return;
+    }
+
+    if (!gps_client_send_raw_at("AT+CMGL=\"ALL\"", resp, LIST_BUF_SIZE, 15000)) {
+        printf("smsc storage: AT+CMGL=\"ALL\" failed/timed out\n");
+        free(resp);
+        return;
+    }
+
+    int shown = 0;
+    const char *p = resp;
+    while ((p = strstr(p, "+CMGL:")) != NULL) {
+        int idx = -1;
+        char stat[16] = {0}, sender[24] = {0}, ts[24] = {0};
+        if (sscanf(p, "+CMGL: %d,\"%15[^\"]\",\"%23[^\"]\",,\"%23[^\"]\"", &idx, stat, sender, ts) >= 3) {
+            for (char *c = stat; *c; c++) if (*c == ' ') *c = '_';   // "REC UNREAD" -> "REC_UNREAD" (single token for the GUI regex)
+
+            const char *line_end = strchr(p, '\n');
+            const char *body_start = line_end ? line_end + 1 : p;
+            const char *body_end = body_start ? strchr(body_start, '\n') : NULL;
+            char body[161] = {0};
+            if (body_start) {
+                size_t blen = body_end ? (size_t)(body_end - body_start) : strlen(body_start);
+                if (blen >= sizeof(body)) blen = sizeof(body) - 1;
+                memcpy(body, body_start, blen);
+                body[blen] = '\0';
+                char *cr = strchr(body, '\r');
+                if (cr) *cr = '\0';
+            }
+            printf("SMSSTORAGE_ITEM idx=%d stat=%s from=%s time=%s body=%s\n", idx, stat, sender, ts, body);
+            shown++;
+        }
+        p += 6;
+    }
+    free(resp);
+    printf("SMSSTORAGE_END %d\n", shown);
+}
+
+typedef struct {
+    bool delete_all;
+    int  index;
+} _delete_job_arg_t;
+
+static bool _delete_job_fn(void *arg) {
+    _delete_job_arg_t *a = (_delete_job_arg_t *)arg;
+    char cmd[24];
+    // AT+CMGD=<index>[,<delflag>] — delflag 4 ("delete all messages
+    // irrespective of status") is documented on this modem's AT command
+    // set; <index> is a required placeholder in that form but ignored.
+    if (a->delete_all) snprintf(cmd, sizeof(cmd), "AT+CMGD=1,4");
+    else                snprintf(cmd, sizeof(cmd), "AT+CMGD=%d", a->index);
+    char resp[32];
+    bool ok = gps_client_send_raw_at(cmd, resp, sizeof(resp), 8000);
+    free(a);
+    return ok;
+}
+
+static void _delete_job_done(bool success, void *arg, void *user_data) {
+    (void)arg; (void)user_data;
+    ESP_LOGI(TAG, "smsc delete: %s", success ? "OK" : "FAILED");
 }
 
 typedef struct {
@@ -294,6 +394,40 @@ bool sms_client_process_command(const char *line) {
         return true;
     }
 
+    if (strcmp(p, "storage") == 0) {
+        _cmd_storage();
+        return true;
+    }
+
+    if (strncmp(p, "delete", 6) == 0) {
+        const char *args = p + 6;
+        while (*args == ' ') args++;
+
+        _delete_job_arg_t *a = malloc(sizeof(*a));
+        if (!a) {
+            printf("smsc delete: malloc failed — out of heap right now (see 'mem')\n");
+            return true;
+        }
+        if (strcmp(args, "all") == 0) {
+            a->delete_all = true;
+            a->index = 0;
+            printf("Deleting ALL SMS on the SIM (backgrounded — watch the log)...\n");
+        } else if (sscanf(args, "%d", &a->index) == 1) {
+            a->delete_all = false;
+            printf("Deleting SMS index %d (backgrounded — watch the log)...\n", a->index);
+        } else {
+            printf("Usage: smsc delete <index> | smsc delete all\n");
+            free(a);
+            return true;
+        }
+
+        if (!bg_worker_submit_fn(_delete_job_fn, a, _delete_job_done, NULL)) {
+            printf("Busy — try again in a moment.\n");
+            free(a);
+        }
+        return true;
+    }
+
     if (strcmp(p, "status") == 0) {
         sms_client_stats_t st;
         sms_client_get_stats(&st);
@@ -308,6 +442,6 @@ bool sms_client_process_command(const char *line) {
         return true;
     }
 
-    printf("Unknown 'smsc' command. Try: send | list | status | help\n");
+    printf("Unknown 'smsc' command. Try: send | list | storage | delete | status | help\n");
     return true;
 }

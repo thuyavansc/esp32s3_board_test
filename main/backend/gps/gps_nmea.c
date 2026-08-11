@@ -45,7 +45,30 @@ bool gps_nmea_parse_gga(const char *sentence, gps_data_t *out) {
                    tbuf, lat, &ns, lon, &ew, &q, &sats, &hdop, &alt);
     }
 
-    if (q == 0 || strlen(lat) < 4 || strlen(lon) < 4) return false;
+    // doc 180 §7.1 / doc 182 10.7: q==0 is the receiver's own explicit
+    // "no fix right now" report — an empty lat/lon field earlier makes
+    // sscanf stop matching before it reaches q, leaving q at its
+    // initialized 0 (see the declaration above), so this correctly
+    // catches both "q was parsed as literally 0" and "the sentence was
+    // too empty to parse that far" — both mean the same thing: no fix.
+    // Relayed as REAL current data (has_fix=false), not silently
+    // dropped — see gps_nmea.h's full explanation of why this matters.
+    if (q == 0) {
+        out->has_fix     = false;
+        out->fix_quality = 0;
+        return true;
+    }
+
+    if (strlen(lat) < 4 || strlen(lon) < 4) return false;   // q>0 but position fields unusable — genuinely corrupt line, nothing usable to report
+
+    // doc 180 §7.1 / doc 182 10.7: a fix was "found" but with unusable
+    // geometry (HDOP near/at NMEA's ~99-100 "no computation" sentinel) —
+    // don't report it as a trustworthy has_fix=true.
+    if (hdop >= GPS_NMEA_HDOP_INVALID_THRESHOLD) {
+        out->has_fix     = false;
+        out->fix_quality = 0;
+        return true;
+    }
 
     out->lat         = _nmea_to_deg(lat, ns);
     out->lon         = _nmea_to_deg(lon, ew);
@@ -53,7 +76,7 @@ bool gps_nmea_parse_gga(const char *sentence, gps_data_t *out) {
     out->satellites  = sats;
     out->hdop        = hdop;
     out->fix_quality = q;
-    out->has_fix     = (q > 0);
+    out->has_fix     = true;
     return true;
 }
 
@@ -75,6 +98,13 @@ bool gps_nmea_parse_rmc(const char *sentence, gps_data_t *out) {
     if (status == 'A') {
         out->speed  = speed_knots * 1.852;   // knots → km/h
         out->course = course;
+    } else if (status == 'V') {
+        // doc 180 §7.1 point 2 / doc 182 10.7: RMC's own "data not
+        // valid" signal — a real-time cross-check independent of GGA's
+        // fix-quality field. Doesn't touch speed/course (last known
+        // values are harmless to leave — fare_calc only reads them
+        // gated on has_fix anyway).
+        out->has_fix = false;
     }
     return true;
 }

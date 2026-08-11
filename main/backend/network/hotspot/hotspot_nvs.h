@@ -34,6 +34,11 @@ typedef struct {
     uint8_t channel;         // 1-13
     uint8_t max_clients;
     bool    hidden;          // SSID broadcast suppressed if true
+    bool    enabled;         // doc 169 — persisted "should the hotspot be running" intent, survives
+                              // power cycles; set by "hotspot on"/"hotspot off", read once at boot by
+                              // hotspot_ap_init() so a hotspot you turned on stays on after a power
+                              // loss instead of reverting to off every time (previously this was a
+                              // build-time-only flag that never actually remembered your last choice)
 } hotspot_config_t;
 
 // Loads from NVS, seeding config.h's HOTSPOT_DEFAULT_* on first boot
@@ -63,6 +68,15 @@ esp_err_t hotspot_nvs_change_password(const char *old_password, const char *new_
 esp_err_t hotspot_nvs_set_channel(uint8_t channel);       // 1-13
 esp_err_t hotspot_nvs_set_max_clients(uint8_t max_clients); // 1-10 (ESP_WIFI_MAX_CONN_NUM ceiling)
 esp_err_t hotspot_nvs_set_hidden(bool hidden);
+
+// Persists the "should the hotspot be running" intent — called from
+// hotspot_ap.c's "hotspot on"/"hotspot off" command handlers (and
+// anything else that maps to them, e.g. the GUI's toggle button), NOT
+// from hotspot_ap_start()/_stop() themselves (those also run for
+// unrelated internal reasons like an SSID-change restart, which
+// shouldn't re-write this flag every time). See config.h's
+// HOTSPOT_DEFAULT_ENABLED for the first-boot default.
+esp_err_t hotspot_nvs_set_enabled(bool enabled);
 
 // Wipes hotspot NVS state back to config.h's factory defaults — the
 // "I forgot the password" recovery path. Gated by the SAME

@@ -1,0 +1,51 @@
+Good question — let's separate "can I turn it on" from "will it actually share internet," because there's a real precondition-and-ordering detail in the code worth knowing.
+
+Precondition — what actually has to be true first
+Hotspot itself needs nothing from PPP/cellular. hotspot_ap_start() just turns on the ESP32's own WiFi access point (SSID, password, channel) — that works completely standalone. A phone can join it and get a local IP (192.168.4.x) even if the device has zero internet connection at all.
+
+But for phones on the hotspot to reach the actual internet, the ESP32 needs some working uplink — either WiFi-STA (its own connection to your router/mobile hotspot — this comes up automatically at boot, no action needed) or Cellular (cell up / net uplink cellular). You do not need cellular specifically — WiFi-STA alone is enough.
+
+The one non-obvious catch
+Internet-sharing (NAT/NAPT) only gets switched on at the moment net uplink ... is run — and only if the hotspot is already running at that exact moment. Since WiFi-STA gets selected automatically at boot, before you've turned the hotspot on, that first automatic selection doesn't turn NAPT on. So:
+
+If you just do hotspot on and stop there, clients can join the WiFi but won't get real internet (NAPT: disabled (no uplink routed yet) in hotspot status). You need one extra command right after.
+
+Full steps
+Check you already have an uplink — net status (should show WiFi connected with an IP; this is normal after boot, no action needed).
+Turn hotspot on — hotspot on (serial command, or the "Hotspot: Turn ON" button on the PC GUI's Network screen).
+Nudge internet-sharing on — net uplink wifi (or cellular/auto) — even though WiFi is already active, running this again is what actually flips NAPT on now that the hotspot exists.
+Verify — hotspot status should now show:
+
+Running:      yes
+SSID:         TaxiMeter-200
+NAPT:         enabled (internet sharing active)
+Connect your phone to that SSID with the configured password.
+Confirm — hotspot clients shows the phone's MAC/IP/signal once it joins; browse something on the phone to confirm real internet works.
+After this first setup, if you later switch uplinks (e.g. net uplink cellular) while the hotspot is still running, NAPT re-applies automatically to whichever uplink you pick — no extra nudge needed after that point. It's only the very first "turn hotspot on" that needs the follow-up net uplink ... command.
+
+All hotspot commands
+Command	What it does
+hotspot on / hotspot off	Start/stop the WiFi AP
+hotspot status	SSID, channel, client count, NAPT (internet-sharing) state
+hotspot clients	List connected devices — MAC, IP, signal strength
+hotspot kick <MAC>	Disconnect one client immediately
+hotspot ssid <name>	Change the SSID (restarts the AP automatically if running)
+hotspot passwd <old> <new>	Change the password (needs the current one; 8–63 chars)
+hotspot reset-credentials <passcode>	Factory-reset SSID/password back to defaults
+hotspot help	Prints this list
+The PC GUI's Network screen covers on/off and status/clients directly with buttons; SSID/password/kick go through the Command Panel's "Hotspot" category (text-input commands, same as above).
+
+That NAPT-nudge quirk is a real, slightly awkward gap in the code (worth fixing — have hotspot_ap_start() automatically re-apply NAPT for whatever uplink is already active, instead of requiring the separate net uplink command) — say the word if you'd like that added to the list alongside the DNS and cellular-reconnect fixes from before.
+
+
+
+
+I (893085) wifi:Init max length of beacon: 752/752
+I (893450) wifi:Total power save buffer number: 16
+I (893451) hotspot_ap: ══════════════════════════════════════
+I (893452) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (893457) hotspot_ap: HOTSPOT STARTED — ssid="TaxiMeter-200" channel=6 ip=192.168.4.1 max_clients=8
+I (893465) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (893478) hotspot_ap:   (NAT not yet enabled — net_manager.c enables it once an uplink is ready)
+I (893490) hotspot_ap: ══════════════════════════════════════
+> gps infoI (896953) gps: ══════════════════════════════════════

@@ -1,22 +1,23 @@
 /**
  * ui_main.c — TaxiMeter LVGL UI
  *
- * 4 top-level screens: Dashboard, Trips, Settings, Test Menu.
- * Color theme: Cerulean/Teal palette — see ui_theme.h.
+ * 3 top-level screens (doc 179 §5 restructure, 2026-08-06): Meter,
+ * Trips, Settings. Color theme: Cerulean/Teal palette — see ui_theme.h.
  *
- * Ported from esp32_display_taxi_3, which also had a GPS screen —
- * dropped during the port (this project has no GPS/socket hardware
- * or code at all), not just disabled.
- *
- * The PAX A920Pro clone and the Color Palette Viewer used to live
- * directly under the TEST nav tab. They now live under test/ and
- * are reached by drilling into the Test Menu list (see test/test_menu.c).
+ * The production METER screen (display/meter/meter_screen.h) is the
+ * former Test Menu "PAX A920Pro Meter UI" mock-up, promoted and wired
+ * to the real fare_calc/trip_manager/duty_client backend. The old
+ * cards-style dashboard that used to live here moved to Test Features
+ * as the dev/diagnostic view (display/test/test_meter_dev.h). Test
+ * Features itself (formerly the bottom-nav TEST tab, test/test_menu.h)
+ * is now reached only via Settings -> "Test Features" — see
+ * _create_settings() below.
  *
  * KEY FIXES (carried over from the original implementation):
  *   1. Settings scroll: uses lv_obj flex-column scroll container so the
  *      LIST scrolls, not the text inside cards.
  *   2. Brightness slider: calls display_set_backlight_pwm() for real PWM.
- *   3. 4-tab nav bar: DASH|TRIP|SET|TEST — see ui_widgets.c.
+ *   3. 3-tab nav bar: METER|TRIP|SET — see ui_widgets.c.
  *
  * SCREEN SWITCHING: lv_scr_load() — NEVER use HIDDEN flags for top-level screens.
  * NAV BAR: Created on every top-level screen via ui_add_nav_bar().
@@ -33,31 +34,58 @@
 #include "ui_widgets.h"
 #include "display_driver.h"
 #include "config.h"
+#include "meter/meter_screen.h"
 #include "test/test_menu.h"
+#include "gps/gps_info_screen.h"
+#include "login/login_screen.h"
 #include "trip/trip_screen.h"
+#include "backend/taximeter/session_store.h"
+#include "backend/taximeter/duty_client.h"
+#include "backend/taximeter/auth_client.h"
+#include "backend/taximeter/reference_data.h"
+#include "backend/bg_worker.h"
+#include "ui_components/confirm_dialog.h"
+#include "ui_components/loading_overlay.h"
+#include "ui_components/toast.h"
 
 static const char *TAG = "ui";
 
 // ── Screen storage ─────────────────────────────────────────────
 static lv_obj_t    *s_screens[SCREEN_COUNT] = {NULL};
-static ui_screen_t  s_current = SCREEN_DASHBOARD;
-
-// ── Dashboard update labels ────────────────────────────────────
-static lv_obj_t *s_lbl_speed    = NULL;
-static lv_obj_t *s_lbl_fare     = NULL;
-static lv_obj_t *s_lbl_distance = NULL;
-static lv_obj_t *s_lbl_time     = NULL;
-static lv_obj_t *s_lbl_status   = NULL;
+static ui_screen_t  s_current = SCREEN_METER;
 
 // ── Settings sliders (for reading values on event) ────────────
 static lv_obj_t *s_slider_brightness = NULL;
 static lv_obj_t *s_lbl_brightness_val = NULL;
 static lv_obj_t *s_lbl_contrast_val   = NULL;
 
+// ── Settings duty row (doc 179 D4 "both" — a pill on the meter header
+// PLUS a status/toggle row here) ───────────────────────────────
+static lv_obj_t   *s_duty_row_lbl = NULL;
+static lv_timer_t *s_duty_row_timer = NULL;
+
+// ── Logout (doc 182 10.9) ──────────────────────────────────────
+static volatile bool s_logout_done = false;
+static lv_timer_t   *s_logout_timer = NULL;
+
+// ── Settings tariff-type row (doc 184 issue #4 — Maxi/Sedan switch,
+// matching Android's TariffTypeFragment: a simple tap-a-row list,
+// applies immediately, no separate confirm — see that file's own
+// setOnClickListener) ───────────────────────────────────────────
+static lv_obj_t *s_tariff_type_row_lbl = NULL;
+static lv_obj_t *s_tariff_picker_backdrop = NULL;
+
 // ── Forward declarations ────────────────────────────────────────
 static void _click_event(lv_event_t *e);
 static void _brightness_event(lv_event_t *e);
 static void _contrast_event(lv_event_t *e);
+static void _test_features_event(lv_event_t *e);
+static void _gps_info_from_settings_event(lv_event_t *e);
+static void _back_to_settings_from_gps(void);
+static void _duty_row_event(lv_event_t *e);
+static void _tariff_type_row_event(lv_event_t *e);
+static void _refresh_tariff_type_row(void);
+static void _logout_row_event(lv_event_t *e);
 
 // ═══════════════════════════════════════════════════════════════
 //  Events
@@ -66,7 +94,262 @@ static void _click_event(lv_event_t *e) {
     const char *label = (const char *)lv_event_get_user_data(e);
     ESP_LOGI(TAG, "Click: %s", label);
     printf("[UI] %s\n", label);
-    if (s_lbl_status) lv_label_set_text(s_lbl_status, label);
+}
+
+// "Test Features" row (doc 179 D3) — drills into what used to be the
+// bottom-nav Test tab.
+static void _test_features_event(lv_event_t *e) {
+    (void)e;
+    test_menu_show();
+}
+
+// "GPS Info" row (doc 179 D6) — same screen the Test Features list also
+// links to; its back button returns HERE (Settings), not the test list,
+// since it was entered directly from Settings this time.
+static void _back_to_settings_from_gps(void) {
+    ui_switch_screen(SCREEN_SETTINGS);
+}
+
+static void _gps_info_from_settings_event(lv_event_t *e) {
+    (void)e;
+    if (!gps_info_screen_get_screen()) gps_info_screen_create();
+    gps_info_screen_set_back_cb(_back_to_settings_from_gps);
+    lv_scr_load(gps_info_screen_get_screen());
+}
+
+// Duty row (doc 179 D4 "both") — same on/off logic as meter_screen.c's
+// header pill, duplicated here rather than shared, since the two live
+// in different modules with no existing shared "duty widget" — small
+// enough that a second copy is simpler than a new abstraction.
+static void _refresh_duty_row(void) {
+    if (!s_duty_row_lbl) return;
+    bool on = (session_store_get_duty_status() == DUTY_STATUS_ON_DUTY);
+    char b[32];
+    snprintf(b, sizeof(b), "Duty: %s (tap to toggle)", on ? "ON" : "OFF");
+    lv_label_set_text(s_duty_row_lbl, b);
+    lv_obj_set_style_text_color(s_duty_row_lbl, on ? C_SUCCESS : C_TEXT, 0);
+}
+
+static void _duty_row_timer_cb(lv_timer_t *timer) {
+    (void)timer;
+    _refresh_duty_row();
+    // Piggybacked here rather than a new timer — the tariff type can
+    // change asynchronously too (reference_data_fetch_all() seeds a
+    // default the first time it loads, right after login), so this
+    // row needs the same "keep it honest" periodic refresh the duty
+    // row already has, not just a refresh at screen-build time.
+    _refresh_tariff_type_row();
+}
+
+static void _duty_row_event(lv_event_t *e) {
+    (void)e;
+    bool on = (session_store_get_duty_status() == DUTY_STATUS_ON_DUTY);
+    if (on) duty_client_go_off_duty();
+    else    duty_client_go_on_duty();
+    _refresh_duty_row();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TARIFF TYPE PICKER (doc 184 issue #4 — "we need the vehicle type
+//  change maxi and sedan in the setting"). Matches Android's
+//  TariffTypeFragment111.kt exactly: a plain list of the types
+//  reference_data actually has loaded, tap one -> applied immediately,
+//  no separate confirm step (that file's own setOnClickListener does
+//  the same: sets the type and navigates straight back, nothing else).
+//  Only changes the DEFAULT for the NEXT trip — this project doesn't
+//  implement mid-trip tariff switching (trip_manager.h's own header
+//  already states that's out of scope), matching Android's own
+//  TaxiMeter.updateTariffType() being a separate, unused-here code path.
+// ═══════════════════════════════════════════════════════════════
+static void _refresh_tariff_type_row(void) {
+    if (!s_tariff_type_row_lbl) return;
+    char current[16];
+    char b[48];
+    if (session_store_get_tariff_type(current, sizeof(current)) && current[0]) {
+        snprintf(b, sizeof(b), "Tariff Type: %s (tap to change)", current);
+    } else {
+        snprintf(b, sizeof(b), "Tariff Type: (none set)");
+    }
+    lv_label_set_text(s_tariff_type_row_lbl, b);
+}
+
+static void _close_tariff_picker(void) {
+    if (s_tariff_picker_backdrop) {
+        lv_obj_del(s_tariff_picker_backdrop);
+        s_tariff_picker_backdrop = NULL;
+    }
+}
+
+static void _tariff_picker_cancel_event(lv_event_t *e) {
+    (void)e;
+    _close_tariff_picker();
+}
+
+static void _tariff_picker_apply_confirmed(void *user_data) {
+    const char *type = (const char *)user_data;
+    session_store_set_tariff_type(type);
+    ESP_LOGI(TAG, "Tariff type set to '%s' (Settings)", type);
+    _close_tariff_picker();
+    _refresh_tariff_type_row();
+    toast_show(s_screens[SCREEN_SETTINGS], "Tariff type updated", TOAST_SUCCESS);
+}
+
+// doc 188: the picker used to apply-and-close on every tap, including
+// re-tapping the type already in use, with no indication of what was
+// currently selected — your ask was "current sedan if we click sedan
+// just close, if sedan if we click maxi then give a dialog confirm...
+// if yes click only change and close". Same-type tap is now a silent
+// close (nothing actually changes); a different-type tap asks first,
+// matching a real settings change rather than Android's own
+// tap-applies-immediately TariffTypeFragment (Android has no
+// confirm step here — this project adds one deliberately, same
+// reasoning as doc 183's start-trip confirm: a fare-affecting change
+// deserves a second tap on this hardware's smaller/denser screen where
+// a mis-tap is easier to make than on a phone's larger list rows).
+static void _tariff_picker_pick_event(lv_event_t *e) {
+    const char *type = (const char *)lv_event_get_user_data(e);
+
+    char current[16];
+    bool has_current = session_store_get_tariff_type(current, sizeof(current)) && current[0];
+    if (has_current && strcmp(current, type) == 0) {
+        _close_tariff_picker();
+        return;
+    }
+
+    char msg[64];
+    snprintf(msg, sizeof(msg), "Change tariff type to %s?", type);
+    confirm_dialog_show(s_screens[SCREEN_SETTINGS], msg, _tariff_picker_apply_confirmed, NULL, (void *)type);
+}
+
+static void _tariff_type_row_event(lv_event_t *e) {
+    (void)e;
+    if (s_tariff_picker_backdrop) return;   // already open
+
+    char types[8][16];
+    int count = reference_data_get_tariff_types(types, 8);
+    if (count == 0) {
+        toast_show(s_screens[SCREEN_SETTINGS], "No tariff data loaded yet — try 'ref fetch'", TOAST_ERROR);
+        return;
+    }
+
+    lv_obj_t *screen = s_screens[SCREEN_SETTINGS];
+    lv_obj_t *backdrop = lv_obj_create(screen);
+    lv_obj_set_size(backdrop, 320, 480);
+    lv_obj_set_pos(backdrop, 0, 0);
+    lv_obj_set_style_bg_color(backdrop, lv_color_black(), 0);
+    lv_obj_set_style_bg_opa(backdrop, LV_OPA_60, 0);
+    lv_obj_set_style_border_width(backdrop, 0, 0);
+    lv_obj_set_style_radius(backdrop, 0, 0);
+    lv_obj_set_style_pad_all(backdrop, 0, 0);
+    lv_obj_clear_flag(backdrop, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_move_foreground(backdrop);
+    s_tariff_picker_backdrop = backdrop;
+
+    lv_obj_t *panel = lv_obj_create(backdrop);
+    lv_obj_set_size(panel, 260, 60 + count * 46);
+    lv_obj_center(panel);
+    lv_obj_set_style_bg_color(panel, C_CARD, 0);
+    lv_obj_set_style_border_width(panel, 1, 0);
+    lv_obj_set_style_border_color(panel, C_DIVIDER, 0);
+    lv_obj_set_style_radius(panel, 10, 0);
+    lv_obj_set_style_pad_all(panel, 10, 0);
+    lv_obj_clear_flag(panel, LV_OBJ_FLAG_SCROLLABLE);
+
+    lv_obj_t *title = ui_label(panel, "Select Tariff Type", C_TEXT2);
+    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 2);
+
+    lv_obj_t *cancel_btn = lv_btn_create(panel);
+    lv_obj_set_size(cancel_btn, 28, 26);
+    lv_obj_align(cancel_btn, LV_ALIGN_TOP_RIGHT, 0, 0);
+    lv_obj_set_style_bg_color(cancel_btn, C_ERROR, 0);
+    lv_obj_set_style_shadow_width(cancel_btn, 0, 0);
+    lv_obj_set_style_radius(cancel_btn, 6, 0);
+    lv_obj_t *cancel_lbl = ui_label(cancel_btn, LV_SYMBOL_CLOSE, C_TEXT);
+    lv_obj_center(cancel_lbl);
+    lv_obj_add_event_cb(cancel_btn, _tariff_picker_cancel_event, LV_EVENT_CLICKED, NULL);
+
+    // types[][] is a LOCAL array here — each row's click handler needs
+    // its own STABLE string to reference after this function returns
+    // (the panel/backdrop, and its buttons, outlive this call). Static
+    // storage, capped at the same 8-type limit passed to
+    // reference_data_get_tariff_types() above.
+    static char s_picker_types[8][16];
+    memcpy(s_picker_types, types, sizeof(s_picker_types));
+
+    char current[16];
+    bool has_current = session_store_get_tariff_type(current, sizeof(current)) && current[0];
+
+    for (int i = 0; i < count; i++) {
+        bool is_current = has_current && strcmp(current, s_picker_types[i]) == 0;
+
+        lv_obj_t *row = lv_btn_create(panel);
+        lv_obj_set_size(row, 232, 38);
+        lv_obj_align(row, LV_ALIGN_TOP_MID, 0, 34 + i * 44);
+        lv_obj_set_style_bg_color(row, C_BTN, 0);
+        lv_obj_set_style_shadow_width(row, 0, 0);
+        lv_obj_set_style_radius(row, 8, 0);
+        if (is_current) {
+            // doc 188: "not indicating what we currently selected that
+            // need to show in green color" — border + label color, same
+            // C_SUCCESS the rest of the app already uses for "active/OK".
+            lv_obj_set_style_border_width(row, 2, 0);
+            lv_obj_set_style_border_color(row, C_SUCCESS, 0);
+        }
+        lv_obj_t *row_lbl = ui_label(row, s_picker_types[i], is_current ? C_SUCCESS : C_TEXT);
+        lv_obj_center(row_lbl);
+        lv_obj_add_event_cb(row, _tariff_picker_pick_event, LV_EVENT_CLICKED, s_picker_types[i]);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  LOGOUT (doc 182 10.9) — Settings, last row. "once anything not fine
+//  user may logout and do" — a clean escape hatch from any bad state.
+//  Goes off duty FIRST (matching Android's LogoutUseCase, which calls
+//  goOffDuty() before the server logout call — doc 182 §6 Fix J: our
+//  auth_client_logout() didn't do this, leaving a logged-out driver
+//  on-duty server-side).
+// ═══════════════════════════════════════════════════════════════
+static bool _job_logout(void *arg) {
+    (void)arg;
+    if (session_store_get_duty_status() == DUTY_STATUS_ON_DUTY) {
+        // Safe to call from here even though we're already running ON
+        // bg_worker's task — it only queues one more small job behind
+        // this one (bg_worker.c's xQueueSend never blocks, including the
+        // worker task calling itself — same reasoning meter_screen.c's
+        // start-trip job already relies on).
+        duty_client_go_off_duty();
+    }
+    return auth_client_logout() == ESP_OK;   // always ESP_OK per its own contract — clears session_store either way
+}
+
+static void _job_logout_done(bool success, void *arg, void *user_data) {
+    (void)success; (void)arg; (void)user_data;
+    s_logout_done = true;
+}
+
+static void _logout_poll_cb(lv_timer_t *timer) {
+    if (!s_logout_done) return;
+    loading_overlay_hide();
+    lv_timer_del(s_logout_timer);
+    s_logout_timer = NULL;
+    ESP_LOGI(TAG, "Logout complete -> login screen");
+    lv_scr_load(login_screen_get_screen());
+}
+
+static void _logout_confirmed(void *user_data) {
+    (void)user_data;
+    loading_overlay_show(s_screens[SCREEN_SETTINGS]);
+    s_logout_done = false;
+    if (!bg_worker_submit_fn(_job_logout, NULL, _job_logout_done, NULL)) {
+        loading_overlay_hide();
+        return;
+    }
+    s_logout_timer = lv_timer_create(_logout_poll_cb, 150, NULL);
+}
+
+static void _logout_row_event(lv_event_t *e) {
+    (void)e;
+    confirm_dialog_show(s_screens[SCREEN_SETTINGS], "Logout?", _logout_confirmed, NULL, NULL);
 }
 
 static void _brightness_event(lv_event_t *e) {
@@ -90,92 +373,6 @@ static void _contrast_event(lv_event_t *e) {
         lv_label_set_text(s_lbl_contrast_val, buf);
     }
     ESP_LOGI(TAG, "Contrast (test only): %ld%%", val);
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  DASHBOARD Screen
-// ═══════════════════════════════════════════════════════════════
-static void _create_dashboard(void) {
-    lv_obj_t *scr = lv_obj_create(NULL);
-    lv_obj_set_size(scr, 320, 480);
-    lv_obj_set_style_bg_color(scr, C_BG, 0);
-    lv_obj_set_style_border_width(scr, 0, 0);
-    lv_obj_set_style_pad_all(scr, 0, 0);
-    lv_obj_clear_flag(scr, LV_OBJ_FLAG_SCROLLABLE);
-
-    // ── Status bar ──
-    lv_obj_t *sb = lv_obj_create(scr);
-    lv_obj_set_size(sb, 320, 32);
-    lv_obj_align(sb, LV_ALIGN_TOP_MID, 0, 0);
-    lv_obj_set_style_bg_color(sb, C_ACCENT, 0);
-    lv_obj_set_style_border_width(sb, 0, 0);
-    lv_obj_set_style_radius(sb, 0, 0);
-    lv_obj_set_style_pad_all(sb, 4, 0);
-    lv_obj_clear_flag(sb, LV_OBJ_FLAG_SCROLLABLE);
-    s_lbl_status = ui_label(sb, "TAXIMETER — READY", C_TEXT);
-    lv_obj_center(s_lbl_status);
-
-    // ── Speed card ──
-    lv_obj_t *spd_card = ui_card(scr, 280, 115);
-    lv_obj_align(spd_card, LV_ALIGN_TOP_MID, 0, 40);
-    lv_obj_set_style_border_width(spd_card, 2, 0);
-    lv_obj_set_style_border_color(spd_card, C_ACCENT2, 0);
-
-    lv_obj_t *spd_lbl_u = ui_label(spd_card, "km/h", C_TEXT2);
-    lv_obj_align(spd_lbl_u, LV_ALIGN_TOP_MID, 0, 2);
-
-    s_lbl_speed = ui_label(spd_card, "0", C_TEXT);
-    lv_obj_set_style_text_font(s_lbl_speed, &lv_font_montserrat_28, 0);
-    lv_obj_align(s_lbl_speed, LV_ALIGN_CENTER, 0, 8);
-
-    lv_obj_t *spd_unit = ui_label(spd_card, "SPEED", C_TEXT2);
-    lv_obj_align(spd_unit, LV_ALIGN_BOTTOM_MID, 0, -2);
-
-    // ── Fare card ──
-    lv_obj_t *fare_card = ui_card(scr, 280, 85);
-    lv_obj_align(fare_card, LV_ALIGN_TOP_MID, 0, 165);
-    lv_obj_set_style_border_width(fare_card, 1, 0);
-    lv_obj_set_style_border_color(fare_card, C_SUCCESS, 0);
-
-    lv_obj_t *fare_lbl = ui_label(fare_card, "FARE", C_TEXT2);
-    lv_obj_align(fare_lbl, LV_ALIGN_TOP_LEFT, 4, 2);
-
-    lv_obj_t *dollar = ui_label(fare_card, "$", C_WARN);
-    lv_obj_align(dollar, LV_ALIGN_LEFT_MID, 4, 4);
-
-    s_lbl_fare = ui_label(fare_card, "0.00", C_TEXT);
-    lv_obj_set_style_text_font(s_lbl_fare, &lv_font_montserrat_28, 0);
-    lv_obj_align(s_lbl_fare, LV_ALIGN_RIGHT_MID, -8, 4);
-
-    // ── Bottom info cards (DIST / TIME / WIFI) ──
-    int card_y = 262;
-    int card_h = 72;
-
-    lv_obj_t *d1 = ui_card(scr, 94, card_h);
-    lv_obj_align(d1, LV_ALIGN_TOP_LEFT, 8, card_y);
-    ui_label(d1, "DIST", C_TEXT2);
-    lv_obj_align(lv_obj_get_child(d1, 0), LV_ALIGN_TOP_MID, 0, 2);
-    s_lbl_distance = ui_label(d1, "0.00", C_TEXT);
-    lv_obj_align(s_lbl_distance, LV_ALIGN_CENTER, 0, 4);
-    ui_label(d1, "km", C_TEXT2);
-    lv_obj_align(lv_obj_get_child(d1, 2), LV_ALIGN_BOTTOM_MID, 0, -2);
-
-    lv_obj_t *d2 = ui_card(scr, 94, card_h);
-    lv_obj_align(d2, LV_ALIGN_TOP_MID, 0, card_y);
-    ui_label(d2, "TIME", C_TEXT2);
-    lv_obj_align(lv_obj_get_child(d2, 0), LV_ALIGN_TOP_MID, 0, 2);
-    s_lbl_time = ui_label(d2, "--:--", C_TEXT);
-    lv_obj_align(s_lbl_time, LV_ALIGN_CENTER, 0, 4);
-
-    lv_obj_t *d3 = ui_card(scr, 94, card_h);
-    lv_obj_align(d3, LV_ALIGN_TOP_RIGHT, -8, card_y);
-    ui_label(d3, "WIFI", C_TEXT2);
-    lv_obj_align(lv_obj_get_child(d3, 0), LV_ALIGN_TOP_MID, 0, 2);
-    ui_label(d3, "OK", C_SUCCESS);
-    lv_obj_align(lv_obj_get_child(d3, 1), LV_ALIGN_CENTER, 0, 4);
-
-    ui_add_nav_bar(scr, SCREEN_DASHBOARD);
-    s_screens[SCREEN_DASHBOARD] = scr;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -293,6 +490,70 @@ static void _create_settings(void) {
     lv_obj_set_scroll_dir(scroll_cont, LV_DIR_VER);
     lv_obj_add_flag(scroll_cont, LV_OBJ_FLAG_SCROLLABLE);
 
+    // ── Navigable rows (doc 179 D3/D6) — "Test Features" (the old
+    // bottom-nav Test tab, now reached only from here) and "GPS Info"
+    // (live GPS sensor data — restored, doc 179 D6). Drawn with a
+    // chevron and a dedicated click handler, ahead of the plain static
+    // info rows below. ──
+    {
+        lv_obj_t *card = lv_obj_create(scroll_cont);
+        lv_obj_set_size(card, 300, 34);
+        lv_obj_set_style_bg_color(card, C_CARD, 0);
+        lv_obj_set_style_border_width(card, 0, 0);
+        lv_obj_set_style_radius(card, 6, 0);
+        lv_obj_set_style_pad_all(card, 6, 0);
+        lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(card, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_t *lbl = ui_label(card, "Test Features", C_TEXT);
+        lv_obj_align(lbl, LV_ALIGN_LEFT_MID, 4, 0);
+        lv_obj_t *chev = ui_label(card, LV_SYMBOL_RIGHT, C_TEXT2);
+        lv_obj_align(chev, LV_ALIGN_RIGHT_MID, -4, 0);
+        lv_obj_add_event_cb(card, _test_features_event, LV_EVENT_CLICKED, NULL);
+    }
+    {
+        lv_obj_t *card = lv_obj_create(scroll_cont);
+        lv_obj_set_size(card, 300, 34);
+        lv_obj_set_style_bg_color(card, C_CARD, 0);
+        lv_obj_set_style_border_width(card, 0, 0);
+        lv_obj_set_style_radius(card, 6, 0);
+        lv_obj_set_style_pad_all(card, 6, 0);
+        lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(card, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_t *lbl = ui_label(card, "GPS Info", C_TEXT);
+        lv_obj_align(lbl, LV_ALIGN_LEFT_MID, 4, 0);
+        lv_obj_t *chev = ui_label(card, LV_SYMBOL_RIGHT, C_TEXT2);
+        lv_obj_align(chev, LV_ALIGN_RIGHT_MID, -4, 0);
+        lv_obj_add_event_cb(card, _gps_info_from_settings_event, LV_EVENT_CLICKED, NULL);
+    }
+    {
+        // Duty status/toggle row (doc 179 D4 "both").
+        lv_obj_t *card = lv_obj_create(scroll_cont);
+        lv_obj_set_size(card, 300, 34);
+        lv_obj_set_style_bg_color(card, C_CARD, 0);
+        lv_obj_set_style_border_width(card, 0, 0);
+        lv_obj_set_style_radius(card, 6, 0);
+        lv_obj_set_style_pad_all(card, 6, 0);
+        lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(card, LV_OBJ_FLAG_CLICKABLE);
+        s_duty_row_lbl = ui_label(card, "Duty: OFF (tap to toggle)", C_TEXT);
+        lv_obj_align(s_duty_row_lbl, LV_ALIGN_LEFT_MID, 4, 0);
+        lv_obj_add_event_cb(card, _duty_row_event, LV_EVENT_CLICKED, NULL);
+    }
+    {
+        // Tariff type (Maxi/Sedan/...) switch row (doc 184 issue #4).
+        lv_obj_t *card = lv_obj_create(scroll_cont);
+        lv_obj_set_size(card, 300, 34);
+        lv_obj_set_style_bg_color(card, C_CARD, 0);
+        lv_obj_set_style_border_width(card, 0, 0);
+        lv_obj_set_style_radius(card, 6, 0);
+        lv_obj_set_style_pad_all(card, 6, 0);
+        lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(card, LV_OBJ_FLAG_CLICKABLE);
+        s_tariff_type_row_lbl = ui_label(card, "Tariff Type: (tap to change)", C_TEXT);
+        lv_obj_align(s_tariff_type_row_lbl, LV_ALIGN_LEFT_MID, 4, 0);
+        lv_obj_add_event_cb(card, _tariff_type_row_event, LV_EVENT_CLICKED, NULL);
+    }
+
     // Info setting items (added to scroll_cont, not scr)
     const char *items[] = {
         "WiFi: CONNECTED",
@@ -323,9 +584,28 @@ static void _create_settings(void) {
         lv_obj_add_event_cb(card, _click_event, LV_EVENT_CLICKED,
             (void *)items[i]);
     }
+    {
+        // Logout — LAST row (doc 182 10.9: "in the set menu at last add
+        // logout... once anything not fine user may logout and do").
+        lv_obj_t *card = lv_obj_create(scroll_cont);
+        lv_obj_set_size(card, 300, 34);
+        lv_obj_set_style_bg_color(card, C_CARD, 0);
+        lv_obj_set_style_border_width(card, 0, 0);
+        lv_obj_set_style_radius(card, 6, 0);
+        lv_obj_set_style_pad_all(card, 6, 0);
+        lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(card, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_t *lbl = ui_label(card, "Logout", C_ERROR);
+        lv_obj_align(lbl, LV_ALIGN_LEFT_MID, 4, 0);
+        lv_obj_add_event_cb(card, _logout_row_event, LV_EVENT_CLICKED, NULL);
+    }
 
     ui_add_nav_bar(scr, SCREEN_SETTINGS);
     s_screens[SCREEN_SETTINGS] = scr;
+
+    _refresh_duty_row();
+    _refresh_tariff_type_row();
+    s_duty_row_timer = lv_timer_create(_duty_row_timer_cb, 2000, NULL);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -335,15 +615,33 @@ static void _create_settings(void) {
 esp_err_t ui_init(void) {
     ESP_LOGI(TAG, "══ UI INIT — TaxiMeter 320x480 ══");
 
-    _create_dashboard();
+    // Top-level screens (doc 179 §5) — eager, same as before: all 3 are
+    // reachable every session via the nav bar, so lazy-creating them
+    // would just delay the same allocation to first tap for no RAM win.
+    meter_screen_create();
+    s_screens[SCREEN_METER] = meter_screen_get_screen();
     s_screens[SCREEN_TRIPS] = trip_screen_create();
-    _create_settings();
-    s_screens[SCREEN_TEST] = test_menu_init();
+    _create_settings();   // sets s_screens[SCREEN_SETTINGS] itself, at the end of the function
 
-    lv_scr_load(s_screens[SCREEN_DASHBOARD]);
-    s_current = SCREEN_DASHBOARD;
+    // Test Features (doc 179 D3) — only the LIST screen is built here
+    // (cheap); every sub-screen it links to is created lazily on first
+    // tap (test_menu.c), not eagerly at boot (doc 179 §2/Phase 1d).
+    test_menu_init();
 
-    ESP_LOGI(TAG, "UI — READY (4 screens | teal palette | scroll fix | test menu)");
+    // Login screen (doc 179 §5/Phase 2) — shown FIRST, unless a
+    // remembered session is still valid (doc 179 D2c), in which case
+    // boot goes straight to the meter, same as Android skipping login
+    // on a still-valid session.
+    login_screen_create();
+    s_current = SCREEN_METER;   // the tab the nav bar/ui_get_current_screen() reports once past login
+    if (login_screen_can_auto_login()) {
+        lv_scr_load(s_screens[SCREEN_METER]);
+        ESP_LOGI(TAG, "UI INIT: remembered session still valid — skipping login screen");
+    } else {
+        lv_scr_load(login_screen_get_screen());
+    }
+
+    ESP_LOGI(TAG, "UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)");
     return ESP_OK;
 }
 
@@ -352,32 +650,15 @@ void ui_switch_screen(ui_screen_t screen) {
     lv_scr_load(s_screens[screen]);
     s_current = screen;
     ESP_LOGI(TAG, "Screen: %d", (int)screen);
-}
-
-void ui_update_dashboard(double speed, double distance, double fare) {
-    char b[32];
-    if (s_lbl_speed) {
-        snprintf(b, sizeof(b), "%.0f", speed);
-        lv_label_set_text(s_lbl_speed, b);
-    }
-    if (s_lbl_fare) {
-        snprintf(b, sizeof(b), "%.2f", fare);
-        lv_label_set_text(s_lbl_fare, b);
-    }
-    if (s_lbl_distance) {
-        snprintf(b, sizeof(b), "%.2f", distance);
-        lv_label_set_text(s_lbl_distance, b);
-    }
-    if (s_lbl_time) {
-        time_t n = 0; time(&n);
-        struct tm *t = localtime(&n);
-        snprintf(b, sizeof(b), "%02d:%02d", t->tm_hour, t->tm_min);
-        lv_label_set_text(s_lbl_time, b);
-    }
+    // doc 188: Trips screen is created once and reused (never re-created),
+    // so this is the "just became visible" hook the History tab needs to
+    // auto-load, matching Android's TripHistoryFragment11 reloading on
+    // every fragment resume.
+    if (screen == SCREEN_TRIPS) trip_screen_on_shown();
 }
 
 void ui_log_event(const char *msg) {
-    if (s_lbl_status) lv_label_set_text(s_lbl_status, msg);
+    ESP_LOGI(TAG, "[event] %s", msg);
 }
 
 ui_screen_t ui_get_current_screen(void) { return s_current; }

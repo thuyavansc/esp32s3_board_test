@@ -22,11 +22,14 @@
 //   away, STA is untouched. This keeps the hotspot fully self-
 //   contained and never risks the already-working STA path.
 //
-// OFF BY DEFAULT (your explicit requirement, doc 155): hotspot_ap_init()
-// registers the AP event handler but does NOT start the AP unless
-// config.h's ENABLE_WIFI_HOTSPOT=1 (a build-time opt-in) — at runtime,
-// with the default config, the hotspot stays off until an explicit
-// "hotspot on" command (serial or GUI). It never turns itself on.
+// PERSISTED ON/OFF STATE (doc 169 — supersedes doc 155's original
+// build-time-only design): hotspot_ap_init() reads hotspot_nvs.c's
+// persisted "enabled" flag and auto-starts the AP if it was on last
+// time — a hotspot you turn on stays on across a power cycle instead of
+// reverting to off every boot. "hotspot on"/"hotspot off" (serial or
+// GUI) are what change this persisted state going forward;
+// config.h's HOTSPOT_DEFAULT_ENABLED only seeds a brand-new device's
+// very first boot, before any NVS value has ever been written.
 //
 // SERIAL COMMANDS ("hotspot ..."):
 //   hotspot on / off              Start/stop the AP at runtime
@@ -51,9 +54,9 @@ typedef struct {
 } hotspot_client_t;
 
 // Call once at boot, AFTER WiFi STA is already up (app_main.c's
-// existing wifi_init_and_wait()) — registers the AP-side WiFi event
-// handler. If ENABLE_WIFI_HOTSPOT=1 (config.h), also starts the AP
-// immediately; otherwise leaves it off until "hotspot on".
+// wifi_driver_bringup()) — registers the AP-side WiFi event handler,
+// then auto-starts the AP if hotspot_nvs.c's persisted "enabled" flag
+// says it was on last time; otherwise leaves it off until "hotspot on".
 esp_err_t hotspot_ap_init(void);
 
 // Starts the SoftAP with the current NVS-backed config (hotspot_nvs.c).

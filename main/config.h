@@ -50,8 +50,34 @@
 // #define WIFI_SSID   "TWHSP"
 // #define WIFI_PASS   "TollWirelessWPA2"
 
-#define WIFI_SSID   "404"
-#define WIFI_PASS   "supun404404"
+// #define WIFI_SSID   "404"
+// #define WIFI_PASS   "supun404404"
+
+// doc 169 — these two are now ONLY the first-boot seed for wifi_sta.c's
+// NVS-backed config (backend/network/wifi/wifi_sta.c) — a brand-new
+// device with no NVS entry yet starts from these values, but from then
+// on the REAL, live SSID/password/auto-connect preference lives in NVS
+// and is changed at runtime via "wifi connect <ssid> <password>" (serial)
+// or the PC GUI's WiFi screen — never by re-flashing. Editing these two
+// lines after first boot has NO effect on an already-provisioned device.
+#define WIFI_SSID       "Mobitel 4G-489E"
+#define WIFI_PASS       "NoMeansNo"
+
+// Bounded — boot must NEVER hang forever waiting for one specific
+// network (production requirement: the deployed vehicle's WiFi, if any,
+// isn't known at build time and may not be in range). If this expires,
+// boot continues anyway; wifi_sta.c's own disconnect-handler keeps
+// retrying in the background for as long as auto-connect stays enabled.
+#define WIFI_STA_CONNECT_TIMEOUT_MS      15000
+
+// Whether to even ATTEMPT a WiFi connection at boot / after a drop.
+// Default ON to match this project's existing dev/test workflow (a
+// known SSID above) — a real production unit that relies on cellular as
+// its primary uplink should set this to 0 (or just run
+// "wifi autoconnect off" / "wifi disconnect" once, which persists the
+// same way) so it never wastes time trying to join a network that isn't
+// there. Runtime-togglable without a rebuild either way.
+#define WIFI_STA_DEFAULT_AUTO_CONNECT    1
 
 // ── Factory reset safety passcode ──────────────────────────────
 // Type "factory reset" then this passcode on the very next line in the
@@ -227,11 +253,33 @@
 #define EP_PICKUP               "/taxis-api/api/Job/Pickup"
 #define EP_CHANGE_STATUS_FMT    "/taxis-api/api/Job/ChangeStatus/%d"   // %d = status ordinal
 
+// doc 188: trip-history list — confirmed against the real Android source
+// (features/trip_sync/TripApi.kt's getTripHistoryByDriver()), the driver
+// variant of the same POST this device's own Job/AddJobByDriver etc.
+// already use (D1, doc 151 §7.1 — this device holds a driver Bearer
+// token, not an AppKey, so it's the "Job/*" path, not "DeviceJobs/*").
+#define EP_JOB_SEARCH           "/taxis-api/api/Job/GetAllBySearch"
+
 // Buffer for trip-sync JSON bodies/responses — bigger than
 // API_SMALL_BUFFER_SIZE because the Trips-update payload carries the
 // whole timeFrames[]/paths[] arrays (doc 149 §2.3), not the tiny
 // login/duty-style bodies API_SMALL_BUFFER_SIZE was sized for.
 #define TRIP_SYNC_BUFFER_SIZE    8192
+
+// doc 188: SEPARATE, larger buffer for GET Job/GetAllBySearch's
+// response only — a real captured response with a 10-item page (each a
+// full JobDto: nested pickup/dropOff/address/customer/vehicle/driver
+// objects) truncated at TRIP_SYNC_BUFFER_SIZE (8192), a real bug caught
+// from device-monitor-260811-073051.log ("Response TRUNCATED at 8191
+// bytes... response is not valid JSON"), not a guess. Kept as its own
+// constant rather than just raising TRIP_SYNC_BUFFER_SIZE, since
+// AddJob/Trips/SaveJobFares fire every ~60s during an active trip and
+// don't need a buffer this large — only the History tab's fetch
+// (opened on-demand, not on a tight loop) does. Sized with real
+// headroom, not just "bumped until the one captured response fit" —
+// PSRAM is abundant (8MB total, ~100KB used elsewhere per 'mem') so
+// there's no reason to size this tightly.
+#define TRIP_HISTORY_BUFFER_SIZE 40960
 
 // ================================================================
 // DIRECTIONS (GraphHopper) — road-snapped distance, matching the
@@ -251,7 +299,7 @@
 #define DIRECTIONS_ENABLED           1
 #define DIRECTIONS_API_HOST          "graphhopper.com"
 #define DIRECTIONS_API_PATH          "/api/1/route"
-#define GRAPHHOPPER_API_KEY          ""   // ⚠ set a real key before relying on road-snapping in the field
+#define GRAPHHOPPER_API_KEY          "eebf0f9d-b636-488d-b84c-4676be0c0e1d"   // set 2026-08-06 (doc 179 D7) — real key, road-snapping/reconciliation now live
 #define DIRECTIONS_MIN_DISTANCE_M    250.0   // matches Android's GH_DIRECTIONS_MIN_DISTANCE (doc 150 §5/§12)
 #define DIRECTIONS_HTTP_TIMEOUT_MS   10000
 #define DIRECTIONS_BUFFER_SIZE       4096
@@ -287,11 +335,33 @@
 
 // Driver login — TEMPORARY hardcoded test credentials, same "hardcode
 // for the test bench, replace before field use" precedent as
-// TRIPS_API_BEARER_TOKEN above. No login screen yet — use the "auth
-// login" serial command to log in with these, or pass different
-// credentials to that command directly.
+// TRIPS_API_BEARER_TOKEN above. Used by the "auth login" serial command
+// AND (doc 179 Phase 2) as the login SCREEN's dev pre-fill, gated by
+// LOGIN_PREFILL_DEV_CREDENTIALS below — one flag to flip before a real
+// field deployment.
 #define AUTH_TEST_USERNAME       "12345"
 #define AUTH_TEST_PASSWORD       "12345"
+
+// ================================================================
+// LOGIN SCREEN (doc 179 §5/Phase 2, 2026-08-06)
+// ================================================================
+// D1(c): the absolute, non-overridable production switch. 1 = the
+// login screen ALWAYS hard-gates (no "Skip" link exists at all,
+// regardless of any runtime toggle — session_store_get_login_gate_hard()
+// short-circuits on this before it ever looks at NVS). 0 = a dev build,
+// where the gate defaults to soft but can be flipped to hard and back
+// at RUNTIME (no rebuild) via "login gate hard|soft" or the Settings
+// screen — see session_store_set_login_gate_hard(). Flip this to 1
+// before a real field deployment; nothing else in the login flow needs
+// to change.
+#define BUILD_IS_PRODUCTION      0
+
+// Pre-fills the login screen's username/password fields with
+// AUTH_TEST_USERNAME/PASSWORD above, so a one-tap LOGIN works during
+// development (your explicit ask). Independent of BUILD_IS_PRODUCTION
+// on purpose — turn this off separately once real credentials matter,
+// even in a dev build.
+#define LOGIN_PREFILL_DEV_CREDENTIALS   1
 
 // Small, fixed-size buffers for the mostly-tiny JSON bodies these
 // endpoints exchange (login/driver/network/vehicle/duty) — kept off the
@@ -310,7 +380,24 @@
 // UART pins were confirmed in doc 138.
 // ================================================================
 #define ENABLE_GPS_GNSS    1   // A7670E built-in GNSS over modem AT-UART1 (GPIO18/17) — DEFAULT real GPS
-#define ENABLE_GPS_NEO6M   1   // external NEO-6M NMEA over UART2 — kept compiled, runnable alongside GNSS
+
+// ⚠ TURNED OFF 2026-08-03 (doc 171): the external NEO-6M's UART2 sits on
+// GPIO 1 + 2 (NEO6M_UART_TX/RX below), and the display re-map in this
+// same pass had to claim those two pins — they are among only FIVE
+// uncommitted GPIOs this board exposes (see the DISPLAY block for the
+// full explanation). Leaving this at 1 would make the UART2 driver and
+// the LCD SPI bus fight over the same physical pins.
+//
+// Nothing is actually lost: the A7670E's built-in GNSS above is the real
+// GPS this project uses (GPS_DEFAULT_ACTIVE_SOURCE below), and it has
+// been confirmed producing genuine fixes on this hardware (doc 170 §2).
+// Every NEO-6M log line in every session so far reads "reads=0 [not
+// active]" — the module was never physically connected.
+//
+// To use a NEO-6M again, it would have to move to a different interface
+// entirely (there are no spare GPIOs left) — most realistically by
+// giving up the camera instead of the TF slot.
+#define ENABLE_GPS_NEO6M   0   // external NEO-6M NMEA over UART2 — OFF: its pins now belong to the display
 
 // Which backend feeds fare_calc by default at boot — runtime-switchable
 // via "gps source gnss|neo6m|inject" without a rebuild (gps_client.h's
@@ -338,24 +425,44 @@
 // board's own 4G DIP switch + an AT-retry-until-OK loop) — OFF by
 // default. Flip on + verify GNSS_PWRKEY_GPIO if your board needs it
 // (doc 139 §9 open item 2).
+//
+// ⚠ DO NOT enable this without changing GNSS_PWRKEY_GPIO first — as of
+// doc 174, GPIO 21 is the LCD's hardware reset line (LCD_RST). Pulsing it
+// would reset the display controller mid-operation. There is no free pin
+// left to move PWRKEY to either; this stayed at 21 only because the flag
+// is 0 and the pin is therefore never touched. It has never been needed
+// on this board (the 4G DIP switch powers the modem).
 #define ENABLE_GNSS_PWRKEY         0
-#define GNSS_PWRKEY_GPIO           21
+#define GNSS_PWRKEY_GPIO           21   // ⚠ COLLIDES WITH LCD_RST — see warning above
 
-// ── A-GPS / SUPL — OFF until a data-enabled SIM is inserted (doc 140:
-// "in the config add a control for that, later after i insert sim we
-// will enable that"). The AT trigger sequence is fully implemented and
-// gated behind this flag; flipping it to 1 (after inserting a SIM with
-// a data plan) makes gps_backend_gnss.c send the SUPL/XTRA setup
-// commands automatically at GNSS bring-up, with a precondition check
-// (SIM present + network registered) that falls back cleanly to plain
-// (non-assisted) GNSS if either isn't ready — see
-// backend/gps/gps_backend_gnss.c.
-#define ENABLE_AGPS                0
-#define AGPS_SUPL_SERVER           "supl.google.com"
-#define AGPS_SUPL_PORT             7276
-#define AGPS_ENABLE_XTRA           1   // Qualcomm XTRA predicted-ephemeris assist
-#define AGPS_ENABLE_SUPL           1   // standard OMA SUPL A-GPS
-#define AGPS_ENABLE_HOTSTILL       1   // fast re-acquisition after a fix
+// ── A-GPS — gated behind this flag; a precondition check (SIM present +
+// network registered) falls back cleanly to plain (non-assisted) GNSS
+// if either isn't ready — see backend/gps/gps_backend_gnss.c.
+//
+// doc 180/182 Fix F(b) (2026-08-06): this used to send FOUR commands
+// (AT+CGPSURL + AT+CGNSSCMD=10/20/30,1) that do not exist on this A76XX
+// chip at all — confirmed against SIMCom's own 652-page AT Command
+// Manual V1.09, not guessed (doc 180 §4). AGPS_SUPL_SERVER/_PORT/
+// _ENABLE_XTRA/_ENABLE_SUPL/_ENABLE_HOTSTILL described a Qualcomm/
+// SIM7600 feature set this chip doesn't have — deleted along with that
+// dead code. The correct command is ONE line, no server to configure:
+// AT+CAGPS (manual §24.2.15) — SIMCom hard-codes its own AGNSS server.
+//
+// ⚠ NOT YET FIELD-VERIFIED on this board (doc 180 §9 Block C, doc 182
+// §11 item "F(b) blocked"): whether this exact firmware build
+// (A011B05A7670M7_F) actually implements AT+CAGPS, and whether it can
+// open its own socket while PPP holds the same modem's PDP context, are
+// both still open questions. If either is false, AT+CAGPS returns
+// ERROR/a failure code and this falls through to plain (non-assisted)
+// GNSS automatically — same safe failure mode as before. This also
+// SUBSTANTIALLY SHRINKS (does not eliminate) the PPP-dial collision
+// window doc 182 §3 root-caused: 1 command instead of 12, and each
+// retried only on the rare "no response at all" case, not on every
+// clean ERROR the old code's 3x-retry-per-command loop did. If PPP
+// still cycles after this, the next step is doc 182 Fix F(a)
+// (ENABLE_AGPS=0 entirely) or F(c) (mutex-serialize ALL AT access
+// across GNSS bring-up and the PPP dial) — neither implemented here.
+#define ENABLE_AGPS                1
 
 // ── NEO-6M — UART2, an external module, free/unclaimed pins (doc 136) ──
 // UART2 is the one hardware UART this board has left completely free
@@ -471,36 +578,100 @@
 // project esp32_wave_board_test — proven hardware over an untested
 // guess.
 //
-// TOUCH_INT moved 18 -> 14 (2026-07-25): GPIO 18 is the A7670E modem's
-// AT-command UART1 TX (docs 5/6/136/138) — confirmed working, real
-// hardware, NEVER to be reused for anything else (same reason GPIO 17
-// is off-limits too — that's the modem's UART1 RX). GPIO 14 has zero
-// conflicts with the LCD SPI bus, touch I2C bus, either UART, native
-// USB, the PSRAM/Flash range, or any strapping pin — see doc 138 §4 and
-// the follow-up analysis in docs/TestFunctionalities/esp32s3_board/ for
-// the full pin-by-pin check. The physical wire was moved to match.
+// ⚠ COMPLETE PIN RE-MAP (2026-08-03, doc 171) — the PREVIOUS values in
+// this block were carried over from the sibling esp32_wave_board_test
+// project (a bare ESP32-S3 devkit) and were WRONG for THIS board. On the
+// real Waveshare ESP32-S3-A7670E-4G, EVERY ONE of the old pins collided
+// with a peripheral that is physically soldered to the board — verified
+// against Waveshare's own pinout diagram
+// (docs/TestFunctionalities/esp32s3_board/ESP32-S3-A7670E-4G-details-inter.jpg):
+//
+//   OLD MOSI 42 = camera VSYNC      OLD SCLK 41 = camera HREF
+//   OLD CS   39 = camera XCLK       OLD DC   40 = modem RI
+//   OLD RST  45 = modem DTR         OLD BL    6 = TF-card DATA
+//   OLD SDA  15 = camera SIO_DAT    OLD SCL   7 = camera Y2
+//   OLD TP_RST 8 = camera Y3        OLD TP_INT 14 = camera Y9
+//   OLD SD_CS 38 = NOT BROKEN OUT AT ALL — no such header pin exists
+//
+// THE BOARD ONLY EXPOSES FIVE UNCOMMITTED GPIOs: 0, 1, 2, 3, 21.
+// Everything else on the two headers is permanently wired to the camera
+// FPC connector (7,8,9,10,11,12,13,14,15,16,39,41,42,46), the A7670E
+// modem (17,18 = AT-UART1; 19,20 = native USB; 40 = RI; 45 = DTR), the
+// TF-card slot (4,5,6), or the UART0 console (43,44).
+//
+// Five free pins cannot drive a display + touch panel, so ONE peripheral
+// had to be given up. The TF-card slot was chosen because this firmware
+// never touches it (all storage is SPIFFS on the 16MB internal flash —
+// rest_api_storage.c/reference_data.c), whereas the camera is wanted
+// later. That releases GPIO 4/5/6 and brings the total to eight.
+//
+// GPIO 0 is still deliberately avoided (BOOT strapping pin) and four
+// display signals need no GPIO at all — they are tied straight to 3V3
+// in the harness, which drops the requirement to exactly SEVEN:
+//
+//   SD_CS  -> 3V3  (only ever had to sit HIGH to keep the unused TF slot
+//                   off the shared SPI bus — a fixed pull-up does that
+//                   just as well as a GPIO driven high)
+//   LCD_RST-> 3V3  (esp_lcd sends the ST7796S software-reset command
+//                   when reset_gpio_num is -1 — no hardware pin needed)
+//   TP_RST -> 3V3  (FT6336U comes out of power-on reset by itself)
+//   TP_INT -> NC   (touch_driver.c polls over I2C; it never read this pin
+//                   even when it WAS wired — it was pure dead weight)
+//
+// Net result: the camera FPC and every modem line stay completely
+// untouched, so adding a camera later needs no rewiring at all.
+// See doc 171 for the full pin-by-pin table and the wiring diagram.
 // ================================================================
-#define LCD_SPI_HOST    SPI3_HOST
-#define LCD_MOSI        42
-#define LCD_MISO        -1
-#define LCD_SCLK        41
-#define LCD_SD_CS       38   // TF-card slot CS, shares the SPI bus — MUST be held HIGH (display_driver.c does this)
-#define LCD_CS          39
-#define LCD_DC          40
-#define LCD_RST         45   // strapping pin (VDD_SPI) — safe as GPIO after boot
-#define LCD_BL          6
+// ⚠ REVISION 2 (doc 173/174) — the pin map PROVEN WORKING on real
+// hardware in esp32s3_display_taxi_4 on 2026-08-03. Copied here verbatim
+// so both projects drive the same harness; no rewiring is needed to move
+// between them.
+//
+// Revision 1 (MOSI 2 / SCLK 21 / CS 1 / DC 3 / RST 0, MISO and SD_CS not
+// wired, 40MHz on SPI3) produced a black panel in BOTH projects while
+// backlight and touch worked — see doc 174 for the full comparison and
+// the ranked root-cause analysis. The two changes most likely responsible
+// for the fix are captured below.
+//
+// SPI2_HOST + IO_MUX: the four bus signals sit on SPI2's DEDICATED
+// IO_MUX pins for this chip — FSPID=11 (MOSI), FSPIQ=13 (MISO),
+// FSPICLK=12 (SCLK), FSPICS0=10 (CS). ESP-IDF routes these straight
+// through the IO_MUX rather than the GPIO matrix, removing the
+// propagation delay that makes fast SPI clocks marginal. Espressif rate
+// the GPIO matrix at 40MHz max vs 80MHz for IO_MUX — Rev 1 ran at
+// exactly 40MHz through the matrix, i.e. at the limit with no margin.
+// SD_CS and DC are not SPI-peripheral signals, so they take plain GPIOs
+// (9 and 14) inside the same bundle.
+//
+// COST: the camera. GPIO 9-14 are six of its data lines. Doc 174 §4 sets
+// out how some of them might be reclaimed once this is stable — do not
+// attempt that until this configuration is confirmed working here too.
+#define LCD_SPI_HOST    SPI2_HOST
+#define LCD_MISO        13   // Pin 4  — WIRED (was -1) · IO_MUX FSPIQ
+#define LCD_MOSI        11   // Pin 5  · IO_MUX FSPID
+#define LCD_SCLK        12   // Pin 6  · IO_MUX FSPICLK
+#define LCD_SD_CS       9    // Pin 7  — TF slot CS, display_driver.c drives it HIGH (doc 39 Bug #1)
+#define LCD_CS          10   // Pin 8  · IO_MUX FSPICS0
+#define LCD_DC          14   // Pin 9  — Data/Command
+#define LCD_RST         21   // Pin 10 — hardware reset
+#define LCD_BL          5    // Pin 11 — unchanged, was already proven working
 
-#define LCD_PIXEL_CLOCK_HZ  (40 * 1000 * 1000)  // 40 MHz SPI clock
+// 40MHz -> 20MHz: see the IO_MUX note above. Still far faster than this
+// UI needs. Raise it again only after the panel is confirmed stable.
+#define LCD_PIXEL_CLOCK_HZ  (20 * 1000 * 1000)
 #define LCD_BK_LIGHT_ON     1
 #define LCD_BK_LIGHT_OFF    0
 
 // ── FT6336U Touch (I2C) ────────────────────────────────────────
+// SDA/SCL land on old TF-card pins, which is actually an advantage here:
+// SD lines carry board pull-ups, and I2C wants pull-ups anyway. Both were
+// already proven working — unchanged in revision 2.
 #define TOUCH_I2C_PORT    I2C_NUM_0
-#define TOUCH_I2C_SDA     15
-#define TOUCH_I2C_SCL     7
+#define TOUCH_I2C_SDA     6
+#define TOUCH_I2C_SCL     4
 #define TOUCH_I2C_ADDR    0x38   // FT6336U 7-bit I2C address
-#define TOUCH_INT         14  // moved from 18 — GPIO18 is the modem's UART1 TX, do not reuse (see comment above)
-#define TOUCH_RST         8
+#define TOUCH_INT         2   // Pin 14 — WIRED (was -1); the driver still polls, it never reads this
+#define TOUCH_RST         1   // Pin 15 — WIRED (was -1); real reset pulse again
 
 // ── LVGL ────────────────────────────────────────────────────────
 // Percentage of screen rows per draw buffer (not a full 320x480
@@ -519,7 +690,22 @@
 // slowdown — an acceptable trade for 12KB of the scarcest resource on
 // the board. If the UI feels sluggish after this, raise it back to 5
 // (the display code reads this value; no other change needed).
-#define LVGL_BUF_SIZE_PCT  3
+//
+// ⚠ PHASE 1+2 CORRECTION #2 (2026-07-30, doc 161 §9): 3 -> 2. Real
+// hardware showed "Largest DMA block: 4 KB" (via "mem") at the SAME
+// moment a real Trips API HTTPS call failed with "esp-aes: Failed to
+// allocate memory" — mbedTLS's hardware AES accelerator needs a
+// DMA-capable buffer, which (like these draw buffers) can ONLY come
+// from internal SRAM, never PSRAM. Doc 157 §5 already listed this exact
+// step ("draw buffers 3% -> 2%") as a pre-approved fallback lever if
+// more DMA-capable headroom was ever needed — this is that day.
+//   At 2%: 320 x (480*2/100 = 9.6 -> 9 rows) x 2 bytes = 5,760 B/buffer,
+//          x2 buffers = ~11.25KB internal SRAM.   → frees ~6.25KB more
+// Combined with the LVGL pool correction (112->96KB) in the same pass,
+// ~22KB total is returned to the general/DMA heap. Cost: slightly more
+// visible redraw lag than at 3% — if the UI feels noticeably sluggish,
+// this is the first place to raise back (to 3, not all the way to 5).
+#define LVGL_BUF_SIZE_PCT  2
 #define LVGL_TICK_PERIOD_MS 5
 
 // ================================================================
@@ -568,9 +754,18 @@
 // console all verified working AT USB=OFF, 2026-07-26.
 // ================================================================
 #define ENABLE_CELLULAR_PPP   1   // modem internet via USB CDC PPP (iot_usbh_modem) — needs DIP USB=OFF
-#define ENABLE_WIFI_HOTSPOT   0   // SoftAP + NAPT internet sharing — OFF BY DEFAULT, explicit opt-in
-                                  // required (build-time flag here, OR runtime "hotspot on" — either
-                                  // way it never turns itself on automatically, per your requirement)
+
+// doc 169 — the hotspot's on/off state is now a RUNTIME, NVS-persisted
+// preference (hotspot_nvs.c), not a build-time-only flag: "hotspot on"/
+// "hotspot off" (serial or GUI) persist your choice, and
+// hotspot_ap_init() reads it back at every boot so a hotspot you turned
+// on stays on across a power cycle instead of reverting to off every
+// time (previously it always came up off after a restart no matter what
+// you'd set last, since only this compile-time flag was ever checked).
+// HOTSPOT_DEFAULT_ENABLED only matters ONCE — a brand-new device's very
+// first boot, before any NVS value has ever been written; after that,
+// only "hotspot on"/"off" change the persisted state.
+#define HOTSPOT_DEFAULT_ENABLED   1
 
 // Which uplink is preferred when BOTH cellular and WiFi-STA are
 // available — runtime-switchable via "net uplink wifi|cellular|auto"
@@ -586,12 +781,47 @@
 #define MODEM_USB_CDC_ITF      5        // CDC data interface index
 #define MODEM_USB_NOTIF_ITF    (-1)     // no notification interface on this modem
 
-// APN — confirmed against the SIM currently in this board (doc 155 §12,
-// user-confirmed 2026-07-26). CELLULAR_APN_OVERRIDE="" means "use
-// CELLULAR_APN below, or the built-in MCC/MNC auto-detect table if that's
-// ever cleared" — set a non-empty override here (or via "cell apn ...")
-// to force a specific APN regardless of what SIM is inserted.
-#define CELLULAR_APN            "live.vodafone.com"
+// ── APN profiles — pick the one matching whatever SIM is currently
+// inserted (you travel between countries with this board — 2026-07-28:
+// Sri Lanka/Hutch; later back to Australia/Vodafone). Change ONLY
+// ACTIVE_APN_PROFILE below when you swap SIMs; CELLULAR_APN then follows
+// automatically. Add a new PROFILE_* + #elif branch for any other
+// carrier instead of overwriting an existing one, so switching back
+// later is a one-line change again, not re-typing the APN string.
+//
+// Hutch (LK) and Dialog (LK) values are from the carriers' own public
+// APN settings (verified via web search 2026-07-28 — apn.how, dialog.lk/
+// roaming/apn-settings — NOT hand-typed from memory). Vodafone AU is the
+// value doc 155 §12/157 already confirmed against the SIM previously in
+// this board. Dialog LK has DIFFERENT APNs for prepaid vs postpaid —
+// "dialogbb" (postpaid) is set below; switch to "PPWAP" if your Dialog
+// line is prepaid and dialing fails.
+//
+// You don't have to rebuild/reflash to try a different APN — "cell apn
+// <apn>" (serial command, cellular_ppp.c) overrides it for the current
+// boot only, useful for testing an APN before committing it here.
+#define APN_PROFILE_VODAFONE_AU   0
+#define APN_PROFILE_HUTCH_LK      1
+#define APN_PROFILE_DIALOG_LK     2
+
+// #define ACTIVE_APN_PROFILE   APN_PROFILE_DIALOG_LK   // <-- 2026-07-31: Dialog SIM inserted, Sri Lanka
+#define ACTIVE_APN_PROFILE   APN_PROFILE_HUTCH_LK   // <-- 2026-07-31: Dialog SIM inserted, Sri Lanka
+
+
+#if ACTIVE_APN_PROFILE == APN_PROFILE_VODAFONE_AU
+    #define CELLULAR_APN   "live.vodafone.com"       // Vodafone Australia — doc 155 §12/157, confirmed on real SIM
+#elif ACTIVE_APN_PROFILE == APN_PROFILE_HUTCH_LK
+    #define CELLULAR_APN   "default"                  // Hutch (Sri Lanka) — MCC 413 / MNC 08; carrier's own published APN is literally "default"
+#elif ACTIVE_APN_PROFILE == APN_PROFILE_DIALOG_LK
+    #define CELLULAR_APN   "dialogbb"                 // Dialog Axiata (Sri Lanka), POSTPAID — MCC 413 / MNC 02; prepaid lines use "PPWAP" instead
+#else
+    #error "Unknown ACTIVE_APN_PROFILE — add a PROFILE_* + #elif branch above for this carrier"
+#endif
+
+// CELLULAR_APN_OVERRIDE="" means "use the profile-selected CELLULAR_APN
+// above" — set a non-empty value here to hard-force a specific APN
+// regardless of ACTIVE_APN_PROFILE (rare; prefer switching the profile
+// instead so this stays the empty/default case).
 #define CELLULAR_APN_OVERRIDE   ""
 
 #define CELLULAR_HTTP_TIMEOUT_MS   15000   // unused directly (PPP is raw IP, not HTTP) — reserved for any future modem-side HTTP diagnostics

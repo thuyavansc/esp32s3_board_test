@@ -18,8 +18,12 @@ typedef void (*text_keypad_cb_t)(const char *value, void *user_data);
 // Shows the keyboard on top of `screen`, pre-filled with `initial` (may
 // be NULL/empty). `title` labels the popup (e.g. "New SSID"). If
 // `password_mode` is true, the textarea masks input (bullets) — for
-// hotspot password entry. Calls `on_enter(text, user_data)` only if the
-// user taps the keyboard's own OK (checkmark) key; tapping Cancel (the
-// header "X" or the keyboard's hide-icon) discards it and calls nothing.
+// hotspot password / login password entry — AND a small eye toggle
+// button appears on the right of the field (doc 179 Phase 2/D6,
+// matching Android's login field's `endIconMode="password_toggle"`)
+// that flips the mask on/off without discarding what's typed. Calls
+// `on_enter(text, user_data)` only if the user taps the keyboard's own
+// OK (checkmark) key; tapping Cancel (the header "X" or the keyboard's
+// hide-icon) discards it and calls nothing.
 void text_keypad_show(lv_obj_t *screen, const char *title, const char *initial,
                        bool password_mode, text_keypad_cb_t on_enter, void *user_data);

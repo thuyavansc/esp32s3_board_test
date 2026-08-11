@@ -2,42 +2,53 @@
 // ================================================================
 // ui_main.h — TaxiMeter LVGL UI Screen Manager
 //
-// Screens:
-//   SCREEN_DASHBOARD — main fare/speed dashboard
-//   SCREEN_TRIPS     — trip history: keypad entry, list, JSON viewer (see display/trip/trip_screen.h)
-//   SCREEN_SETTINGS  — settings list (scrollable) + brightness/contrast
-//   SCREEN_TEST      — Test Menu (list of test UIs; see test/test_menu.h)
+// Screens (doc 179 §5 restructure, 2026-08-06):
+//   SCREEN_METER    — the production meter: PAX A920Pro-style layout
+//                      (display/meter/meter_screen.h), wired to the
+//                      real fare_calc snapshot. Was the Test Menu's
+//                      "01 PAX A920Pro Meter UI" entry — promoted to
+//                      the production main screen; the mock-up no
+//                      longer lives under Test.
+//   SCREEN_TRIPS    — trip history: keypad entry, list, JSON viewer (see display/trip/trip_screen.h)
+//   SCREEN_SETTINGS — settings list (scrollable) + brightness/contrast
+//                      + a "Test Features" row that drills into what
+//                      used to be the bottom-nav Test tab (test/
+//                      test_menu.h) — no longer a top-level tab.
+//
+// Nav bar is now 3 tabs (METER | TRIP | SET), not 4 — the old "DASH"
+// cards UI moved to Test Features as the dev/diagnostic meter view
+// (display/test/test_meter_dev.h), and the Test tab itself moved
+// behind Settings -> Test Features.
 //
 // Ported from esp32_display_taxi_3, which also had a SCREEN_GPS (real
-// GPS lat/lon/speed + SEND button) — dropped during the port, not
-// disabled: this project has no GPS/socket hardware or code at all.
+// GPS lat/lon/speed + SEND button) — dropped during the original port
+// as "no GPS hardware". That's no longer true (this board has a real
+// GNSS/NEO-6M source, backend/gps/gps_client.h) — a GPS info screen is
+// back, reachable from Settings and from Test Features (doc 179 D6).
 // ================================================================
 #include <stdbool.h>
 #include <stdint.h>
 #include "esp_err.h"
 
-// Screen IDs
+// Screen IDs — top-level, bottom-nav screens only.
 typedef enum {
-    SCREEN_DASHBOARD = 0,
+    SCREEN_METER = 0,
     SCREEN_TRIPS,
     SCREEN_SETTINGS,
-    SCREEN_TEST,
-    SCREEN_COUNT      // 4 screens total
+    SCREEN_COUNT      // 3 screens total
 } ui_screen_t;
 
-// Initialize all UI screens and show dashboard
+// Initialize all UI screens and show the meter
 esp_err_t ui_init(void);
 
 // Switch to a specific screen
 void ui_switch_screen(ui_screen_t screen);
 
-// Update dashboard values (called periodically from app_main)
-void ui_update_dashboard(double speed, double distance, double fare);
+// Live meter values are now owned by meter_screen.c/test_meter_dev.c
+// directly (each reads fare_calc_get_snapshot() from its own 1s
+// lv_timer) — this module no longer relays dashboard numbers.
 
-// GPS values are now owned by gps_screen.c (see gps_screen_update()) —
-// this module no longer touches the GPS screen directly.
-
-// Show a toast/log message in the dashboard status bar
+// Show a toast/log message on the meter screen's status area.
 void ui_log_event(const char *msg);
 
 // Get current screen index

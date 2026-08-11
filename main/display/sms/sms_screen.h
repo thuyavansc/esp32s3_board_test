@@ -2,8 +2,9 @@
 // ================================================================
 // sms_screen.h — SMS inbox + send GUI (Phase 2, doc 155/159)
 //
-// Reached via Test Menu -> "SMS (Inbox/Send)" — same drill-down
-// convention as network_screen.c/test_pax_meter.c/color_palette_ui.c.
+// Reached via Settings -> Test Features -> "SMS (Inbox/Send)" (doc 179
+// §5) — same drill-down convention as network_screen.c/
+// color_palette_ui.c. Built lazily on first tap (test_menu.c).
 //
 // Shows the in-RAM inbox (sms_client_get_inbox()) and a "+ Send New
 // SMS" button that collects a recipient number then a message body via

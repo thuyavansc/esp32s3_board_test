@@ -24,6 +24,7 @@
 #include "fare_calc.h"
 #include "gps/gps_client.h"
 #include "bg_worker.h"
+#include "rest_api_storage.h"
 #include "trip_sync.h"
 
 static const char *TAG = "tripsync";
@@ -555,6 +556,137 @@ esp_err_t trip_sync_run_full_sequence(bool is_cancelled) {
     s_last_sync_ok = (err == ESP_OK);
     s_last_sync_at = time(NULL);
     return err;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  4. Trip history — POST taxis-api/api/Job/GetAllBySearch (doc 188)
+// ═══════════════════════════════════════════════════════════════
+static void _extract_string(cJSON *parent, const char *key, char *out, size_t out_size) {
+    cJSON *v = cJSON_GetObjectItemCaseSensitive(parent, key);
+    if (cJSON_IsString(v) && v->valuestring) strlcpy(out, v->valuestring, out_size);
+}
+
+int trip_sync_fetch_history(int page_number, int page_size,
+                             trip_history_item_t *out, int max_count,
+                             int *out_total_count) {
+    if (out_total_count) *out_total_count = 0;
+    if (!out || max_count <= 0) return 0;
+
+    cJSON *req = cJSON_CreateObject();
+    cJSON_AddNumberToObject(req, "pageNumber", page_number);
+    cJSON_AddNumberToObject(req, "pageSize", page_size);
+    // Exact filter Android's GetTripHistoryUseCase.kt uses — completed
+    // trips only, same set its own History tab shows.
+    cJSON_AddStringToObject(req, "search", "Dropedoff");
+    cJSON_AddStringToObject(req, "searchColumn", "Status");
+    char *body_str = cJSON_PrintUnformatted(req);
+    cJSON_Delete(req);
+    if (!body_str) {
+        ESP_LOGE(TAG, "fetch_history: failed to build request JSON (out of memory?)");
+        return 0;
+    }
+
+    // doc 188: TRIP_HISTORY_BUFFER_SIZE, NOT TRIP_SYNC_BUFFER_SIZE — a
+    // real captured response truncated at 8192 (a full page of JobDto
+    // records is much bigger than the other 3 calls' small responses).
+    char *resp = malloc(TRIP_HISTORY_BUFFER_SIZE);
+    if (!resp) {
+        ESP_LOGE(TAG, "fetch_history: malloc(%d) for response buffer FAILED — out of heap (see 'mem')", TRIP_HISTORY_BUFFER_SIZE);
+        free(body_str);
+        return 0;
+    }
+
+    ESP_LOGI(TAG, "══════════════════════════════════════");
+    ESP_LOGI(TAG, "GET TRIP HISTORY — page %d, pageSize %d, search=Dropedoff/Status", page_number, page_size);
+    int status = 0;
+    esp_err_t err = _request_with_reauth(API_METHOD_POST, EP_JOB_SEARCH, body_str, resp, TRIP_HISTORY_BUFFER_SIZE, &status);
+    free(body_str);
+
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "GET TRIP HISTORY failed — no response from server");
+        free(resp);
+        ESP_LOGI(TAG, "══════════════════════════════════════\n");
+        return 0;
+    }
+
+    cJSON *json = cJSON_Parse(resp);
+    free(resp);
+    if (!json) {
+        ESP_LOGE(TAG, "GET TRIP HISTORY: response is not valid JSON (HTTP %d)", status);
+        ESP_LOGI(TAG, "══════════════════════════════════════\n");
+        return 0;
+    }
+
+    cJSON *success = cJSON_GetObjectItemCaseSensitive(json, "success");
+    cJSON *data    = cJSON_GetObjectItemCaseSensitive(json, "data");
+    if (!cJSON_IsTrue(success) || !cJSON_IsObject(data)) {
+        cJSON *message = cJSON_GetObjectItemCaseSensitive(json, "message");
+        ESP_LOGE(TAG, "GET TRIP HISTORY FAILED (HTTP %d): %s", status,
+                 cJSON_IsString(message) ? message->valuestring : "(no message — check raw response)");
+        cJSON_Delete(json);
+        ESP_LOGI(TAG, "══════════════════════════════════════\n");
+        return 0;
+    }
+
+    cJSON *total_count = cJSON_GetObjectItemCaseSensitive(data, "totalCount");
+    if (out_total_count && cJSON_IsNumber(total_count)) *out_total_count = (int)total_count->valuedouble;
+
+    cJSON *items = cJSON_GetObjectItemCaseSensitive(data, "items");
+    int count = 0;
+    cJSON *item = NULL;
+    if (cJSON_IsArray(items)) {
+        cJSON_ArrayForEach(item, items) {
+            if (count >= max_count) break;
+            trip_history_item_t *dst = &out[count];
+            memset(dst, 0, sizeof(*dst));
+
+            cJSON *id = cJSON_GetObjectItemCaseSensitive(item, "id");
+            dst->id = cJSON_IsNumber(id) ? (int64_t)id->valuedouble : 0;
+            if (dst->id <= 0) continue;   // JobDto.id is non-nullable in Android — no id, no usable row
+
+            cJSON *jstatus = cJSON_GetObjectItemCaseSensitive(item, "status");
+            dst->status = cJSON_IsNumber(jstatus) ? (int)jstatus->valuedouble : 0;
+
+            cJSON *pickup = cJSON_GetObjectItemCaseSensitive(item, "pickup");
+            if (cJSON_IsObject(pickup)) {
+                _extract_string(pickup, "pickupTime", dst->pickup_time, sizeof(dst->pickup_time));
+                cJSON *addr = cJSON_GetObjectItemCaseSensitive(pickup, "address");
+                if (cJSON_IsObject(addr)) _extract_string(addr, "addressLine1", dst->pickup_address, sizeof(dst->pickup_address));
+            }
+
+            cJSON *dropoff = cJSON_GetObjectItemCaseSensitive(item, "dropOff");
+            if (cJSON_IsObject(dropoff)) {
+                _extract_string(dropoff, "dropOffTime", dst->dropoff_time, sizeof(dst->dropoff_time));
+                cJSON *addr = cJSON_GetObjectItemCaseSensitive(dropoff, "address");
+                if (cJSON_IsObject(addr)) _extract_string(addr, "addressLine1", dst->dropoff_address, sizeof(dst->dropoff_address));
+            }
+
+            cJSON *fares = cJSON_GetObjectItemCaseSensitive(item, "totalFares");
+            dst->total_fares = cJSON_IsNumber(fares) ? fares->valuedouble : 0.0;
+
+            _extract_string(item, "fromCity", dst->from_city, sizeof(dst->from_city));
+            _extract_string(item, "toCity", dst->to_city, sizeof(dst->to_city));
+
+            // Cache the FULL raw JobDto for this row under the usual
+            // trips_<id>.json convention — a history-row tap then opens
+            // in the existing trip_json_viewer_show(id) unchanged, with
+            // no extra per-row network round-trip (this response already
+            // carried the whole JobDto body for every item on the page).
+            char *item_str = cJSON_PrintUnformatted(item);
+            if (item_str) {
+                rest_api_storage_write((int)dst->id, item_str, strlen(item_str));
+                free(item_str);
+            }
+
+            count++;
+        }
+    }
+
+    ESP_LOGI(TAG, "GET TRIP HISTORY OK \xE2\x9C\x93 (HTTP %d) — %d item(s), totalCount=%d", status, count,
+             out_total_count ? *out_total_count : -1);
+    cJSON_Delete(json);
+    ESP_LOGI(TAG, "══════════════════════════════════════\n");
+    return count;
 }
 
 // ═══════════════════════════════════════════════════════════════

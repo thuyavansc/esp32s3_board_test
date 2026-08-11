@@ -102,5 +102,15 @@ int rest_api_storage_list(trip_file_info_t *out, int max_count);
 // free() it). Returns ESP_ERR_NOT_FOUND if that trip isn't stored.
 esp_err_t rest_api_storage_read(int trip_id, char **out_buf, size_t *out_len);
 
+// doc 188: write a JSON blob directly into the trips_<id>.json convention,
+// for caching one record out of a Job/GetAllBySearch history-list response
+// (which already returns full JobDto bodies per row — no need for a
+// separate per-trip GET /Trips/{id} the way rest_api_storage_fetch() does).
+// Same backend scope as rest_api_storage_read() (STORAGE_BACKEND 1/2 only
+// — the file backends). RAM backends return ESP_ERR_NOT_SUPPORTED, same
+// as read's existing precedent, since they only ever hold one JSON at a
+// time and aren't used for the touchscreen trip-history list.
+esp_err_t rest_api_storage_write(int trip_id, const char *json, size_t len);
+
 // Delete a stored trip's JSON file (same as "api delete <id>").
 esp_err_t rest_api_storage_delete(int trip_id);

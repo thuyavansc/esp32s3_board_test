@@ -29,6 +29,11 @@
 // simulator in additional_work.c, left untouched):
 //   smsc send <number> <message...>   Send a real SMS (routed via bg_worker)
 //   smsc list                          Last SMS_INBOX_CAPACITY received (sender + body)
+//   smsc storage                       EVERY SMS on the SIM (not just our own inbox above)
+//                                       + used/total capacity (doc 162 §2 — old pre-existing
+//                                       messages our reliability sweep never touches)
+//   smsc delete <index>                Delete one SMS off the SIM (AT+CMGD)
+//   smsc delete all                    Delete every SMS on the SIM (AT+CMGD=1,4)
 //   smsc status                        Ready state, counts, whitelist size
 //   smsc help
 // ================================================================

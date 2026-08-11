@@ -13,6 +13,7 @@
 #include <string.h>
 #include "esp_log.h"
 #include "esp_wifi.h"
+#include "esp_wifi_ap_get_sta_list.h"   // wifi_sta_mac_ip_list_t / esp_wifi_ap_get_sta_list_with_ip() — NOT declared by esp_wifi.h itself, a separate header
 #include "esp_mac.h"
 #include "lwip/ip4_addr.h"
 #include "lwip/dns.h"
@@ -121,15 +122,21 @@ static void _set_dns_servers(esp_netif_t *netif, const char *primary_str, const 
 esp_err_t hotspot_ap_init(void) {
     esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_AP_STACONNECTED, _on_ap_event, NULL);
     esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_AP_STADISCONNECTED, _on_ap_event, NULL);
-    ESP_LOGI(TAG, "Hotspot module ready (AP event handlers registered) — off until "
-             "'hotspot on' or ENABLE_WIFI_HOTSPOT=1");
+    ESP_LOGI(TAG, "Hotspot module ready (AP event handlers registered)");
 
-#if ENABLE_WIFI_HOTSPOT
-    ESP_LOGI(TAG, "ENABLE_WIFI_HOTSPOT=1 (config.h build-time opt-in) — starting hotspot now");
-    return hotspot_ap_start();
-#else
+    // doc 169 — auto-start reflects the PERSISTED "enabled" preference
+    // (hotspot_nvs.c), not a build-time-only flag, so a hotspot you
+    // turned on stays on across a power cycle instead of reverting to
+    // off every boot. "hotspot on"/"hotspot off" are what change this
+    // going forward — see hotspot_nvs_set_enabled()'s own comment.
+    hotspot_config_t cfg;
+    hotspot_nvs_get(&cfg);
+    if (cfg.enabled) {
+        ESP_LOGI(TAG, "Hotspot was ON last time (persisted) — starting automatically");
+        return hotspot_ap_start();
+    }
+    ESP_LOGI(TAG, "Hotspot off — 'hotspot on' or the GUI's toggle to start it");
     return ESP_OK;
-#endif
 }
 
 esp_err_t hotspot_ap_start(void) {
@@ -344,8 +351,10 @@ bool hotspot_ap_process_command(const char *line) {
         _show_help();
     } else if (strcmp(p, "on") == 0) {
         hotspot_ap_start();
+        hotspot_nvs_set_enabled(true);    // doc 169 — persists so this survives a power cycle
     } else if (strcmp(p, "off") == 0) {
         hotspot_ap_stop();
+        hotspot_nvs_set_enabled(false);
     } else if (strcmp(p, "status") == 0) {
         hotspot_config_t cfg;
         hotspot_nvs_get(&cfg);

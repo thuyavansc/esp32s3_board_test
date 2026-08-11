@@ -39,6 +39,7 @@
 //   trip help
 // ================================================================
 #include <stdbool.h>
+#include <stddef.h>
 #include "esp_err.h"
 
 // Call once at boot — starts the periodic fare-calc tick task.
@@ -71,5 +72,30 @@ esp_err_t trip_manager_finalize_trip(void);
 void trip_manager_add_extras_cents(double cents);
 
 bool trip_manager_is_trip_active(void);
+
+// doc 184 §7.2 — a trip survives a reboot (its aggregate totals are
+// persisted to SPIFFS), but the meter does NOT auto-resume it — the
+// driver must confirm first, so nobody is surprised by a fare already
+// running that they can't account for. trip_manager_init() detects a
+// pending restore at boot; the UI should check
+// trip_manager_has_pending_restore() once, right after login, and if
+// true, show trip_manager_get_pending_restore_summary()'s message in a
+// confirm dialog, then call trip_manager_confirm_restore() with the
+// driver's answer.
+bool trip_manager_has_pending_restore(void);
+
+// Writes a driver-facing summary (e.g. "Trip #4 - $10.87 so far.\n
+// Resume this trip?") into out. Safe to call even if there's nothing
+// pending (writes an empty string).
+void trip_manager_get_pending_restore_summary(char *out, size_t out_size);
+
+// resume=true: restores fare_calc to the carried-forward state and
+// keeps ticking normally from here. resume=false: restores just long
+// enough to have the correct totals, then immediately stops and runs
+// the full finalize/sync sequence (trip_manager_finalize_trip()) —
+// whatever fare had genuinely accrued before the reboot still reaches
+// the server; it's not silently discarded. Either way, clears the
+// pending-restore state — call this at most once.
+void trip_manager_confirm_restore(bool resume);
 
 bool trip_manager_process_command(const char *line);

@@ -75,6 +75,7 @@ static void _i2c_init(void) {
 //  FT6336U Init
 // ═══════════════════════════════════════════════════════════════
 static void _ft6336u_init(void) {
+#if TOUCH_RST >= 0
     // Reset touch controller
     gpio_config_t rst_cfg = {
         .pin_bit_mask = (1ULL << TOUCH_RST),
@@ -83,6 +84,14 @@ static void _ft6336u_init(void) {
     gpio_config(&rst_cfg);
     gpio_set_level(TOUCH_RST, 0); vTaskDelay(pdMS_TO_TICKS(10));
     gpio_set_level(TOUCH_RST, 1); vTaskDelay(pdMS_TO_TICKS(50));
+    ESP_LOGI(TAG, "FT6336U reset pulsed on GPIO%d", TOUCH_RST);
+#else
+    // TOUCH_RST = -1 (doc 171): tied to 3V3 in the harness, because this
+    // board only exposes five uncommitted GPIOs and the FT6336U releases
+    // its own power-on reset without help. Give it the same settling time
+    // the pulse path above would have, then talk to it over I2C.
+    vTaskDelay(pdMS_TO_TICKS(50));
+#endif
 
     ESP_LOGI(TAG, "FT6336U init — addr: 0x%02X", TOUCH_I2C_ADDR);
 }

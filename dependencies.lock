@@ -1,10 +1,40 @@
 dependencies:
+  espressif/cmake_utilities:
+    component_hash: 351350613ceafba240b761b4ea991e0f231ac7a9f59a9ee901f751bddc0bb18f
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 0.5.3
   espressif/esp-dsp:
     component_hash: ed9ac175b14e0414399a2b33c525579414b5bad19a2a67b12ea212def96f9a98
     source:
       service_url: https://api.components.espressif.com/
       type: service
     version: 1.8.2
+  espressif/iot_eth:
+    component_hash: 3be03ff933e27e17887becbed16305a561b35b66a5a4978ac51ae7f9f2ec70ea
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 1.1.0
+  espressif/iot_usbh_cdc:
+    component_hash: e924a79e9b7926b38bee52234d9f90101d8926f5e560dd5edf51c395546eac87
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 3.1.0
+  espressif/iot_usbh_modem:
+    component_hash: 2c9d527bef0721c2925341ee92c7244d4bc5b45c8ffe85d68e125deab7322083
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 2.2.0
+  espressif/modem_at:
+    component_hash: 86d8260760c5c41decd7a1d3bd3c3805c9be0174c60c502a074734b2342b406a
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 0.1.0
   idf:
     component_hash: null
     source:
@@ -16,6 +46,6 @@ dependencies:
       service_url: https://api.components.espressif.com/
       type: service
     version: 8.4.0
-manifest_hash: c59b6221b985653146eb641e8161bff95a75a7034428991d5e2e820ce7d32496
+manifest_hash: 1ddf08af96197ce7a4176d59f0a4b7cbe8f47dec04412aa8eece914ae4cff57d
 target: esp32s3
 version: 1.0.0

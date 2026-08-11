@@ -1,0 +1,208 @@
+I (3775) iot_eth: Ethernet link up
+W (3777) iot_eth: Driver does not support get_addr
+I (3786) esp-netif_lwip-ppp: Connected
+I (3786) cellular: ══════════════════════════════════════
+I (3790) cellular: PPP CONNECTED — carrier IP: 100.84.112.113
+I (3796) cellular: ══════════════════════════════════════
+
+I (3808) iot_eth.netif_glue: netif "USB PPP" Got IP Address
+I (3813) iot_eth.netif_glue: ~~~~~~~~~~~
+I (3817) iot_eth.netif_glue: ETHIP:100.84.112.113
+I (3821) iot_eth.netif_glue: ETHMASK:255.255.255.255
+I (3826) iot_eth.netif_glue: ETHGW:10.64.64.64
+I (3830) iot_eth.netif_glue: Main DNS: 202.69.205.2
+I (3835) iot_eth.netif_glue: Backup DNS: 202.69.205.1
+I (3839) iot_eth.netif_glue: ~~~~~~~~~~~
+I (3875) modem_board: Handling stage = STAGE_RUNNING
+I (3875) modem_board: Modem is running
+I (5949) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs)
+I (5949) trips_api: ══════════════════════════════════════
+I (5958) trips_api: TRIPS REST API + JSON Storage Init
+I (5963) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (5970) trips_api:   Default trip ID: 12772
+I (5974) trips_api:   Storage backend: 2
+I (6272) trips_api: Created storage directory: /spiffs/store
+I (6273) trips_api: SPIFFS partition: 4581 KB total | 86 KB used | 4495 KB free
+I (6274) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (6280) trips_api: TRIPS API Storage — READY ✓
+I (6284) trips_api: Type 'api help' for available commands.
+I (6290) trips_api: ══════════════════════════════════════
+
+I (6402) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8219 KB, largest block=8064 KB
+I (6416) refdata: Reference data module ready (call 'ref fetch' or go on-duty to load data)
+I (6416) gps: ══════════════════════════════════════
+I (6424) gps: GPS Client Init — default active source: GNSS
+I (6430) gps:   Starting GNSS backend (A7670E, UART1)...
+I (6435) gps_gnss: ══════════════════════════════════════
+I (6446) gps_gnss: GNSS (A7670E) Init
+I (6450) gps_gnss:   A-GPS: disabled (no SIM yet — see doc 140)
+I (6456) gps_gnss: ══════════════════════════════════════
+I (6468) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (6474) gps_gnss: AT handshake...
+I (6477) gps:   Starting NEO-6M backend (UART2)...
+I (6480) gps_gnss:   AT -> OK
+I (6484) gps_gnss: Modem responding ✓
+I (6488) gps_gnss: A-GPS disabled (ENABLE_AGPS=0 in config.h) — plain GNSS only.
+I (6495) gps_gnss:   Insert a data-enabled SIM, set ENABLE_AGPS=1, rebuild — see doc 140.
+I (6503) gps_neo6m: ══════════════════════════════════════
+I (6508) gps_gnss:   AT+CGNSSPWR=1 -> OK
+I (6518) gps_neo6m: GPS NEO-6M Module Init
+I (6522) gps_neo6m:   UART:       UART2
+I (6526) gps_neo6m:   TX Pin:     GPIO1
+I (6529) gps_neo6m:   RX Pin:     GPIO2
+I (6533) gps_neo6m:   Baud:       9600
+I (6537) gps_neo6m: GPS UART init: TX=GPIO1 RX=GPIO2 9600 baud ✓
+I (6542) gps_neo6m: GPS read task STARTED — UART2 @ 9600 baud
+I (6548) gps_neo6m: NEO-6M may take 1-2 minutes for first fix (cold start)
+I (6555) gps_neo6m: Use: gps neo6m info | once | start | every <sec> [cnt]
+I (6561) gps_neo6m: GPS Module — READY ✓
+I (6565) gps_neo6m: Commands: gps neo6m on|off|info|start|stop|once|every <sec> [cnt]
+I (6573) gps_neo6m: ══════════════════════════════════════
+I (6584) gps:   Injection ('gps set ...') always available regardless of the above.
+I (6592) gps: ══════════════════════════════════════
+
+I (6603) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (6611) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (6620) chipinfo: ########################################
+I (6625) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (6631) chipinfo: ########################################
+I (6636) version: ======================================
+I (6641) version: FIRMWARE VERSION
+I (6644) version: --------------------------------------
+I (6649) version:   Project:   esp32s3_board
+I (6653) version:   Version:   26.07.23 (code 1)
+I (6658) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (6670) version:   Running from partition: factory
+I (6675) chipinfo: ======================================
+I (6680) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (6687) chipinfo: --------------------------------------
+I (6688) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (6699) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (6703) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (6709) chipinfo:   Crystal is 40 MHz
+I (6712) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (6716) chipinfo: ======================================
+I (6721) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (6727) chipinfo: --------------------------------------
+I (6732) chipinfo:   Model:       ESP32-S3
+I (6736) chipinfo:   Cores:       2
+I (6739) chipinfo:   Revision:    v0.2
+I (6743) chipinfo:   Features:    WiFi BLE External-Flash
+I (6748) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (6753) chipinfo:   IDF version: 5.4.0
+I (6757) chipinfo: ======================================
+I (6761) chipinfo: FLASH INFO  (live-probed)
+I (6765) chipinfo: --------------------------------------
+I (6770) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (6777) chipinfo:   JEDEC ID:        0x852018
+I (6781) chipinfo: ======================================
+I (6786) chipinfo: RAM / HEAP INFO  (live)
+I (6790) chipinfo: --------------------------------------
+I (6796) chipinfo:   Free heap now (all capabilities): 8411792 bytes | 8214.6 KB (8.02 MB)
+I (6804) chipinfo:   Minimum ever free:                8389812 bytes | 8193.2 KB (8.00 MB)
+I (6811) chipinfo:   --------------------------------------
+I (6817) chipinfo:   PSRAM initialized: YES
+I (6821) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (6823) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (6833) chipinfo:   SRAM  total:          214519 bytes | 209.5 KB (0.20 MB)
+I (6839) chipinfo:   SRAM  free now:       45415 bytes | 44.4 KB (0.04 MB)
+I (6846) chipinfo:   SRAM  min free ever:  25295 bytes | 24.7 KB (0.02 MB)
+I (6852) chipinfo:   SRAM  largest block:  24576 bytes | 24.0 KB (0.02 MB)
+I (6859) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (6866) chipinfo:   PSRAM free now:          8375048 bytes | 8178.8 KB (7.99 MB)
+I (6873) chipinfo:   PSRAM min free ever:     8373188 bytes | 8176.9 KB (7.99 MB)
+I (6881) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (6888) chipinfo: ======================================
+I (6893) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (6900) chipinfo: --------------------------------------
+I (6905) chipinfo:   Name       Type   SubType   Offset     Size
+I (6911) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (6919) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (6927) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (6935) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6943) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6952) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6960) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (6969) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (6977) chipinfo: ======================================
+I (6982) chipinfo: NVS INFO  (live)
+I (6985) chipinfo: --------------------------------------
+I (6990) chipinfo:   Used entries:  214
+I (6994) chipinfo:   Free entries:  542
+I (6997) chipinfo:   Total entries: 756
+I (7001) chipinfo: ======================================
+I (7006) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (7012) chipinfo: --------------------------------------
+I (7017) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (7023) chipinfo:   Used:  88101 bytes | 86.0 KB (0.08 MB)
+I (7028) chipinfo:   Free:  4603340 bytes | 4495.4 KB (4.39 MB)
+I (7033) chipinfo: ########################################
+
+I (7039) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (7045) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (7053) display: SD_CS (TF slot) → GPIO38 HIGH (disabled)
+I (7059) display: Backlight PWM init — GPIO6, 5kHz, 10-bit
+I (7064) display: Backlight ON (GPIO6, PWM 100%)
+I (7069) display: SPI: MOSI=42 SCLK=41 CS=39 DC=40 RST=45
+I (7074) gpio: GPIO[40]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7082) gpio: GPIO[45]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7139) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (7139) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (7140) gps_gnss:   AT+CGNSSPORTSWITCH attempt 1/6 failed — retrying in 2000ms (likely raced with
+W (7149) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (7430) display: ST7796S init complete — 320x480 RGB565
+I (7430) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (7434) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (7437) display: DISPLAY — READY ✓
+I (7440) touch: TOUCH INIT — FT6336U via I2C
+I (7445) touch: I2C init: SDA=15 SCL=7
+I (7448) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7516) touch: FT6336U init — addr: 0x38
+I (7516) touch: Touch input registered with LVGL ✓
+W (7516) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (7520) touch: TOUCH — READY ✓
+I (7523) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (7881) net_ui: Network screen ready
+I (7889) sms_ui: SMS screen ready
+I (7919) ui: UI — READY (4 screens | teal palette | scroll fix | test menu)
+I (7919) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (7921) additional_work: Additional work module ready (try: "sms reboot")
+I (7928) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (7934) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (7942) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (7949) chipinfo: READY — Touch UI Active ✓
+I (9163) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (9164) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (9165) gps_gnss:   AT+CGNSSPORTSWITCH attempt 2/6 failed — retrying in 2000ms (likely raced with
+W (9174) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (10934) ram_test: ══════════════════════════════════════
+I (10934) ram_test: PSRAM periodic health-check
+I (10939) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (10946) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11100) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (11101) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (11108) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11118) ram_test: ══════════════════════════════════════
+I (11188) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (11189) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (11190) gps_gnss:   AT+CGNSSPORTSWITCH attempt 3/6 failed — retrying in 2000ms (likely raced with
+W (11199) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (13214) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (13215) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (13216) gps_gnss:   AT+CGNSSPORTSWITCH attempt 4/6 failed — retrying in 2000ms (likely raced with
+W (13225) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (15240) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (15241) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (15242) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (31077) gps_gnss: GNSS: no fix | reads=137 [ACTIVE] (idle — waiting for satellites)
+I (31081) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)

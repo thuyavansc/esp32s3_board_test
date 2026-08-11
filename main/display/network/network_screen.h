@@ -2,10 +2,13 @@
 // ================================================================
 // network_screen.h — Network status/control GUI (Phase 1, doc 155/158)
 //
-// Reached via Test Menu → "Network (Cellular/Hotspot)" — same
-// drill-down convention as test_pax_meter.c/color_palette_ui.c (own
-// _create()/_get_screen() pair, ui_back_header() instead of the main
-// 4-tab nav bar, test_menu_return() to go back).
+// Reached via Settings -> Test Features -> "Network (Cellular/Hotspot)"
+// (doc 179 §5, 2026-08-06) — same drill-down convention as
+// color_palette_ui.c (own _create()/_get_screen() pair,
+// ui_back_header() instead of the main nav bar, test_menu_return() to
+// go back). Built LAZILY on first tap, not eagerly at boot (doc 179
+// §2/Phase 1d) — test_menu.c calls create() itself once get_screen()
+// first returns NULL.
 //
 // Shows/controls everything Phase 1's backend modules expose:
 //   - Active uplink (WiFi/Cellular/Auto) — net_manager.c
@@ -19,8 +22,9 @@
 // ================================================================
 #include "lvgl.h"
 
-// Creates both screens (main status + client list). Called once from
-// test_menu_init(), same convention as every other registered test UI.
+// Creates both screens (main status + client list). Called by
+// test_menu.c on first tap (lazily), same convention as every other
+// registered test UI.
 void network_screen_create(void);
 
 // Returns the cached main screen (NULL until network_screen_create() has

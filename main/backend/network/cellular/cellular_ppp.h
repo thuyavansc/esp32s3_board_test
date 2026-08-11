@@ -43,7 +43,27 @@
 //                                  the persistent one; this is a
 //                                  runtime-only override until reboot)
 //   cell ip                        Just the carrier-assigned IP
+//   cell reset                     Reinstall the modem/PPP driver stack —
+//                                  see cellular_ppp_reset()'s own comment
 //   cell help
+//
+// PPP DIAL RECOVERY (doc 162 §3, added after real-hardware testing with
+// a Dialog SIM; widened doc 164 §3 after further real-hardware testing):
+// the vendored iot_usbh_modem component (confirmed by reading its actual
+// source, not guessed) has NO way to recover on its own once its daemon
+// task's internal state stops matching reality — either because a dial
+// attempt's own precondition checks (SIM/signal/registration) fail past
+// its retry budget (ESP_ERR_TIMEOUT, "Modem not idle after timeout"), or
+// because the network layer drops the link on its own without the
+// daemon being told (ESP_ERR_INVALID_STATE, "PPP is already running,
+// cannot start PPP again!"). Either way, every subsequent dial attempt
+// fails identically, no matter how many times you retry, until
+// something reinstalls the modem driver. cellular_ppp_up() now does
+// this automatically (one bounded recovery cycle, with extra time
+// budgeted for the fresh re-sync a reinstall requires) the first time it
+// sees either of these two errors; cellular_ppp_reset() is the same
+// recovery exposed directly if you want to force it without waiting for
+// a failed dial first.
 // ================================================================
 #include <stdbool.h>
 #include "esp_err.h"
@@ -76,6 +96,28 @@ esp_err_t cellular_ppp_up(int timeout_ms);
 // Stops PPP (keeps the USB stack installed — cellular_ppp_up() can
 // re-dial without a reboot).
 esp_err_t cellular_ppp_down(void);
+
+// Reinstalls the modem/PPP driver stack (usbh_modem_uninstall() +
+// usbh_modem_install() with the same config) — the ONLY way, per the
+// vendor's own public API, to recover from the daemon task's internal
+// error state after a failed dial (see this header's own "PPP DIAL
+// RECOVERY" note above). Blocks the calling task for a few seconds
+// (USB re-enumeration) — same threading rule as cellular_ppp_up(),
+// route through bg_worker_submit_fn() if calling from a small-stack/
+// LVGL task. Called automatically by cellular_ppp_up() after a "not
+// idle" timeout; exposed here so it can also be triggered manually
+// ("cell reset").
+//
+// CONCURRENCY: cellular_ppp_up() and cellular_ppp_reset() share one
+// internal mutex — only one dial/recovery sequence can be in flight at
+// a time (real hardware evidence: net_manager.c's background "auto
+// mode" retry and a manual 'cell up'/'net uplink cellular' were caught
+// racing the SAME vendor daemon concurrently from two different tasks,
+// which cannot help an already-fragile recovery). A second caller does
+// NOT block waiting (a dial+recovery can legitimately take ~80s) — it
+// returns ESP_ERR_INVALID_STATE immediately instead. Callers should
+// treat that as "try again shortly," not as a real fault.
+esp_err_t cellular_ppp_reset(void);
 
 bool cellular_ppp_is_connected(void);
 esp_netif_t *cellular_ppp_get_netif(void);   // NULL until the USB modem has enumerated

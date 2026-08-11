@@ -1,0 +1,20 @@
+I (61123) gps_gnss: GNSS: no fix | reads=324 [ACTIVE] (idle — waiting for satellites)
+I (91124) gps_gnss: GNSS: no fix | reads=567 [ACTIVE] (idle — waiting for satellites)
+I (121125) gps_gnss: GNSS: no fix | reads=810 [ACTIVE] (idle — waiting for satellites)
+I (151126) gps_gnss: GNSS: no fix | reads=1045 [ACTIVE] (idle — waiting for satellites)
+I (181127) gps_gnss: GNSS: no fix | reads=1288 [ACTIVE] (idle — waiting for satellites)
+I (211128) gps_gnss: GNSS: no fix | reads=1531 [ACTIVE] (idle — waiting for satellites)
+I (241130) gps_gnss: GNSS: no fix | reads=1774 [ACTIVE] (idle — waiting for satellites)
+I (271195) gps_gnss: GNSS: no fix | reads=2025 [ACTIVE] (idle — waiting for satellites)
+I (301229) gps_gnss: GNSS: no fix | reads=2268 [ACTIVE] (idle — waiting for satellites)
+I (314167) ram_test: ══════════════════════════════════════
+I (314168) ram_test: PSRAM periodic health-check
+I (314172) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (314179) ram_test:   Before: free=8352512 bytes (7.97 MB) | largest free block=8257536 bytes (7.88 MB)
+I (314329) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (314330) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7303932 bytes (6.97 MB)
+I (314337) ram_test:   After free: free=8352512 bytes (7.97 MB) | largest free block=8257536 bytes (7.88 MB)
+I (314347) ram_test: ══════════════════════════════════════
+I (331232) gps_gnss: GNSS: no fix | reads=2503 [ACTIVE] (idle — waiting for satellites)
+I (361233) gps_gnss: GNSS: no fix | reads=2746 [ACTIVE] (idle — waiting for satellites)
+I (391234) gps_gnss: GNSS: no fix | reads=2989 [ACTIVE] (idle — waiting for satellites)

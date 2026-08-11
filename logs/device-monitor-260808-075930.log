@@ -1,0 +1,1137 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0xb (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f3c
+entry 0x403c8920
+I (27) boot: ESP-IDF 5.4.0 2nd stage bootloader
+I (27) boot: compile time Aug  6 2026 08:44:50
+I (27) boot: Multicore bootloader
+I (27) boot: chip revision: v0.2
+I (30) boot: efuse block revision: v1.4
+I (33) boot.esp32s3: Boot SPI Speed : 80MHz
+I (37) boot.esp32s3: SPI Mode       : DIO
+I (41) boot.esp32s3: SPI Flash Size : 16MB
+I (45) boot: Enabling RNG early entropy source...
+I (49) boot: Partition Table:
+I (52) boot: ## Label            Usage          Type ST Offset   Length
+I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (65) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (71) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (78) boot:  3 factory          factory app      00 00 00020000 00300000
+I (84) boot:  4 ota_0            OTA app          00 10 00320000 00300000
+I (91) boot:  5 ota_1            OTA app          00 11 00620000 00300000
+I (97) boot:  6 storage          Unknown data     01 82 00920000 004e0000
+I (104) boot:  7 llm              Unknown data     01 82 00e00000 00200000
+I (110) boot: End of partition table
+I (114) boot: Defaulting to factory image
+I (117) esp_image: segment 0: paddr=00020020 vaddr=3c120020 size=7ef3ch (519996) map
+I (217) esp_image: segment 1: paddr=0009ef64 vaddr=3fc9ed00 size=010b4h (  4276) load
+I (218) esp_image: segment 2: paddr=000a0020 vaddr=42000020 size=115604h (1136132) map
+I (421) esp_image: segment 3: paddr=001b562c vaddr=3fc9fdb4 size=043a0h ( 17312) load
+I (425) esp_image: segment 4: paddr=001b99d4 vaddr=40374000 size=1acb4h (109748) load
+I (449) esp_image: segment 5: paddr=001d4690 vaddr=600fe100 size=0001ch (    28) load
+I (459) boot: Loaded app from partition at offset 0x20000
+I (459) boot: Disabling RNG early entropy source...
+I (470) octal_psram: vendor id    : 0x0d (AP)
+I (470) octal_psram: dev id       : 0x02 (generation 3)
+I (470) octal_psram: density      : 0x03 (64 Mbit)
+I (472) octal_psram: good-die     : 0x01 (Pass)
+I (477) octal_psram: Latency      : 0x01 (Fixed)
+I (481) octal_psram: VCC          : 0x01 (3V)
+I (485) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (490) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (495) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (499) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (505) octal_psram: DriveStrength: 0x00 (1/1)
+I (509) MSPI Timing: PSRAM timing tuning index: 10
+I (513) esp_psram: Found 8MB PSRAM device
+I (517) esp_psram: Speed: 80MHz
+I (520) cpu_start: Multicore app
+I (949) esp_psram: SPI SRAM memory test OK
+I (958) cpu_start: Pro cpu start user code
+I (958) cpu_start: cpu freq: 240000000 Hz
+I (958) app_init: Application information:
+I (958) app_init: Project name:     esp32s3_board
+I (962) app_init: App version:      5d4c9e0-dirty
+I (967) app_init: Compile time:     Aug  6 2026 08:34:47
+I (972) app_init: ELF file SHA256:  907f7410c...
+I (976) app_init: ESP-IDF:          5.4.0
+I (980) efuse_init: Min chip rev:     v0.0
+I (984) efuse_init: Max chip rev:     v0.99 
+I (988) efuse_init: Chip rev:         v0.2
+I (992) heap_init: Initializing. RAM available for dynamic allocation:
+I (998) heap_init: At 3FCC3BF8 len 00025B18 (150 KiB): RAM
+I (1003) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1008) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1014) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (1019) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1026) spi_flash: detected chip: generic
+I (1029) spi_flash: flash io: dio
+W (1033) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
+I (1042) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1049) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1056) main_task: Started on CPU0
+I (1070) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1071) main_task: Calling app_main()
+I (1094) nvs_state: OTA state namespace 'ota_state' ready
+I (1099) session: Session store loaded from NVS (namespace 'session')
+I (1100) bgworker: Background worker task started (persistent, one-time stack allocation)
+
+Type 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all' | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help' | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store' | 'time' | 'net uplink wifi|cellular|auto' | 'cell up|status' | 'hotspot on|off|status' | 'smsc send|list|status' | 'sms <command>' | 'factory reset' | 'nvs status'
+> I (1153) pp: pp rom version: e7ae62f
+I (1154) net80211: net80211 rom version: e7ae62f
+I (1160) wifi:wifi driver task: 3fcdb174, prio:23, stack:6656, core=0
+I (1175) wifi:wifi firmware version: 48ea317a7
+I (1175) wifi:wifi certification version: v7.0
+I (1176) wifi:config NVS flash: enabled
+I (1177) wifi:config nano formatting: disabled
+I (1181) wifi:Init data frame dynamic rx buffer num: 16
+I (1186) wifi:Init static rx mgmt buffer num: 5
+I (1190) wifi:Init management short buffer num: 32
+I (1194) wifi:Init dynamic tx buffer num: 32
+I (1198) wifi:Init static tx FG buffer num: 2
+I (1203) wifi:Init static rx buffer size: 1600
+I (1207) wifi:Init static rx buffer num: 6
+I (1210) wifi:Init dynamic rx buffer num: 16
+I (1215) wifi_init: rx ba win: 6
+I (1217) wifi_init: accept mbox: 6
+I (1221) wifi_init: tcpip mbox: 32
+I (1224) wifi_init: udp mbox: 6
+I (1227) wifi_init: tcp mbox: 6
+I (1229) wifi_init: tcp tx win: 5760
+I (1233) wifi_init: tcp rx win: 5760
+I (1236) wifi_init: tcp mss: 1440
+I (1239) wifi_init: WiFi IRAM OP enabled
+I (1243) wifi_init: WiFi RX IRAM OP enabled
+I (1247) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10
+I (1284) wifi:mode : sta (a4:cb:8f:d6:98:f8)
+I (1285) wifi:enable tsf
+I (1286) wifi:Set ps type: 0, coexist: 0
+
+I (1287) wifi_sta: WiFi STA config loaded: ssid="Mobitel 4G-489E" auto_connect=yes (password not logged)
+W (1294) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1303) wifi_sta: WiFi connecting to 'Mobitel 4G-489E' (timeout 15000ms)...
+I (1315) wifi:new:<8,0>, old:<1,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (1316) wifi:state: init -> auth (0xb0)
+I (1324) wifi:state: auth -> assoc (0x0)
+I (1329) wifi:state: assoc -> run (0x10)
+I (1346) wifi:connected with Mobitel 4G-489E, aid = 4, channel 8, BW20, bssid = 1c:13:86:d6:48:9e
+I (1347) wifi:security: WPA2-PSK, phy: bgn, rssi: -69
+I (1350) wifi:pm start, type: 0
+
+I (1352) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (1360) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (1424) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (2450) esp_netif_handlers: sta ip: 192.168.8.140, mask: 255.255.255.0, gw: 192.168.8.1
+I (2450) wifi_sta: WiFi connected — IP: 192.168.8.140
+I (2452) hotspot_nvs: Hotspot config loaded: ssid="TaxiMeter-200" channel=6 max_clients=8 hidden=no enabled=yes (password not logged)
+I (2464) cellular: ══════════════════════════════════════
+I (2475) cellular: CELLULAR PPP INIT — USB CDC modem (A7670E)
+I (2481) cellular:   Requires board DIP switch USB=OFF — confirmed on this exact board that
+I (2489) cellular:   GNSS/AT/console (UART1/UART0) are unaffected by this setting (doc 155 §12.6).
+I (2498) USBH_CDC: iot usbh cdc version: 3.1.0
+I (2533) cellular: USB CDC driver installed — waiting for A7670E enumeration...
+I (2533) modem_board: iot_usbh_modem, version: 2.2.0
+I (2534) iot_eth: IoT ETH Version: 1.1.0
+I (2538) esp-modem-dte: USB PPP network interface init success
+I (2544) cellular: Modem installed — APN="default" — PPP auto-connect DISABLED (manual control)
+I (2552) cellular:   Use 'cell up' or let net_manager.c bring it up per NET_UPLINK_PREFER_CELLULAR.
+I (2561) cellular: ══════════════════════════════════════
+
+I (2573) hotspot_ap: Hotspot module ready (AP event handlers registered)
+I (2579) hotspot_ap: Hotspot was ON last time (persisted) — starting automatically
+I (2587) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 1.1.1.1 (secondary)
+I (2593) wifi:mode : sta (a4:cb:8f:d6:98:f8) + softAP (a4:cb:8f:d6:98:f9)
+I (2602) wifi:Total power save buffer number: 16
+I (2604) wifi:Init max length of beacon: 752/752
+I (2608) wifi:Init max length of beacon: 752/752
+I (2615) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (2620) wifi:Total power save buffer number: 16
+I (2625) hotspot_ap: ══════════════════════════════════════
+I (2626) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (2645) hotspot_ap: HOTSPOT STARTED — ssid="TaxiMeter-200" channel=6 ip=192.168.4.1 max_clients=8
+I (2653) hotspot_ap:   (NAT not yet enabled — net_manager.c enables it once an uplink is ready)
+I (2662) hotspot_ap: ══════════════════════════════════════
+
+I (2674) net_mgr: NET_UPLINK_PREFER_CELLULAR=1 — attempting cellular uplink in the background...
+I (2683) cellular: Dialling PPP (APN="default", timeout=30000ms)...
+I (2915) USBH_CDC: New device connected, address: 1
+I (2915) esp-modem-dte: USB CDC device connected, VID: 0x1e0e, PID: 0x9011
+I (2915) esp-modem-dte: Matched USB Modem: "SIMCOM A7670E (Waveshare)", Modem Interface: 5, AT Interface: -1
+I (2925) cdc_descriptor: Found NOTIF endpoint: 8
+I (2929) cdc_descriptor: Found OUT endpoint: 10
+I (2933) cdc_descriptor: Found IN endpoint: 1
+I (2938) modem_board: DTE connected
+I (2940) modem_board: Handling stage = STAGE_SYNC
+E (4945) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (4945) esp-modem-dte: Retry 1/5 failed. Retrying in 2000 milliseconds...
+I (5889) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs; try 'time' to check current status)
+I (5889) trips_api: ══════════════════════════════════════
+I (5901) trips_api: TRIPS REST API + JSON Storage Init
+I (5906) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (5913) trips_api:   Default trip ID: 12772
+I (5917) trips_api:   Storage backend: 2
+I (6217) trips_api: Created storage directory: /spiffs/store
+I (6218) trips_api: SPIFFS partition: 4581 KB total | 90 KB used | 4490 KB free
+I (6219) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (6225) trips_api: TRIPS API Storage — READY ✓
+I (6230) trips_api: Type 'api help' for available commands.
+I (6235) trips_api: ══════════════════════════════════════
+
+I (6355) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8233 KB, largest block=8064 KB
+I (6368) refdata: tariffs: 8 rows loaded
+I (6369) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8232 KB, largest block=8064 KB
+I (6373) refdata: fixed_rates: 2 rows loaded
+I (6376) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8232 KB, largest block=8064 KB
+I (6390) refdata: special_fares: 9 rows loaded
+I (6482) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8232 KB, largest block=8064 KB
+I (6733) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (6733) refdata: Reference data restored from cache: tariffs=8 fixed_rates=2 special_fares=9 holidays=22
+I (6741) gps: ══════════════════════════════════════
+I (6752) gps: GPS Client Init — default active source: GNSS
+I (6757) gps:   Starting GNSS backend (A7670E, UART1)...
+I (6762) gps_gnss: ══════════════════════════════════════
+I (6774) gps_gnss: GNSS (A7670E) Init
+I (6778) gps_gnss:   A-GPS: ENABLED in config.h
+I (6782) gps_gnss: ══════════════════════════════════════
+I (6794) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (6800) gps_gnss: AT handshake...
+I (6803) gps:   NEO-6M backend NOT compiled in (ENABLE_GPS_NEO6M=0)
+I (6806) gps_gnss:   AT -> OK
+I (6812) gps_gnss: Modem responding ✓
+I (6815) gps:   Injection ('gps set ...') always available regardless of the above.
+I (6820) gps_gnss:   AT+CGNSSPWR=1,1 -> OK
+I (6824) gps: ══════════════════════════════════════
+
+I (6839) farecalc: fare_calc_init: state (35648 bytes) allocated in PSRAM, internal SRAM untouched
+W (6851) trip: ══════════════════════════════════════
+W (6858) trip: RESTORE: trip #7 was still running before this reboot — $17.55 accrued so far
+W (6866) trip:   Waiting for driver confirmation before resuming — see 'trip restore yes|no'
+W (6875) trip: ══════════════════════════════════════
+
+I (6886) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (6894) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (6903) chipinfo: ########################################
+I (6908) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (6914) chipinfo: ########################################
+I (6919) version: ======================================
+I (6924) version: FIRMWARE VERSION
+I (6927) version: --------------------------------------
+I (6932) version:   Project:   esp32s3_board
+I (6936) version:   Version:   26.07.23 (code 1)
+I (6940) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (6953) version:   Running from partition: factory
+I (6958) chipinfo: ======================================
+I (6963) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (6970) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (6976) chipinfo: --------------------------------------
+I (6981) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (6986) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (6991) chipinfo:   Crystal is 40 MHz
+I (6995) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (6999) chipinfo: ======================================
+I (7004) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (7010) chipinfo: --------------------------------------
+I (7015) chipinfo:   Model:       ESP32-S3
+I (7019) chipinfo:   Cores:       2
+I (7022) chipinfo:   Revision:    v0.2
+I (7026) chipinfo:   Features:    WiFi BLE External-Flash
+I (7031) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (7036) chipinfo:   IDF version: 5.4.0
+I (7040) chipinfo: ======================================
+I (7044) chipinfo: FLASH INFO  (live-probed)
+I (7048) chipinfo: --------------------------------------
+I (7053) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (7060) chipinfo:   JEDEC ID:        0x852018
+I (7064) chipinfo: ======================================
+I (7069) chipinfo: RAM / HEAP INFO  (live)
+I (7073) chipinfo: --------------------------------------
+I (7079) chipinfo:   Free heap now (all capabilities): 8378364 bytes | 8182.0 KB (7.99 MB)
+I (7086) chipinfo:   Minimum ever free:                8134280 bytes | 7943.6 KB (7.76 MB)
+I (7094) chipinfo:   --------------------------------------
+I (7100) chipinfo:   PSRAM initialized: YES
+I (7104) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (7112) chipinfo:   SRAM  total:          250119 bytes | 244.3 KB (0.24 MB)
+I (7118) chipinfo:   SRAM  free now:       78139 bytes | 76.3 KB (0.07 MB)
+I (7125) chipinfo:   SRAM  min free ever:  32047 bytes | 31.3 KB (0.03 MB)
+I (7131) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (7136) chipinfo:   SRAM  largest block:  31744 bytes | 31.0 KB (0.03 MB)
+I (7142) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (7149) chipinfo:   PSRAM free now:          8332256 bytes | 8137.0 KB (7.95 MB)
+I (7156) chipinfo:   PSRAM min free ever:     8134264 bytes | 7943.6 KB (7.76 MB)
+I (7164) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (7171) chipinfo: ======================================
+I (7176) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (7183) chipinfo: --------------------------------------
+I (7188) chipinfo:   Name       Type   SubType   Offset     Size
+I (7194) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (7202) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (7210) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (7218) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (7226) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (7235) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (7243) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (7251) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (7260) chipinfo: ======================================
+I (7265) chipinfo: NVS INFO  (live)
+I (7268) chipinfo: --------------------------------------
+I (7273) chipinfo:   Used entries:  216
+I (7277) chipinfo:   Free entries:  540
+I (7280) chipinfo:   Total entries: 756
+I (7284) chipinfo: ======================================
+I (7289) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (7295) chipinfo: --------------------------------------
+I (7300) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (7306) chipinfo:   Used:  93121 bytes | 90.9 KB (0.09 MB)
+I (7311) chipinfo:   Free:  4598320 bytes | 4490.5 KB (4.39 MB)
+I (7316) chipinfo: ########################################
+
+I (7322) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (7328) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (7336) display: SD_CS (TF slot) → GPIO9 HIGH (disabled)
+I (7342) display: Backlight PWM init — GPIO5, 5kHz, 10-bit
+I (7347) display: Backlight ON (GPIO5, PWM 100%)
+I (7351) display: SPI: MOSI=11 SCLK=12 CS=10 DC=14 RST=21 (hardware reset)
+I (7358) gpio: GPIO[14]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7366) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7441) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (7442) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (7443) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (7462) gps_gnss: A-GPS preconditions OK — SIM ready, network registered.
+I (7462) gps_gnss:   A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...
+I (7715) display: ST7796S init complete — 320x480 RGB565
+I (7716) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (7720) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (7723) display: DISPLAY — READY ✓
+I (7726) touch: TOUCH INIT — FT6336U via I2C
+I (7731) touch: I2C init: SDA=6 SCL=4
+I (7734) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7802) touch: FT6336U reset pulsed on GPIO1
+I (7802) touch: FT6336U init — addr: 0x38
+I (7802) touch: Touch input registered with LVGL ✓
+W (7804) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (7810) touch: TOUCH — READY ✓
+I (7813) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (8196) ui: UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)
+I (8196) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (8200) additional_work: Additional work module ready (try: "sms reboot")
+I (8207) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (8213) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (8220) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (8228) chipinfo: READY — Touch UI Active ✓
+E (8947) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (8947) esp-modem-dte: Retry 2/5 failed. Retrying in 2000 milliseconds...
+I (9182) gps_gnss:   AT+CAGPS -> +AGPS: success.
+I (9183) gps_gnss: A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular
+I (9184) gps_gnss:   connection (not WiFi — see doc 140). Cold fix should now be faster.
+I (11213) ram_test: ══════════════════════════════════════
+I (11213) ram_test: PSRAM periodic health-check
+I (11218) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (11225) ram_test:   Before: free=8323836 bytes (7.94 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11373) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (11374) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7275256 bytes (6.94 MB)
+I (11381) ram_test:   After free: free=8323836 bytes (7.94 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11391) ram_test: ══════════════════════════════════════
+E (12949) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (12949) esp-modem-dte: Retry 3/5 failed. Retrying in 2000 milliseconds...
+E (16951) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (16951) esp-modem-dte: Retry 4/5 failed. Retrying in 2000 milliseconds...
+E (20953) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (20953) esp-modem-dte: Retry 5/5 failed. Retrying in 2000 milliseconds...
+W (22955) esp-modem-dte: Operation failed.
+W (22955) esp-modem-dte: Failed to sync with modem DCE, trying to exit data mode
+I (22981) modem_board: Modem manufacturer ID: INCORPORATED
+I (22982) modem_board: Modem module ID: A7670E-FASE
+I (22983) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (23086) modem_board: Handling stage = STAGE_IDLE
+I (23086) net_mgr: DNS resolver -> 8.8.8.8
+I (23087) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (23092) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (23099) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (23105) net_mgr: Active uplink -> CELLULAR
+I (23109) bgworker: Job finished: OK
+I (23186) modem_board: Handling stage = STAGE_START_PPP
+I (23186) modem_board: Check SIM card state...
+I (23187) modem_board: Check signal quality...
+I (23192) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (23195) modem_board: Check network registration...
+I (23201) modem_board: Check PDP context...
+I (23203) modem_board: Set PDP context: cid=1, type=IP, apn=default
+I (23214) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (23217) modem_board: PPP Dial up...
+E (23721) esp-modem-dte: esp_modem_dte_dial_up(326): dial up failed
+I (23722) modem_board: Handling stage = STAGE_ERROR
+E (23722) modem_board: Modem in error state
+I (31069) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.5km/h sats=6 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+W (32689) net_mgr: Health check: active uplink was CELLULAR but it silently dropped — falling back to WiFi automatically (doc 162 §4)
+I (32691) net_mgr: DNS resolver -> 8.8.8.8
+I (32694) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (32702) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (32709) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (32716) net_mgr: Active uplink -> WIFI
+W (37953) Modem AT: AT parser handle_line is NULL but receive: "
++PPPD: DISCONNECTED
+"
+I (61131) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2312 speed=0.0km/h sats=5 hdop=2.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (91139) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2315 speed=0.0km/h sats=5 hdop=3.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (121208) gps_gnss: GNSS: fix OK | lat=9.8259 lon=80.2316 speed=0.0km/h sats=4 hdop=3.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (151211) gps_gnss: GNSS: fix OK | lat=9.8259 lon=80.2316 speed=0.0km/h sats=5 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (181212) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2316 speed=0.0km/h sats=5 hdop=15.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (211213) gps_gnss: GNSS: fix OK | lat=9.8260 lon=80.2315 speed=0.0km/h sats=5 hdop=14.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (241224) gps_gnss: GNSS: fix OK | lat=9.8259 lon=80.2315 speed=0.0km/h sats=7 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (271293) gps_gnss: GNSS: fix OK | lat=9.8259 lon=80.2316 speed=0.0km/h sats=7 hdop=17.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (301296) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2317 speed=10.4km/h sats=6 hdop=3.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (302689) net_mgr: Auto mode: retrying cellular uplink in the background...
+I (302689) cellular: Dialling PPP (APN="default", timeout=30000ms)...
+I (311403) ram_test: ══════════════════════════════════════
+I (311404) ram_test: PSRAM periodic health-check
+I (311408) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (311415) ram_test:   Before: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (311566) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (311566) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7258868 bytes (6.92 MB)
+I (311574) ram_test:   After free: free=8307448 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (311583) ram_test: ══════════════════════════════════════
+I (331364) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2316 speed=9.8km/h sats=6 hdop=4.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+E (332691) modem_board: usbh_modem_ppp_start(430): Modem not idle after timeout 30000 ms
+E (332691) cellular: PPP dial failed/timed out: ESP_ERR_TIMEOUT — check SIM/antenna/signal ('AT+CSQ', 'AT+CPIN?' over UART1)
+W (332699) cellular: Attempting one automatic recovery cycle (modem driver reinstall + retry)...
+W (332707) cellular: Modem stack recovery: uninstalling + reinstalling the modem/PPP layer
+W (332715) cellular:   (doc 162 §3 — the vendor daemon has no path back to idle after a failed dial)
+I (332775) modem_board: Modem Daemon Task Deleted!
+I (332776) modem_board: iot_usbh_modem, version: 2.2.0
+I (332776) iot_eth: IoT ETH Version: 1.1.0
+I (332778) esp-modem-dte: USB PPP network interface init success
+I (335784) cellular: Modem stack reinstalled
+I (335784) cellular: Retrying dial after recovery...
+I (361375) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2315 speed=7.0km/h sats=7 hdop=2.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+E (385784) modem_board: usbh_modem_ppp_start(430): Modem not idle after timeout 50000 ms
+E (385784) cellular: PPP dial STILL failed after recovery: ESP_ERR_TIMEOUT — try 'cell reset' manually, or check the SIM/antenna physically
+E (385793) net_mgr: set_uplink(CELLULAR): dial failed — staying on current uplink (WiFi)
+I (385801) net_mgr: auto: cellular unavailable — falling back to WiFi
+I (385808) net_mgr: DNS resolver -> 8.8.8.8
+I (385811) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (385820) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (385827) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (385833) net_mgr: Active uplink -> WIFI
+I (385837) bgworker: Job finished: OK
+I (391444) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=4.6km/h sats=7 hdop=2.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (421447) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=5.4km/h sats=8 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (451448) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=4.0km/h sats=8 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (481448) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=8 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (511455) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (541457) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (571466) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (601534) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2312 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (611595) ram_test: ══════════════════════════════════════
+I (611596) ram_test: PSRAM periodic health-check
+I (611600) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (611607) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (611757) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (611758) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (611765) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (611775) ram_test: ══════════════════════════════════════
+I (631603) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (661604) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (691673) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (721683) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (751748) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (781845) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2312 speed=0.0km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (811909) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=8 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (841914) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=8 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (871983) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (901998) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=4.8km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (911786) ram_test: ══════════════════════════════════════
+I (911787) ram_test: PSRAM periodic health-check
+I (911791) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (911798) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (911947) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (911948) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (911955) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (911965) ram_test: ══════════════════════════════════════
+I (931999) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.9km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (962005) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.6km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (992009) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1022010) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1052013) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1082072) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=9.2km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1112080) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.7km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1142090) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.4km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1172091) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.2km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1202092) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1211976) ram_test: ══════════════════════════════════════
+I (1211977) ram_test: PSRAM periodic health-check
+I (1211981) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (1211988) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1212139) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (1212140) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (1212147) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1212157) ram_test: ══════════════════════════════════════
+I (1232094) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=12 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1262095) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1292162) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.5km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1322165) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1352168) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1382170) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=6.2km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1412236) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1442238) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1472241) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1502250) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1512169) ram_test: ══════════════════════════════════════
+I (1512170) ram_test: PSRAM periodic health-check
+I (1512174) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (1512181) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1512333) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (1512334) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (1512342) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1512351) ram_test: ══════════════════════════════════════
+I (1532253) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1562319) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.2km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1592327) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1622394) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1652408) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1682473) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=7.7km/h sats=14 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1712523) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=13 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1742533) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.4km/h sats=12 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (1772537) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.6km/h sats=12 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4054782) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.9km/h sats=15 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4084784) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=15 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4114837) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=15 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4144939) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=4.5km/h sats=13 hdop=2.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4174949) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=13 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4205009) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2313 speed=0.0km/h sats=12 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4213903) ram_test: ══════════════════════════════════════
+I (4213904) ram_test: PSRAM periodic health-check
+I (4213908) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (4213916) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (4214064) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (4214065) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (4214072) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (4214082) ram_test: ══════════════════════════════════════
+I (4235017) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.5km/h sats=11 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4265079) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.2km/h sats=12 hdop=2.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4295090) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4325154) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.6km/h sats=11 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4355162) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4385225) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=2.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4415236) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.2km/h sats=11 hdop=2.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4445299) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2312 speed=0.0km/h sats=10 hdop=2.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4475305) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4505305) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4514093) ram_test: ══════════════════════════════════════
+I (4514094) ram_test: PSRAM periodic health-check
+I (4514098) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (4514106) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (4514256) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (4514257) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (4514265) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (4514274) ram_test: ══════════════════════════════════════
+I (4535314) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4565377) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4595386) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=15 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4625453) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=15 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4655459) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=6.5km/h sats=14 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4685522) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=14 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4715528) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=13 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4745530) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4775599) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=2.3km/h sats=13 hdop=2.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4805600) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.3km/h sats=14 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4814286) ram_test: ══════════════════════════════════════
+I (4814287) ram_test: PSRAM periodic health-check
+I (4814291) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (4814298) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (4814449) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (4814450) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (4814458) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (4814467) ram_test: ══════════════════════════════════════
+I (4835610) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.9km/h sats=13 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4865672) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=13 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4895681) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=13 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4925740) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4955747) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (4985747) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=11 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5015752) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=13 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5045752) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=13 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5075754) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=13 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5105757) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5114479) ram_test: ══════════════════════════════════════
+I (5114480) ram_test: PSRAM periodic health-check
+I (5114484) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (5114491) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (5114642) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (5114643) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (5114651) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (5114661) ram_test: ══════════════════════════════════════
+I (5135763) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5165831) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=3.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5195896) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5225981) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2313 speed=0.0km/h sats=12 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5255982) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2313 speed=0.0km/h sats=12 hdop=2.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5285986) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=3.4km/h sats=13 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5316052) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=11 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5346055) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5376120) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5406120) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5414672) ram_test: ══════════════════════════════════════
+I (5414673) ram_test: PSRAM periodic health-check
+I (5414677) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (5414684) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (5414835) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (5414836) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (5414843) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (5414853) ram_test: ══════════════════════════════════════
+I (5436128) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5466128) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5496192) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5526202) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.8km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5556266) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.9km/h sats=11 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5586279) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5616348) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5646406) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=3.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5676409) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=4.0km/h sats=10 hdop=2.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5706410) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2315 speed=0.0km/h sats=7 hdop=8.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5714865) ram_test: ══════════════════════════════════════
+I (5714866) ram_test: PSRAM periodic health-check
+I (5714870) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (5714878) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (5715028) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (5715029) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (5715037) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (5715046) ram_test: ══════════════════════════════════════
+I (5736468) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2317 speed=0.0km/h sats=7 hdop=2.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5766483) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2315 speed=3.6km/h sats=7 hdop=6.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5796488) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2316 speed=5.4km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5826492) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2316 speed=0.0km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5856551) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=6 hdop=4.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5886561) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=7 hdop=4.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5916561) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=7 hdop=4.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5946566) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=8 hdop=4.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (5976626) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=4.7km/h sats=8 hdop=3.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6006633) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=4.6km/h sats=8 hdop=2.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6015058) ram_test: ══════════════════════════════════════
+I (6015059) ram_test: PSRAM periodic health-check
+I (6015063) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (6015071) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (6015219) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (6015220) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (6015228) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (6015237) ram_test: ══════════════════════════════════════
+I (6036702) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=8 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6066759) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=7 hdop=3.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6096769) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=3.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6126769) gps_gnss: GNSS: fix OK | lat=9.8259 lon=80.2313 speed=5.6km/h sats=8 hdop=5.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6156777) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.8km/h sats=8 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6186781) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2312 speed=0.0km/h sats=10 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6216847) gps_gnss: GNSS: no fix | reads=96840 [ACTIVE] (idle — waiting for satellites)
+I (6246905) gps_gnss: GNSS: no fix | reads=97246 [ACTIVE] (idle — waiting for satellites)
+I (6276922) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2313 speed=0.0km/h sats=9 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6306923) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=5.0km/h sats=9 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6315249) ram_test: ══════════════════════════════════════
+I (6315250) ram_test: PSRAM periodic health-check
+I (6315254) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (6315261) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (6315411) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (6315412) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (6315419) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (6315429) ram_test: ══════════════════════════════════════
+I (6336979) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2314 speed=5.4km/h sats=9 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6366982) gps_gnss: GNSS: fix OK | lat=9.8254 lon=80.2314 speed=4.4km/h sats=10 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6397048) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2314 speed=0.0km/h sats=7 hdop=5.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6427053) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=7 hdop=5.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6457056) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6487057) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=3.9km/h sats=9 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6517057) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2313 speed=0.0km/h sats=9 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6547067) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6577130) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=4.6km/h sats=10 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6607138) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6615441) ram_test: ══════════════════════════════════════
+I (6615442) ram_test: PSRAM periodic health-check
+I (6615446) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (6615453) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (6615603) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (6615603) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (6615611) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (6615620) ram_test: ══════════════════════════════════════
+I (6637203) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6667204) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=4.8km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6697204) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6727213) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=4.2km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6757275) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6787279) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=2.8km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6817280) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.8km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6847280) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6877281) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6907350) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6915632) ram_test: ══════════════════════════════════════
+I (6915633) ram_test: PSRAM periodic health-check
+I (6915637) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (6915645) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (6915793) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (6915794) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (6915802) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (6915811) ram_test: ══════════════════════════════════════
+I (6937354) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6967355) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=5.0km/h sats=9 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (6997356) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=3.7km/h sats=9 hdop=2.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7027358) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7057371) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7087433) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7117444) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7147512) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7177513) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=5.1km/h sats=12 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7207514) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=3.2km/h sats=12 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7215823) ram_test: ══════════════════════════════════════
+I (7215824) ram_test: PSRAM periodic health-check
+I (7215828) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (7215836) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (7215987) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (7215988) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (7215995) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (7216005) ram_test: ══════════════════════════════════════
+I (7237524) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2315 speed=6.3km/h sats=11 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7267582) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2315 speed=4.2km/h sats=9 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7297649) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2315 speed=0.0km/h sats=9 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7327649) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7357649) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.8km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7387654) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7417655) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7447656) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7477723) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=8 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7507792) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=8.2km/h sats=8 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7516016) ram_test: ══════════════════════════════════════
+I (7516017) ram_test: PSRAM periodic health-check
+I (7516021) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (7516028) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (7516177) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (7516178) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (7516185) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (7516195) ram_test: ══════════════════════════════════════
+I (7537796) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=12.5km/h sats=8 hdop=3.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7567808) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7597872) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7627883) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7657940) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7687944) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=5.5km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7717945) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7747945) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.3km/h sats=9 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7777947) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7807952) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7816206) ram_test: ══════════════════════════════════════
+I (7816207) ram_test: PSRAM periodic health-check
+I (7816211) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (7816219) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (7816368) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (7816369) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (7816376) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (7816386) ram_test: ══════════════════════════════════════
+I (7838050) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=2.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7868111) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7898116) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7928185) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7958187) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (7988188) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=13 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8018189) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8048197) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8078198) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8108264) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=14 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8116398) ram_test: ══════════════════════════════════════
+I (8116399) ram_test: PSRAM periodic health-check
+I (8116403) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (8116411) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (8116560) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (8116561) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (8116569) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (8116578) ram_test: ══════════════════════════════════════
+I (8138333) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8168334) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=13 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8198335) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8228346) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8258408) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=13 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8288409) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=14 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8318477) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=13 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8348477) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8378478) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8408545) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8416590) ram_test: ══════════════════════════════════════
+I (8416591) ram_test: PSRAM periodic health-check
+I (8416595) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (8416602) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (8416751) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (8416752) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (8416760) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (8416769) ram_test: ══════════════════════════════════════
+I (8438559) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8468626) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8498689) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8528689) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8558695) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8588697) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=4.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8618705) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8648769) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8678769) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8708772) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8716781) ram_test: ══════════════════════════════════════
+I (8716782) ram_test: PSRAM periodic health-check
+I (8716786) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (8716793) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (8716942) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (8716943) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (8716950) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (8716960) ram_test: ══════════════════════════════════════
+I (8738772) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8768775) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8798779) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8828787) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8858789) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.4km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8888848) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=4.9km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8918850) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8948852) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.9km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (8978921) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9008923) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9016972) ram_test: ══════════════════════════════════════
+I (9016973) ram_test: PSRAM periodic health-check
+I (9016977) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (9016984) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (9017136) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (9017137) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (9017144) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (9017154) ram_test: ══════════════════════════════════════
+I (9038925) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.6km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9068927) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9098927) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9128942) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=1.4km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9159002) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.5km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9189011) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.0km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9219096) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.8km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9249164) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9279168) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9309179) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9317166) ram_test: ══════════════════════════════════════
+I (9317167) ram_test: PSRAM periodic health-check
+I (9317171) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (9317179) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (9317329) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (9317330) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (9317337) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (9317347) ram_test: ══════════════════════════════════════
+I (9339240) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.7km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9369241) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9399243) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=6.6km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9429312) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2315 speed=0.0km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9459313) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9489314) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9519323) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9549386) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9579454) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=11.5km/h sats=10 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9609522) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9617359) ram_test: ══════════════════════════════════════
+I (9617360) ram_test: PSRAM periodic health-check
+I (9617364) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (9617371) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (9617522) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (9617522) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (9617530) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (9617539) ram_test: ══════════════════════════════════════
+I (9639536) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2315 speed=0.0km/h sats=9 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9669599) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9699614) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=5.5km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9729671) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9759687) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9789747) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9819814) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=2.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9849818) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9879821) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9909832) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9917551) ram_test: ══════════════════════════════════════
+I (9917552) ram_test: PSRAM periodic health-check
+I (9917556) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (9917564) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (9917714) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (9917715) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (9917723) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (9917732) ram_test: ══════════════════════════════════════
+I (9939878) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9969881) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2312 speed=0.0km/h sats=11 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (9999882) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10029893) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=5.5km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10059955) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10089962) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=0.0km/h sats=10 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10120025) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2312 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10150117) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10180117) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.3km/h sats=10 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10210186) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10217744) ram_test: ══════════════════════════════════════
+I (10217745) ram_test: PSRAM periodic health-check
+I (10217749) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (10217757) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (10217907) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (10217908) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (10217915) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (10217925) ram_test: ══════════════════════════════════════
+I (10240190) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=2.6km/h sats=10 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10270192) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10300194) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10330195) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10360196) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=7.1km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10390265) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=6.4km/h sats=10 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10420270) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=11 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10450271) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10480278) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.0km/h sats=12 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10510279) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10517937) ram_test: ══════════════════════════════════════
+I (10517938) ram_test: PSRAM periodic health-check
+I (10517942) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (10517950) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (10518102) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (10518102) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (10518110) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (10518120) ram_test: ══════════════════════════════════════
+I (10540347) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10570362) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=13 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10600422) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10630491) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10660493) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10690495) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10720497) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10750509) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=3.7km/h sats=10 hdop=4.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10780567) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10810567) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10818132) ram_test: ══════════════════════════════════════
+I (10818133) ram_test: PSRAM periodic health-check
+I (10818137) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (10818145) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (10818295) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (10818296) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (10818304) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (10818314) ram_test: ══════════════════════════════════════
+I (10840570) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2313 speed=4.8km/h sats=10 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10870574) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.9km/h sats=12 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10900576) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=12 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10930589) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10960590) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=3.6km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (10990590) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=4.3km/h sats=12 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11020595) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=12 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11050595) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=12 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11080651) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11110654) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.3km/h sats=13 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11118325) ram_test: ══════════════════════════════════════
+I (11118326) ram_test: PSRAM periodic health-check
+I (11118330) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (11118338) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11118489) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (11118490) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (11118498) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11118507) ram_test: ══════════════════════════════════════
+I (11140723) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=11 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11170725) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=11 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11200727) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.9km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11230729) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11260748) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=12 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11290804) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=13 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11320816) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11350874) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11380888) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2313 speed=5.7km/h sats=10 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11410892) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=11 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11418519) ram_test: ══════════════════════════════════════
+I (11418520) ram_test: PSRAM periodic health-check
+I (11418525) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (11418532) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11418681) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (11418682) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (11418689) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11418699) ram_test: ══════════════════════════════════════
+I (11440948) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.5km/h sats=10 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11471016) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11501084) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11531173) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11561181) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11591181) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11621183) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=2.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11651183) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11681252) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2313 speed=0.0km/h sats=10 hdop=27.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11711252) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=5.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11718711) ram_test: ══════════════════════════════════════
+I (11718712) ram_test: PSRAM periodic health-check
+I (11718716) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (11718724) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11718874) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (11718875) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (11718882) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11718892) ram_test: ══════════════════════════════════════
+I (11741300) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.9km/h sats=9 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11771319) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.5km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11801374) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.6km/h sats=10 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11831389) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11861392) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=11 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11891450) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=11 hdop=0.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11921450) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11951517) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=3.7km/h sats=8 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (11981586) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.7km/h sats=7 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12011588) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=8 hdop=3.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12018904) ram_test: ══════════════════════════════════════
+I (12018905) ram_test: PSRAM periodic health-check
+I (12018909) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (12018917) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12019065) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (12019066) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (12019074) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12019084) ram_test: ══════════════════════════════════════
+I (12041592) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2313 speed=0.0km/h sats=8 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12071595) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.8km/h sats=10 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12101595) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12131596) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12161611) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=5.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12191670) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12221683) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12251685) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=6.8km/h sats=9 hdop=5.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12281741) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12311746) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=2.8km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12319096) ram_test: ══════════════════════════════════════
+I (12319097) ram_test: PSRAM periodic health-check
+I (12319101) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (12319109) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12319261) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (12319262) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (12319269) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12319279) ram_test: ══════════════════════════════════════
+I (12341746) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=3.4km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12371748) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=10 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12401748) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.7km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12431749) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=4.6km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12461749) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=5.2km/h sats=10 hdop=1.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12491818) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12521822) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12551835) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12581897) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12611897) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=6.7km/h sats=9 hdop=3.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12619291) ram_test: ══════════════════════════════════════
+I (12619292) ram_test: PSRAM periodic health-check
+I (12619296) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (12619304) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12619455) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (12619456) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (12619463) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12619473) ram_test: ══════════════════════════════════════
+I (12641899) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12671900) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12701967) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=5.1km/h sats=9 hdop=3.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12731967) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=3.3km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12761969) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=5.4km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12791970) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12821973) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12851986) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12882042) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=8.3km/h sats=9 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12912059) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=10 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12919485) ram_test: ══════════════════════════════════════
+I (12919486) ram_test: PSRAM periodic health-check
+I (12919490) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (12919498) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12919647) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (12919648) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (12919656) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12919665) ram_test: ══════════════════════════════════════
+I (12942204) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=3.6km/h sats=8 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (12972209) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=3.9km/h sats=9 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13002277) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=3.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13032291) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=8 hdop=2.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13062348) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2314 speed=4.4km/h sats=8 hdop=4.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13092363) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2314 speed=4.4km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13122418) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=8 hdop=2.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13152486) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=5.3km/h sats=7 hdop=2.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13182489) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=7.8km/h sats=7 hdop=8.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13212490) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=7 hdop=2.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13219677) ram_test: ══════════════════════════════════════
+I (13219678) ram_test: PSRAM periodic health-check
+I (13219682) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (13219690) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13219838) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (13219839) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (13219846) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13219856) ram_test: ══════════════════════════════════════
+I (13242559) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=5.3km/h sats=7 hdop=2.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13272562) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2315 speed=0.0km/h sats=7 hdop=2.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13302564) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2315 speed=0.0km/h sats=8 hdop=8.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13332565) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=8 hdop=8.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13362566) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=5.7km/h sats=8 hdop=3.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13392568) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=13.1km/h sats=9 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13422570) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=2.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13452639) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13482642) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=10 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13512642) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=9 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13519868) ram_test: ══════════════════════════════════════
+I (13519869) ram_test: PSRAM periodic health-check
+I (13519873) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (13519881) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13520030) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (13520031) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (13520038) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13520048) ram_test: ══════════════════════════════════════
+I (13542711) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=4.0km/h sats=8 hdop=1.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13572717) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=10 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13602718) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=9 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13632787) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=8 hdop=1.8 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13662802) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=8 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13692857) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=8 hdop=5.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13722869) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=6 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13752924) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=6 hdop=8.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13782943) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=7 hdop=1.9 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13813002) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=8 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13820060) ram_test: ══════════════════════════════════════
+I (13820061) ram_test: PSRAM periodic health-check
+I (13820065) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (13820073) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13820223) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (13820224) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (13820231) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13820241) ram_test: ══════════════════════════════════════
+I (13843016) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=8 hdop=8.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13873074) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2314 speed=0.0km/h sats=8 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13903075) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=8 hdop=2.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13933075) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=8.7km/h sats=8 hdop=1.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13963090) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=0.0km/h sats=8 hdop=3.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (13993234) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=6.9km/h sats=7 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14023250) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=7 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14053307) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2314 speed=4.1km/h sats=8 hdop=2.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14081770) wifi:new:<8,0>, old:<8,0>, ap:<8,0>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (14081771) wifi:station: 4e:a2:a4:47:2f:78 join, AID=1, bgn, 20
+I (14081809) hotspot_ap: Hotspot client connected: 4e:a2:a4:47:2f:78 (aid=1)
+I (14082047) wifi:<ba-add>idx:2 (ifx:1, 4e:a2:a4:47:2f:78), tid:7, ssn:0, winSize:64
+I (14082126) wifi:<ba-add>idx:3 (ifx:1, 4e:a2:a4:47:2f:78), tid:0, ssn:0, winSize:64
+I (14082205) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4.2
+I (14082556) wifi:<ba-add>idx:0 (ifx:0, 1c:13:86:d6:48:9e), tid:5, ssn:14, winSize:64
+I (14083311) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=3.6km/h sats=9 hdop=6.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14085410) wifi:<ba-add>idx:1 (ifx:0, 1c:13:86:d6:48:9e), tid:0, ssn:407, winSize:64
+I (14113311) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=4.7km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14120253) ram_test: ══════════════════════════════════════
+I (14120254) ram_test: PSRAM periodic health-check
+I (14120258) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (14120266) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (14120415) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (14120416) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (14120423) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (14120433) ram_test: ══════════════════════════════════════
+I (14143311) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=0.0km/h sats=8 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14173311) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=5.4km/h sats=7 hdop=1.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14203315) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=0.0km/h sats=8 hdop=11.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14233315) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=5.8km/h sats=8 hdop=1.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14263316) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=6.4km/h sats=8 hdop=1.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14293317) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=8 hdop=4.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14323386) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=8 hdop=1.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14353407) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=2.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14383459) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2312 speed=0.0km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14413481) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=2.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (14420445) ram_test: ══════════════════════════════════════
+I (14420446) ram_test: PSRAM periodic health-check
+I (14420451) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (14420458) ram_test:   Before: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (14420608) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (14420608) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7259376 bytes (6.92 MB)
+I (14420616) ram_test:   After free: free=8307956 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (14420626) ram_test: ══════════════════════════════════════
+I (14443532) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2313 speed=0.0km/h sats=9 hdop=1.2 [ACTIVE] (idle — use 'gps gnss info' for full status)

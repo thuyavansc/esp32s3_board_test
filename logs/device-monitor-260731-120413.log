@@ -1,0 +1,195 @@
+I (5250) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs)
+I (5250) trips_api: ══════════════════════════════════════
+I (5259) trips_api: TRIPS REST API + JSON Storage Init
+I (5264) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (5271) trips_api:   Default trip ID: 12772
+I (5275) trips_api:   Storage backend: 2
+I (5574) trips_api: Created storage directory: /spiffs/store
+I (5575) trips_api: SPIFFS partition: 4581 KB total | 86 KB used | 4495 KB free
+I (5576) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (5582) trips_api: TRIPS API Storage — READY ✓
+I (5586) trips_api: Type 'api help' for available commands.
+I (5592) trips_api: ══════════════════════════════════════
+
+I (5705) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8218 KB, largest block=8064 KB
+I (5719) refdata: Reference data module ready (call 'ref fetch' or go on-duty to load data)
+I (5719) gps: ══════════════════════════════════════
+I (5727) gps: GPS Client Init — default active source: GNSS
+I (5733) gps:   Starting GNSS backend (A7670E, UART1)...
+I (5738) gps_gnss: ══════════════════════════════════════
+I (5749) gps_gnss: GNSS (A7670E) Init
+I (5753) gps_gnss:   A-GPS: disabled (no SIM yet — see doc 140)
+I (5759) gps_gnss: ══════════════════════════════════════
+I (5771) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (5777) gps_gnss: AT handshake...
+I (5780) gps:   Starting NEO-6M backend (UART2)...
+I (5784) gps_neo6m: ══════════════════════════════════════
+I (5796) gps_neo6m: GPS NEO-6M Module Init
+I (5800) gps_neo6m:   UART:       UART2
+I (5804) gps_neo6m:   TX Pin:     GPIO1
+I (5807) gps_neo6m:   RX Pin:     GPIO2
+I (5811) gps_neo6m:   Baud:       9600
+I (5815) gps_neo6m: GPS UART init: TX=GPIO1 RX=GPIO2 9600 baud ✓
+I (5820) gps_neo6m: GPS read task STARTED — UART2 @ 9600 baud
+I (5826) gps_neo6m: NEO-6M may take 1-2 minutes for first fix (cold start)
+I (5832) gps_neo6m: Use: gps neo6m info | once | start | every <sec> [cnt]
+I (5839) gps_neo6m: GPS Module — READY ✓
+I (5843) gps_neo6m: Commands: gps neo6m on|off|info|start|stop|once|every <sec> [cnt]
+I (5850) gps_neo6m: ══════════════════════════════════════
+I (5862) gps:   Injection ('gps set ...') always available regardless of the above.
+I (5870) gps: ══════════════════════════════════════
+
+I (5881) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (5888) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (5897) chipinfo: ########################################
+I (5903) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (5908) chipinfo: ########################################
+I (5914) version: ======================================
+I (5919) version: FIRMWARE VERSION
+I (5922) version: --------------------------------------
+I (5927) version:   Project:   esp32s3_board
+I (5931) version:   Version:   26.07.23 (code 1)
+I (5935) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (5948) version:   Running from partition: factory
+I (5953) chipinfo: ======================================
+I (5958) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (5964) chipinfo: --------------------------------------
+I (5969) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (5974) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (5979) chipinfo:   Crystal is 40 MHz
+I (5983) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (5987) chipinfo: ======================================
+I (5992) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (5998) chipinfo: --------------------------------------
+I (6003) chipinfo:   Model:       ESP32-S3
+I (6007) chipinfo:   Cores:       2
+I (6010) chipinfo:   Revision:    v0.2
+I (6014) chipinfo:   Features:    WiFi BLE External-Flash
+I (6019) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (6023) chipinfo:   IDF version: 5.4.0
+I (6028) chipinfo: ======================================
+I (6032) chipinfo: FLASH INFO  (live-probed)
+I (6036) chipinfo: --------------------------------------
+I (6041) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (6048) chipinfo:   JEDEC ID:        0x852018
+I (6052) chipinfo: ======================================
+I (6057) chipinfo: RAM / HEAP INFO  (live)
+I (6061) chipinfo: --------------------------------------
+I (6067) chipinfo:   Free heap now (all capabilities): 8411148 bytes | 8214.0 KB (8.02 MB)
+I (6074) chipinfo:   Minimum ever free:                8389116 bytes | 8192.5 KB (8.00 MB)
+I (6082) chipinfo:   --------------------------------------
+I (6088) chipinfo:   PSRAM initialized: YES
+I (6092) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (6100) chipinfo:   SRAM  total:          198159 bytes | 193.5 KB (0.19 MB)
+I (6107) chipinfo:   SRAM  free now:       37723 bytes | 36.8 KB (0.04 MB)
+I (6113) chipinfo:   SRAM  min free ever:  17515 bytes | 17.1 KB (0.02 MB)
+I (6120) chipinfo:   SRAM  largest block:  22528 bytes | 22.0 KB (0.02 MB)
+I (6126) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (6133) chipinfo:   PSRAM free now:          8376208 bytes | 8179.9 KB (7.99 MB)
+I (6141) chipinfo:   PSRAM min free ever:     8374348 bytes | 8178.1 KB (7.99 MB)
+I (6148) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (6155) chipinfo: ======================================
+I (6160) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (6167) chipinfo: --------------------------------------
+I (6172) chipinfo:   Name       Type   SubType   Offset     Size
+I (6178) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (6186) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (6194) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (6202) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6211) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6219) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (6227) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (6236) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (6244) chipinfo: ======================================
+I (6249) chipinfo: NVS INFO  (live)
+I (6252) chipinfo: --------------------------------------
+I (6257) chipinfo:   Used entries:  214
+I (6261) chipinfo:   Free entries:  542
+I (6264) chipinfo:   Total entries: 756
+I (6268) chipinfo: ======================================
+I (6273) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (6279) chipinfo: --------------------------------------
+I (6284) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (6290) chipinfo:   Used:  88101 bytes | 86.0 KB (0.08 MB)
+I (6295) chipinfo:   Free:  4603340 bytes | 4495.4 KB (4.39 MB)
+I (6301) chipinfo: ########################################
+
+I (6306) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (6312) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (6320) display: SD_CS (TF slot) → GPIO38 HIGH (disabled)
+I (6326) display: Backlight PWM init — GPIO6, 5kHz, 10-bit
+I (6331) display: Backlight ON (GPIO6, PWM 100%)
+I (6336) display: SPI: MOSI=42 SCLK=41 CS=39 DC=40 RST=45
+I (6341) gpio: GPIO[40]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (6349) gpio: GPIO[45]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (6697) display: ST7796S init complete — 320x480 RGB565
+I (6697) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (6701) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (6704) display: DISPLAY — READY ✓
+I (6707) touch: TOUCH INIT — FT6336U via I2C
+I (6712) touch: I2C init: SDA=15 SCL=7
+I (6715) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (6783) touch: FT6336U init — addr: 0x38
+I (6783) touch: Touch input registered with LVGL ✓
+W (6783) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (6787) touch: TOUCH — READY ✓
+I (6790) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (7146) net_ui: Network screen ready
+I (7154) sms_ui: SMS screen ready
+I (7184) ui: UI — READY (4 screens | teal palette | scroll fix | test menu)
+I (7184) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (7186) additional_work: Additional work module ready (try: "sms reboot")
+I (7193) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (7199) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (7206) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (7214) chipinfo: READY — Touch UI Active ✓
+I (7780) gps_gnss:   AT -> no OK (see raw response below)
+W (7780) gps_gnss:     raw: 
+I (10199) ram_test: ══════════════════════════════════════
+I (10200) ram_test: PSRAM periodic health-check
+I (10204) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (10211) ram_test:   Before: free=8367788 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (10367) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (10368) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7319208 bytes (6.98 MB)
+I (10375) ram_test:   After free: free=8367788 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (10385) ram_test: ══════════════════════════════════════
+W (10780) gps_gnss:   UART1 busy (AT passthrough in progress?) — 'AT' skipped
+I (10780) gps_gnss:   AT -> no OK (see raw response below)
+W (10781) gps_gnss:     raw: 
+I (14780) sms_client: SMS runtime SETUP FAILED — check modem/SIM, retry with 'smsc status' (AT+CMGF=1: failed, AT+CNMI=2,1,0,0,0: failed)
+I (14780) gps_gnss:   AT -> no OK (see raw response below)
+W (14786) gps_gnss:     raw: 
+I (17789) gps_gnss:   AT -> no OK (see raw response below)
+W (17789) gps_gnss:     raw: 
+I (20789) gps_gnss:   AT -> no OK (see raw response below)
+W (20789) gps_gnss:     raw: 
+W (20789) gps_gnss: Modem not responding to AT after 5 attempts — check the board's
+W (20793) gps_gnss:   4G DIP switch is ON, power, and UART1 wiring (GPIO18/17).
+I (23800) gps_gnss:   AT -> no OK (see raw response below)
+W (23800) gps_gnss:     raw: 
+I (26800) gps_gnss:   AT -> no OK (see raw response below)
+W (26800) gps_gnss:     raw: 
+I (29800) gps_gnss:   AT -> no OK (see raw response below)
+W (29800) gps_gnss:     raw: 
+I (31059) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+E (32550) modem_board: usbh_modem_ppp_start(430): Modem not idle after timeout 30000 ms
+E (32550) cellular: PPP dial failed/timed out: ESP_ERR_TIMEOUT — check SIM/antenna/signal ('AT+CSQ', 'AT+CPIN?' over UART1)
+E (32558) net_mgr: set_uplink(CELLULAR): dial failed — staying on current uplink (WiFi)
+W (32565) net_mgr:   Cellular unavailable at boot — staying on WiFi (already active). Try 'cell up' or 'net uplink cellular' once signal/SIM are confirmed.
+I (32579) bgworker: Job finished: OK
+I (32800) gps_gnss:   AT -> no OK (see raw response below)
+W (32800) gps_gnss:     raw: 
+I (35800) gps_gnss:   AT -> no OK (see raw response below)
+W (35800) gps_gnss:     raw: 
+W (35800) gps_gnss: Modem not responding to AT after 10 attempts — check the board's
+W (35804) gps_gnss:   4G DIP switch is ON, power, and UART1 wiring (GPIO18/17).
+I (38811) gps_gnss:   AT -> no OK (see raw response below)
+W (38811) gps_gnss:     raw: 
+I (41811) gps_gnss:   AT -> no OK (see raw response below)
+W (41811) gps_gnss:     raw: 
+I (44811) gps_gnss:   AT -> no OK (see raw response below)
+W (44811) gps_gnss:     raw: 
+I (47811) gps_gnss:   AT -> no OK (see raw response below)
+W (47811) gps_gnss:     raw: 

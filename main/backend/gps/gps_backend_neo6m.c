@@ -16,10 +16,12 @@
 #include "freertos/task.h"
 #include "driver/uart.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 #include "config.h"
 #include "gps_client.h"
 #include "gps_nmea.h"
 #include "gps_backend_neo6m.h"
+#include "taximeter/diag.h"
 
 static const char *TAG = "gps_neo6m";
 
@@ -92,6 +94,12 @@ static void _gps_read_task(void *arg) {
                 if (s_enabled) {
                     gps_data_t tmp = {0};
                     if (gps_nmea_parse_gga(line, &tmp)) {
+                        // doc 180 §7.1 / doc 182 10.7: runs on a genuine
+                        // "no fix" report too now (tmp.has_fix=false) —
+                        // see gps_nmea.h. Timestamped regardless of
+                        // fix/no-fix — "we genuinely heard from the
+                        // receiver right now" is what gps_client.c's
+                        // staleness check needs, not "we got a fix".
                         s_gps_data.lat         = tmp.lat;
                         s_gps_data.lon         = tmp.lon;
                         s_gps_data.alt         = tmp.alt;
@@ -99,13 +107,16 @@ static void _gps_read_task(void *arg) {
                         s_gps_data.hdop        = tmp.hdop;
                         s_gps_data.fix_quality = tmp.fix_quality;
                         s_gps_data.has_fix     = tmp.has_fix;
+                        s_gps_data.fix_time_us = esp_timer_get_time();
                     }
                     gps_nmea_parse_rmc(line, &s_gps_data);
 
-                    if (s_gps_data.has_fix) {
-                        s_valid_reads++;
-                        gps_client_publish_neo6m_fix(&s_gps_data);   // publish to the dispatcher
-                    }
+                    // doc 180 §7.1 point 4 / doc 182 10.7: publish
+                    // UNCONDITIONALLY — see gps_backend_gnss.c's matching
+                    // comment for why (the dispatcher's own cached fix
+                    // must see has_fix=false too, not just this backend).
+                    gps_client_publish_neo6m_fix(&s_gps_data);
+                    if (s_gps_data.has_fix) s_valid_reads++;
                     s_total_reads++;
                 }
                 // when disabled: bytes are still drained above (avoids UART
@@ -187,7 +198,9 @@ esp_err_t gps_backend_neo6m_init(void) {
 
     _gps_uart_init();
 
-    xTaskCreate(_gps_read_task, "gps_read", 3072, NULL, 2, NULL);
+    TaskHandle_t h = NULL;
+    xTaskCreate(_gps_read_task, "gps_read", 3072, NULL, 2, &h);
+    diag_register_task(h, "gps_read");   // doc 184 §10.2 — see 'stacks'
 
     ESP_LOGI(TAG, "GPS Module — READY ✓");
     ESP_LOGI(TAG, "Commands: gps neo6m on|off|info|start|stop|once|every <sec> [cnt]");

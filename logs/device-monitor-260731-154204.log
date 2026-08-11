@@ -1,0 +1,237 @@
+I (4843) esp_netif_handlers: sta ip: 192.168.8.140, mask: 255.255.255.0, gw: 192.168.8.1
+I (4843) chipinfo: WiFi connected — IP: 192.168.8.140
+I (4845) hotspot_nvs: Hotspot config loaded: ssid="TaxiMeter-200" channel=6 max_clients=8 hidden=no (password not logged)
+I (4856) cellular: ══════════════════════════════════════
+I (4867) cellular: CELLULAR PPP INIT — USB CDC modem (A7670E)
+I (4873) cellular:   Requires board DIP switch USB=OFF — confirmed on this exact board that
+I (4881) cellular:   GNSS/AT/console (UART1/UART0) are unaffected by this setting (doc 155 §12.6).
+I (4890) USBH_CDC: iot usbh cdc version: 3.1.0
+I (4925) cellular: USB CDC driver installed — waiting for A7670E enumeration...
+I (4925) modem_board: iot_usbh_modem, version: 2.2.0
+I (4926) iot_eth: IoT ETH Version: 1.1.0
+I (4930) esp-modem-dte: USB PPP network interface init success
+I (4936) cellular: Modem installed — APN="dialogbb" — PPP auto-connect DISABLED (manual control)
+I (4944) cellular:   Use 'cell up' or let net_manager.c bring it up per NET_UPLINK_PREFER_CELLULAR.
+I (4953) cellular: ══════════════════════════════════════
+
+I (4965) hotspot_ap: Hotspot module ready (AP event handlers registered) — off until 'hotspot on' or ENABLE_WIFI_HOTSPOT=1
+I (4976) net_mgr: NET_UPLINK_PREFER_CELLULAR=1 — attempting cellular uplink in the background...
+I (4984) cellular: Dialling PPP (APN="dialogbb", timeout=30000ms)...
+I (5307) USBH_CDC: New device connected, address: 1
+I (5307) esp-modem-dte: USB CDC device connected, VID: 0x1e0e, PID: 0x9011
+I (5307) esp-modem-dte: Matched USB Modem: "SIMCOM A7670E (Waveshare)", Modem Interface: 5, AT Interface: -1
+I (5317) cdc_descriptor: Found NOTIF endpoint: 8
+I (5321) cdc_descriptor: Found OUT endpoint: 10
+I (5325) cdc_descriptor: Found IN endpoint: 1
+I (5330) modem_board: DTE connected
+I (5332) modem_board: Handling stage = STAGE_SYNC
+E (7337) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (7337) esp-modem-dte: Retry 1/5 failed. Retrying in 2000 milliseconds...
+I (8291) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs)
+I (8291) trips_api: ══════════════════════════════════════
+I (8300) trips_api: TRIPS REST API + JSON Storage Init
+I (8305) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (8312) trips_api:   Default trip ID: 12772
+I (8316) trips_api:   Storage backend: 2
+I (8617) trips_api: Created storage directory: /spiffs/store
+I (8618) trips_api: SPIFFS partition: 4581 KB total | 86 KB used | 4495 KB free
+I (8619) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (8625) trips_api: TRIPS API Storage — READY ✓
+I (8629) trips_api: Type 'api help' for available commands.
+I (8635) trips_api: ══════════════════════════════════════
+
+I (8748) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8216 KB, largest block=8064 KB
+I (8761) refdata: Reference data module ready (call 'ref fetch' or go on-duty to load data)
+I (8762) gps: ══════════════════════════════════════
+I (8770) gps: GPS Client Init — default active source: GNSS
+I (8775) gps:   Starting GNSS backend (A7670E, UART1)...
+I (8780) gps_gnss: ══════════════════════════════════════
+I (8792) gps_gnss: GNSS (A7670E) Init
+I (8795) gps_gnss:   A-GPS: disabled (no SIM yet — see doc 140)
+I (8801) gps_gnss: ══════════════════════════════════════
+I (8813) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (8819) gps_gnss: AT handshake...
+I (8822) gps:   Starting NEO-6M backend (UART2)...
+I (8825) gps_gnss:   AT -> OK
+I (8830) gps_gnss: Modem responding ✓
+I (8833) gps_gnss: A-GPS disabled (ENABLE_AGPS=0 in config.h) — plain GNSS only.
+I (8839) gps_neo6m: ══════════════════════════════════════
+I (8840) gps_gnss:   Insert a data-enabled SIM, set ENABLE_AGPS=1, rebuild — see doc 140.
+I (8860) gps_neo6m: GPS NEO-6M Module Init
+I (8864) gps_neo6m:   UART:       UART2
+I (8865) gps_gnss:   AT+CGNSSPWR=1 -> OK
+I (8871) gps_neo6m:   TX Pin:     GPIO1
+I (8875) gps_neo6m:   RX Pin:     GPIO2
+I (8878) gps_neo6m:   Baud:       9600
+I (8883) gps_neo6m: GPS UART init: TX=GPIO1 RX=GPIO2 9600 baud ✓
+I (8888) gps_neo6m: GPS read task STARTED — UART2 @ 9600 baud
+I (8893) gps_neo6m: NEO-6M may take 1-2 minutes for first fix (cold start)
+I (8900) gps_neo6m: Use: gps neo6m info | once | start | every <sec> [cnt]
+I (8907) gps_neo6m: GPS Module — READY ✓
+I (8911) gps_neo6m: Commands: gps neo6m on|off|info|start|stop|once|every <sec> [cnt]
+I (8918) gps_neo6m: ══════════════════════════════════════
+I (8930) gps:   Injection ('gps set ...') always available regardless of the above.
+I (8937) gps: ══════════════════════════════════════
+
+I (8949) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (8956) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (8965) chipinfo: ########################################
+I (8970) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (8976) chipinfo: ########################################
+I (8982) version: ======================================
+I (8987) version: FIRMWARE VERSION
+I (8990) version: --------------------------------------
+I (8995) version:   Project:   esp32s3_board
+I (8999) version:   Version:   26.07.23 (code 1)
+I (9003) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (9016) version:   Running from partition: factory
+I (9021) chipinfo: ======================================
+I (9026) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (9030) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (9039) chipinfo: --------------------------------------
+I (9044) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (9049) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (9054) chipinfo:   Crystal is 40 MHz
+I (9057) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (9061) chipinfo: ======================================
+I (9067) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (9073) chipinfo: --------------------------------------
+I (9078) chipinfo:   Model:       ESP32-S3
+I (9082) chipinfo:   Cores:       2
+I (9085) chipinfo:   Revision:    v0.2
+I (9088) chipinfo:   Features:    WiFi BLE External-Flash
+I (9094) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (9098) chipinfo:   IDF version: 5.4.0
+I (9102) chipinfo: ======================================
+I (9107) chipinfo: FLASH INFO  (live-probed)
+I (9111) chipinfo: --------------------------------------
+I (9116) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (9123) chipinfo:   JEDEC ID:        0x852018
+I (9127) chipinfo: ======================================
+I (9132) chipinfo: RAM / HEAP INFO  (live)
+I (9136) chipinfo: --------------------------------------
+I (9141) chipinfo:   Free heap now (all capabilities): 8400980 bytes | 8204.1 KB (8.01 MB)
+I (9149) chipinfo:   Minimum ever free:                8387144 bytes | 8190.6 KB (8.00 MB)
+I (9157) chipinfo:   --------------------------------------
+I (9162) chipinfo:   PSRAM initialized: YES
+I (9166) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (9174) chipinfo:   SRAM  total:          198135 bytes | 193.5 KB (0.19 MB)
+I (9175) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (9185) chipinfo:   SRAM  free now:       28983 bytes | 28.3 KB (0.03 MB)
+I (9191) chipinfo:   SRAM  min free ever:  16959 bytes | 16.6 KB (0.02 MB)
+I (9198) chipinfo:   SRAM  largest block:  17408 bytes | 17.0 KB (0.02 MB)
+I (9205) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (9212) chipinfo:   PSRAM free now:          8375048 bytes | 8178.8 KB (7.99 MB)
+I (9219) chipinfo:   PSRAM min free ever:     8373188 bytes | 8176.9 KB (7.99 MB)
+I (9226) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (9233) chipinfo: ======================================
+I (9238) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (9245) chipinfo: --------------------------------------
+I (9250) chipinfo:   Name       Type   SubType   Offset     Size
+I (9257) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (9264) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (9272) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (9280) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (9289) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (9297) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (9306) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (9314) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (9322) chipinfo: ======================================
+I (9327) chipinfo: NVS INFO  (live)
+I (9330) chipinfo: --------------------------------------
+I (9336) chipinfo:   Used entries:  214
+I (9339) chipinfo:   Free entries:  542
+I (9343) chipinfo:   Total entries: 756
+I (9346) chipinfo: ======================================
+I (9351) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (9357) chipinfo: --------------------------------------
+I (9363) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (9368) chipinfo:   Used:  88101 bytes | 86.0 KB (0.08 MB)
+I (9373) chipinfo:   Free:  4603340 bytes | 4495.4 KB (4.39 MB)
+I (9379) chipinfo: ########################################
+
+I (9384) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (9390) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (9399) display: SD_CS (TF slot) → GPIO38 HIGH (disabled)
+I (9404) display: Backlight PWM init — GPIO6, 5kHz, 10-bit
+I (9409) display: Backlight ON (GPIO6, PWM 100%)
+I (9414) display: SPI: MOSI=42 SCLK=41 CS=39 DC=40 RST=45
+I (9419) gpio: GPIO[40]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (9427) gpio: GPIO[45]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (9490) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (9491) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (9492) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (9776) display: ST7796S init complete — 320x480 RGB565
+I (9776) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (9780) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (9783) display: DISPLAY — READY ✓
+I (9786) touch: TOUCH INIT — FT6336U via I2C
+I (9791) touch: I2C init: SDA=15 SCL=7
+I (9794) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (9862) touch: FT6336U init — addr: 0x38
+I (9862) touch: Touch input registered with LVGL ✓
+W (9862) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (9866) touch: TOUCH — READY ✓
+I (9869) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (10230) net_ui: Network screen ready
+I (10239) sms_ui: SMS screen ready
+I (10270) ui: UI — READY (4 screens | teal palette | scroll fix | test menu)
+I (10270) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (10272) additional_work: Additional work module ready (try: "sms reboot")
+I (10279) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (10285) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (10293) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (10300) chipinfo: READY — Touch UI Active ✓
+E (11339) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (11339) esp-modem-dte: Retry 2/5 failed. Retrying in 2000 milliseconds...
+I (13285) ram_test: ══════════════════════════════════════
+I (13285) ram_test: PSRAM periodic health-check
+I (13290) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (13297) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13452) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (13453) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (13460) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (13470) ram_test: ══════════════════════════════════════
+E (15341) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (15341) esp-modem-dte: Retry 3/5 failed. Retrying in 2000 milliseconds...
+E (19343) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (19343) esp-modem-dte: Retry 4/5 failed. Retrying in 2000 milliseconds...
+E (23345) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (23345) esp-modem-dte: Retry 5/5 failed. Retrying in 2000 milliseconds...
+W (25347) esp-modem-dte: Operation failed.
+W (25347) esp-modem-dte: Failed to sync with modem DCE, trying to exit data mode
+I (25373) modem_board: Modem manufacturer ID: INCORPORATED
+I (25374) modem_board: Modem module ID: A7670E-FASE
+I (25375) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (25478) modem_board: Handling stage = STAGE_IDLE
+I (25478) net_mgr: Active uplink -> CELLULAR
+I (25478) bgworker: Job finished: OK
+I (25578) modem_board: Handling stage = STAGE_START_PPP
+I (25578) modem_board: Check SIM card state...
+I (25579) modem_board: Check signal quality...
+E (25584) at_3gpp_ts_27_007: The length of the result is too long, truncated to 127
+I (25587) modem_board: PDP context: "+CGDCONT: 1,"IP","dialogbb","",0,0,,,,
+
++CGDCONT: 8,"IPV4V6","IMS","254.128.0.0.0.0.0.0.24.199.88.17.216.196.54.246",0,0,0,2,"
+I (25602) modem_board: Check network registration...
+I (25608) modem_board: Check PDP context...
+I (25611) modem_board: Set PDP context: cid=1, type=IP, apn=dialogbb
+E (25622) at_3gpp_ts_27_007: The length of the result is too long, truncated to 127
+I (25624) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","dialogbb","",0,0,,,,
+
++CGDCONT: 8,"IPV4V6","IMS","254.128.0.0.0.0.0.0.24.199.88.17.216.196.54.246",0,0,0,2,"
+I (25640) modem_board: PPP Dial up...
+E (26144) esp-modem-dte: esp_modem_dte_dial_up(326): dial up failed
+I (26144) modem_board: Handling stage = STAGE_ERROR
+E (26144) modem_board: Modem in error state
+I (31117) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (31121) gps_gnss: GNSS: no fix | reads=212 [ACTIVE] (idle — waiting for satellites)
+W (34990) net_mgr: Health check: active uplink was CELLULAR but it silently dropped — falling back to WiFi automatically (doc 162 §4)
+I (34992) net_mgr: Active uplink -> WIFI
+W (40346) Modem AT: AT parser handle_line is NULL but receive: "
++PPPD: DISCONNECTED
+"
+I (61121) gps_gnss: GNSS: no fix | reads=517 [ACTIVE] (idle — waiting for satellites)
+I (61147) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)

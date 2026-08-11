@@ -14,8 +14,19 @@
 #include <stdlib.h>
 #include "driver/uart.h"   // UART_NUM_1/UART_NUM_2 (GNSS_UART_NUM/NEO6M_UART_NUM) referenced in the log lines below
 #include "esp_log.h"
+#include "esp_timer.h"
 #include "config.h"
 #include "gps_client.h"
+
+// doc 180 §7.1 point 3 / doc 182 10.7 — second half of the sticky-fix
+// fix (see gps_data_t.fix_time_us's own comment, gps_client.h). Catches
+// "the whole read pipeline went silent" — a UART/task death that stops
+// new NMEA sentences arriving at all, which the parser-level has_fix
+// correctness (gps_nmea.c) can never see on its own, since there's
+// nothing left to parse. Generous on purpose: a healthy GNSS/NEO-6M
+// stream updates every ~100ms-1s; 5s is "clearly not talking anymore",
+// not "briefly late".
+#define GPS_CLIENT_FIX_STALE_MS  5000
 
 #if ENABLE_GPS_GNSS
 #include "gps_backend_gnss.h"
@@ -49,6 +60,15 @@ void gps_client_publish_neo6m_fix(const gps_data_t *fix) {
     s_neo6m.has_fix = fix->has_fix;
 }
 
+// doc 180 §7.1 point 3 / doc 182 10.7: true only if BOTH the stored
+// has_fix says yes AND the fix isn't stale — the fresh-vs-stale
+// judgment lives here, once, rather than duplicated at every call site.
+static bool _slot_has_live_fix(const _fix_slot_t *slot) {
+    if (!slot->has_fix) return false;
+    int64_t age_us = esp_timer_get_time() - slot->data.fix_time_us;
+    return age_us < ((int64_t)GPS_CLIENT_FIX_STALE_MS * 1000);
+}
+
 void gps_client_set_active_source(gps_source_t src) { s_active = src; }
 gps_source_t gps_client_get_active_source(void)     { return s_active; }
 
@@ -68,11 +88,24 @@ const gps_data_t *gps_client_get_latest(void) {
         case GPS_SRC_NEO6M:  primary = &s_neo6m;  break;
         case GPS_SRC_INJECT: primary = &s_inject; break;
     }
-    if (primary && primary->has_fix) return &primary->data;
+    if (primary) {
+        // Injected fixes are exempt from the staleness check — "gps set
+        // ..." is an explicit, deliberate one-shot action (and this
+        // project's own bench-test mechanism for exercising fare_calc
+        // with zero GPS hardware attached, per this file's own header),
+        // not a live stream with an expected update cadence to go stale
+        // against. _cmd_set() below doesn't stamp fix_time_us, so
+        // running an injected fix through the SAME staleness check a
+        // live receiver gets would make every injected fix look
+        // instantly stale after GPS_CLIENT_FIX_STALE_MS.
+        bool live = (s_active == GPS_SRC_INJECT) ? primary->has_fix : _slot_has_live_fix(primary);
+        if (live) return &primary->data;
+    }
 
-    // Active source has no fix yet — fall back to an injected fix if one
-    // exists (lets the PC GUI drive a trip even while GNSS is still cold-
-    // starting, per doc 139 §10 decision B).
+    // Active source has no fix (or its last fix is stale) — fall back to
+    // an injected fix if one exists (lets the PC GUI drive a trip even
+    // while GNSS is still cold-starting, per doc 139 §10 decision B).
+    // Same staleness exemption as above.
     if (s_active != GPS_SRC_INJECT && s_inject.has_fix) return &s_inject.data;
 
     return NULL;

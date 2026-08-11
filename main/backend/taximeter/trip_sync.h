@@ -67,6 +67,7 @@
 //   sync help
 // ================================================================
 #include <stdbool.h>
+#include <stdint.h>
 #include "esp_err.h"
 
 // Same ordinals as Android's MeterStatus enum (doc 149) — trip_manager.c
@@ -118,3 +119,45 @@ esp_err_t trip_sync_run_full_sequence(bool is_cancelled);
 
 // Serial command handler ("sync ...")
 bool trip_sync_process_command(const char *line);
+
+// ═══════════════════════════════════════════════════════════════
+//  Trip history list (doc 188) — POST Job/GetAllBySearch, the REAL
+//  data source behind Android's TripHistoryFragment11 (confirmed
+//  field-by-field against features/trip_sync/usecases/
+//  GetTripHistoryUseCase.kt and features/available_trip/dtos/JobDto.kt
+//  — NOT guessed). Android auto-loads this on screen open, filtered to
+//  search="Dropedoff"/searchColumn="Status" (only completed trips) —
+//  same filter used here, so the ESP32 History tab shows the same set
+//  Android's own History tab would, with no trip-ID typing needed.
+//  This is a DIFFERENT server call from rest_api_storage_fetch()'s
+//  single-trip GET Trips/{id} (that one still exists — it's the Manual
+//  Fetch tab now, doc 188).
+// ═══════════════════════════════════════════════════════════════
+typedef struct {
+    int64_t id;
+    int     status;               // JobDto.status (Android's JobStatus ordinal)
+    char    pickup_time[32];      // JobDto.pickup.pickupTime (ISO8601)
+    char    dropoff_time[32];     // JobDto.dropOff.dropOffTime
+    double  total_fares;          // JobDto.totalFares (dollars — matches the server's Double, same unit Android displays)
+    char    from_city[32];        // JobDto.fromCity
+    char    to_city[32];          // JobDto.toCity
+    char    pickup_address[64];   // JobDto.pickup.address.addressLine1
+    char    dropoff_address[64];  // JobDto.dropOff.address.addressLine1
+} trip_history_item_t;
+
+// Fetches one page of the driver's completed-trip history. Blocks on
+// HTTPS — call from bg_worker only, never the LVGL thread (same rule as
+// every other call in this module). Returns the number of items
+// written into `out` (up to max_count, 0 on any failure).
+// `out_total_count`, if non-NULL, receives the server's totalCount, for
+// "there are more pages" paging.
+//
+// As a side effect, each returned item's full raw JSON is cached via
+// rest_api_storage_write() under the same trips_<id>.json convention
+// rest_api_storage_fetch() uses — a history row can be opened in the
+// existing trip_json_viewer_show(id) unchanged, without a second
+// network round-trip per row (Job/GetAllBySearch already returns the
+// full JobDto body for every item in the page).
+int trip_sync_fetch_history(int page_number, int page_size,
+                             trip_history_item_t *out, int max_count,
+                             int *out_total_count);

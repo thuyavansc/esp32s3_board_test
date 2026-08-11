@@ -17,8 +17,22 @@
 //                       /store (reference data + trip JSON) with size,
 //                       PLUS the full session_store dump (NVS — token/
 //                       driver/vehicle/network/duty/active-trip state)
+//   stacks           → per-task stack high-water marks (doc 184 §10.2 —
+//                       measure margin instead of guessing it; this is
+//                       the instrumentation that was missing when
+//                       trip_tick's 4096-byte stack silently overflowed
+//                       3 times before anyone could see it coming)
 //   diag help
 // ================================================================
 #include <stdbool.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 bool diag_process_command(const char *line);
+
+// doc 184 §10.2 — registers a task so 'stacks' can report its high-
+// water mark. Call once, right after xTaskCreate(), passing the SAME
+// handle xTaskCreate() wrote into its own last (out) parameter — that
+// parameter is commonly left NULL/discarded across this codebase; each
+// call site this is wired into now captures it instead.
+void diag_register_task(TaskHandle_t handle, const char *name);

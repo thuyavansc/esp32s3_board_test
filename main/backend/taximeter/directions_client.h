@@ -36,12 +36,22 @@
 // GraphHopper specifically (a different failure than "no internet at
 // all," e.g. GraphHopper's own service being down).
 //
-// THREADING: makes a blocking HTTPS call — same rule as api_client.c's
-// _perform(): never call this from the LVGL thread. fare_calc_tick()
-// itself runs on trip_manager's own tick task (not LVGL), so this is
-// safe there, but a >250m gap or an ended GpsInactive frame will add
-// one extra blocking HTTPS round-trip to that tick — see the .c file's
-// note on why this is acceptable (rare event, not every-tick).
+// THREADING: makes a blocking HTTPS call — needs a task stack sized for
+// mbedTLS's TLS handshake (~8KB of call-stack depth), same rule as
+// api_client.c's _perform(). Never call this from the LVGL thread. Two
+// callers today:
+//   - fare_calc.c's two call sites — route through a bg_worker-backed
+//     wrapper (_directions_get_route_via_bgworker(), fare_calc.c),
+//     NOT this function directly. This is a deliberate fix (doc 184
+//     §1/§10.3): calling this function directly from trip_tick crashed
+//     the board 3 times — trip_tick's stack was only 4096 bytes, well
+//     under what TLS needs, and this call site is what finally
+//     exercised it once GRAPHHOPPER_API_KEY was set to a real value.
+//   - "directions test" (directions_client.c's own process_command)
+//     calls this function directly — safe as-is, since it runs on
+//     serial_cmd_task, which also has an 8KB stack (same sizing this
+//     function needs; not a coincidence — every task in this project
+//     that touches TLS is 8KB except the one that crashed).
 // ================================================================
 #include <stdbool.h>
 #include <stddef.h>

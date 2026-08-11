@@ -49,6 +49,11 @@ typedef struct {
     int32_t active_local_trip_id;
     int64_t active_server_job_id;
     int32_t next_local_trip_id_counter;
+
+    // ── Login screen (doc 179 Phase 2) ──
+    bool    remember_me;
+    char    remember_username[32];   // D2(c): username only — NOT the password (see session_store.h)
+    int32_t login_gate_hard;         // 0=soft (Skip link visible), 1=hard — dev-toggleable; see session_store_get_login_gate_hard()
 } session_t;
 
 static session_t s = {0};
@@ -139,6 +144,14 @@ esp_err_t session_store_init(void) {
     s.active_local_trip_id       = _nvs_get_i32("trip_local_id", 0);
     s.active_server_job_id       = _nvs_get_i64("trip_job_id", 0);
     s.next_local_trip_id_counter = _nvs_get_i32("next_trip_id", 1);   // start at 1, never 0 (0 means "no trip")
+
+    s.remember_me = _nvs_get_i32("remember_me", 0) != 0;
+    _nvs_get_str("remember_user", s.remember_username, sizeof(s.remember_username));
+    // Default: HARD in a production build, SOFT in dev (doc 179 D1) — only
+    // read from NVS if this is NOT a production build; a production build
+    // always enforces hard regardless of any stored dev-session toggle
+    // (see session_store_get_login_gate_hard()'s own guard, belt-and-braces).
+    s.login_gate_hard = _nvs_get_i32("login_gate_hard", BUILD_IS_PRODUCTION ? 1 : 0);
 
     // First-boot provisioning — only seed if NVS genuinely has nothing yet,
     // never overwrite a value a previous session already stored ("setup"
@@ -255,6 +268,45 @@ int32_t session_store_next_local_trip_id(void) {
     s.next_local_trip_id_counter++;
     _nvs_set_i32("next_trip_id", s.next_local_trip_id_counter);
     return id;
+}
+
+// ── Login screen (doc 179 Phase 2/D1/D2) ───────────────────────
+void session_store_set_remember_me(bool enable, const char *username) {
+    s.remember_me = enable;
+    _nvs_set_i32("remember_me", enable ? 1 : 0);
+    if (enable && username) {
+        strlcpy(s.remember_username, username, sizeof(s.remember_username));
+        _nvs_set_str("remember_user", s.remember_username);
+    } else if (!enable) {
+        s.remember_username[0] = '\0';
+        _nvs_set_str("remember_user", "");
+    }
+}
+
+bool session_store_get_remember_me(char *out_username, size_t out_size) {
+    if (out_username && out_size) strlcpy(out_username, s.remember_username, out_size);
+    return s.remember_me;
+}
+
+// D1(c): production is ALWAYS hard-gated, no exception, no override —
+// this check comes first and short-circuits everything else. Only a
+// non-production (dev) build ever consults the NVS-persisted toggle,
+// which can be flipped at ANY time at runtime (no rebuild) via
+// session_store_set_login_gate_hard() / the "login gate ..." serial
+// command (login_screen.c).
+bool session_store_get_login_gate_hard(void) {
+    if (BUILD_IS_PRODUCTION) return true;
+    return s.login_gate_hard != 0;
+}
+
+void session_store_set_login_gate_hard(bool hard) {
+    if (BUILD_IS_PRODUCTION) {
+        ESP_LOGW(TAG, "login_gate: this is a PRODUCTION build — hard gate cannot be turned off, ignoring");
+        return;
+    }
+    s.login_gate_hard = hard ? 1 : 0;
+    _nvs_set_i32("login_gate_hard", s.login_gate_hard);
+    ESP_LOGI(TAG, "login_gate: dev override set to %s", hard ? "HARD" : "SOFT");
 }
 
 // ── Clear (logout) ────────────────────────────────────────────

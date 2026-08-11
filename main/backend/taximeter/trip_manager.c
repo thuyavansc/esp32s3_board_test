@@ -6,6 +6,7 @@
  * phases).
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -20,6 +21,7 @@
 #include "fare_calc.h"
 #include "trip_sync.h"
 #include "bg_worker.h"
+#include "diag.h"
 #include "trip_manager.h"
 
 static const char *TAG = "trip";
@@ -43,6 +45,28 @@ static const char *TAG = "trip";
 static char s_customer_name[32] = {0};
 static int  s_tick_counter = 0;
 static int  s_sync_tick_counter = 0;
+
+// doc 184 §7.2 — trip-survives-reboot restore state. Populated by
+// _check_for_pending_restore() at boot (trip_manager_init()); consumed
+// exactly once by trip_manager_confirm_restore(), driven by the UI.
+typedef struct {
+    int32_t local_trip_id;
+    int64_t server_job_id;
+    char    customer_name[32];
+    char    tariff_type[16];
+    time_t  started_at;
+    double  distance_km;
+    double  flag_fall_cents;
+    double  distance_fare_cents;
+    double  time_fare_cents;
+    double  gps_inactive_fare_cents;
+    double  extras_cents;
+    double  special_fares_cents;
+    double  total_fare_cents;
+} _pending_restore_t;
+
+static bool               s_has_pending_restore = false;
+static _pending_restore_t s_pending_restore;
 
 // ── Persistence — one JSON file per trip, /spiffs/store/trips/trip_<id>.json ──
 static void _ensure_dir(void) {
@@ -90,6 +114,104 @@ static void _persist_trip_state(void) {
         fclose(fp);
     }
     free(str);
+}
+
+// doc 184 §7.2/§3.3 — reads back the persisted trip JSON _persist_
+// trip_state() writes every 10s. Before this, trip_manager.c's own
+// header comment claimed "persists trip state to SPIFFS so an in-
+// progress trip survives a reboot" — untrue: fopen(path, "w") was the
+// ONLY file operation anywhere in this file, nothing ever read it back
+// (the same class of write-only-persistence bug doc 182 found in
+// reference_data.c). Called once, from trip_manager_init(), before the
+// tick task starts — sets s_has_pending_restore if a trip was genuinely
+// still running when the reboot happened; the driver confirms via
+// trip_manager_confirm_restore() before fare_calc actually resumes.
+static void _check_for_pending_restore(void) {
+    int32_t local_id = session_store_get_active_local_trip_id();
+    if (local_id <= 0) return;   // nothing was active — normal case, most boots
+
+    char path[96];
+    snprintf(path, sizeof(path), "%s/trip_%ld.json", TRIPS_DIR, (long)local_id);
+    FILE *fp = fopen(path, "r");
+    if (!fp) {
+        ESP_LOGW(TAG, "restore: session says trip #%ld was active, but '%s' doesn't exist — clearing stale session state",
+                 (long)local_id, path);
+        session_store_clear_active_trip();
+        return;
+    }
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    if (size <= 0) {
+        fclose(fp);
+        ESP_LOGW(TAG, "restore: '%s' is empty — clearing stale session state", path);
+        session_store_clear_active_trip();
+        return;
+    }
+    char *buf = malloc((size_t)size + 1);
+    if (!buf) {
+        fclose(fp);
+        ESP_LOGE(TAG, "restore: malloc(%ld) failed — cannot check for a pending restore this boot", size + 1);
+        return;   // deliberately does NOT clear session state — try again next boot when heap may be less pressured
+    }
+    size_t read = fread(buf, 1, (size_t)size, fp);
+    fclose(fp);
+    buf[read] = '\0';
+
+    cJSON *j = cJSON_Parse(buf);
+    free(buf);
+    if (!j) {
+        ESP_LOGW(TAG, "restore: '%s' is not valid JSON — clearing stale session state", path);
+        session_store_clear_active_trip();
+        return;
+    }
+
+    cJSON *is_running = cJSON_GetObjectItemCaseSensitive(j, "is_running");
+    if (!cJSON_IsTrue(is_running)) {
+        // The trip was already stopped (fare_calc_stop() ran) before the
+        // reboot — nothing to resume. Deliberately leave the active
+        // trip id in session_store as-is: it may still need 'trip
+        // finalize'/'sync now' to reach the server, and that path
+        // doesn't need fare_calc restored at all (it only reads
+        // session_store, not fare_calc).
+        cJSON_Delete(j);
+        return;
+    }
+
+    #define NUM(field) ((f = cJSON_GetObjectItemCaseSensitive(j, field)) && cJSON_IsNumber(f) ? f->valuedouble : 0.0)
+    cJSON *f;
+    memset(&s_pending_restore, 0, sizeof(s_pending_restore));
+    s_pending_restore.local_trip_id          = local_id;
+    s_pending_restore.server_job_id          = (int64_t)NUM("server_job_id");
+    s_pending_restore.started_at             = (time_t)NUM("started_at");
+    s_pending_restore.distance_km            = NUM("distance_km");
+    s_pending_restore.flag_fall_cents        = NUM("flag_fall_cents");
+    s_pending_restore.distance_fare_cents    = NUM("distance_fare_cents");
+    s_pending_restore.time_fare_cents        = NUM("time_fare_cents");
+    s_pending_restore.gps_inactive_fare_cents = NUM("gps_inactive_fare_cents");
+    s_pending_restore.extras_cents           = NUM("extras_cents");
+    s_pending_restore.special_fares_cents    = NUM("special_fares_cents");
+    s_pending_restore.total_fare_cents       = NUM("total_fare_cents");
+    #undef NUM
+
+    cJSON *customer = cJSON_GetObjectItemCaseSensitive(j, "customer_name");
+    cJSON *ttype    = cJSON_GetObjectItemCaseSensitive(j, "tariff_type");
+    if (cJSON_IsString(customer)) strlcpy(s_pending_restore.customer_name, customer->valuestring, sizeof(s_pending_restore.customer_name));
+    if (cJSON_IsString(ttype))    strlcpy(s_pending_restore.tariff_type, ttype->valuestring, sizeof(s_pending_restore.tariff_type));
+    cJSON_Delete(j);
+
+    if (s_pending_restore.tariff_type[0] == '\0') {
+        ESP_LOGW(TAG, "restore: trip #%ld has no tariff_type recorded — cannot resume it, clearing", (long)local_id);
+        session_store_clear_active_trip();
+        return;
+    }
+
+    s_has_pending_restore = true;
+    ESP_LOGW(TAG, "══════════════════════════════════════");
+    ESP_LOGW(TAG, "RESTORE: trip #%ld was still running before this reboot — $%.2f accrued so far",
+             (long)local_id, s_pending_restore.total_fare_cents / 100.0);
+    ESP_LOGW(TAG, "  Waiting for driver confirmation before resuming — see 'trip restore yes|no'");
+    ESP_LOGW(TAG, "══════════════════════════════════════\n");
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -167,7 +289,11 @@ static void _trip_tick_task(void *arg) {
 }
 
 void trip_manager_init(void) {
-    xTaskCreate(_trip_tick_task, "trip_tick", 4096, NULL, 3, NULL);
+    fare_calc_init();   // PSRAM allocation MUST happen before any other fare_calc_* call (doc 179 §2/§6)
+    _check_for_pending_restore();   // doc 184 §7.2 — must run before the tick task starts (nothing to tick until the driver confirms)
+    TaskHandle_t h = NULL;
+    xTaskCreate(_trip_tick_task, "trip_tick", 4096, NULL, 3, &h);
+    diag_register_task(h, "trip_tick");   // doc 184 §10.2 — the task that actually overflowed; see 'stacks'
     ESP_LOGI(TAG, "Trip manager ready — fare-calc tick task started (every %dms)", FARE_CALC_TICK_MS);
 }
 
@@ -275,6 +401,61 @@ bool trip_manager_is_trip_active(void) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  TRIP-SURVIVES-REBOOT RESTORE (doc 184 §7.2)
+// ═══════════════════════════════════════════════════════════════
+bool trip_manager_has_pending_restore(void) {
+    return s_has_pending_restore;
+}
+
+void trip_manager_get_pending_restore_summary(char *out, size_t out_size) {
+    if (!out || out_size == 0) return;
+    if (!s_has_pending_restore) { out[0] = '\0'; return; }
+    snprintf(out, out_size, "Trip #%ld - $%.2f so far.\nResume this trip?",
+             (long)s_pending_restore.local_trip_id, s_pending_restore.total_fare_cents / 100.0);
+}
+
+void trip_manager_confirm_restore(bool resume) {
+    if (!s_has_pending_restore) return;
+
+    const tariff_t *tariff = reference_data_find_tariff_by_time(s_pending_restore.tariff_type, time(NULL));
+    if (!tariff) {
+        ESP_LOGE(TAG, "restore: could not resolve tariff type '%s' — the accrued fare could not be recovered", s_pending_restore.tariff_type);
+        ESP_LOGE(TAG, "  into a live meter. Local trip #%ld / server job id kept in session — 'sync now' can",
+                 (long)s_pending_restore.local_trip_id);
+        ESP_LOGE(TAG, "  still push whatever was already synced before the reboot.");
+        s_has_pending_restore = false;
+        return;
+    }
+
+    strlcpy(s_customer_name, s_pending_restore.customer_name, sizeof(s_customer_name));
+    session_store_set_active_trip(s_pending_restore.local_trip_id, s_pending_restore.server_job_id);
+    s_tick_counter = 0;
+    s_sync_tick_counter = 0;
+
+    fare_calc_snapshot_t carried = {0};
+    carried.started_at              = s_pending_restore.started_at;
+    carried.distance_km             = s_pending_restore.distance_km;
+    carried.flag_fall_cents         = s_pending_restore.flag_fall_cents;
+    carried.distance_fare_cents     = s_pending_restore.distance_fare_cents;
+    carried.time_fare_cents         = s_pending_restore.time_fare_cents;
+    carried.gps_inactive_fare_cents = s_pending_restore.gps_inactive_fare_cents;
+    carried.extras_cents            = s_pending_restore.extras_cents;
+    carried.special_fares_cents     = s_pending_restore.special_fares_cents;
+
+    fare_calc_restore(tariff, &carried);
+    s_has_pending_restore = false;
+    _persist_trip_state();
+
+    if (resume) {
+        ESP_LOGI(TAG, "TRIP #%ld RESUMED after reboot — driver confirmed", (long)s_pending_restore.local_trip_id);
+    } else {
+        ESP_LOGW(TAG, "TRIP #%ld: driver chose NOT to resume — finalizing with the fare as of the reboot",
+                 (long)s_pending_restore.local_trip_id);
+        trip_manager_finalize_trip();   // reuses the existing, proven stop+sync path
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  SERIAL COMMANDS
 // ═══════════════════════════════════════════════════════════════
 static void _show_help(void) {
@@ -283,6 +464,7 @@ static void _show_help(void) {
     printf("  trip pause / trip resume    Pause/resume billing\n");
     printf("  trip extras <dollars>       Add a flat extras charge\n");
     printf("  trip finalize               Stop (if needed) + full AddJob/Trips/SaveJobFares sync\n");
+    printf("  trip restore yes|no         Confirm/decline resuming a trip found active from before a reboot (doc 184)\n");
     printf("  trip info                   Live fare breakdown\n");
     printf("  trip help                   Show this help\n\n");
 }
@@ -341,6 +523,20 @@ bool trip_manager_process_command(const char *line) {
         }
     } else if (strcmp(p, "finalize") == 0) {
         trip_manager_finalize_trip();
+    } else if (strncmp(p, "restore", 7) == 0) {
+        const char *arg = p + 7;
+        while (*arg == ' ') arg++;
+        if (!s_has_pending_restore) {
+            printf("No pending restore — nothing to confirm.\n");
+        } else if (strcmp(arg, "yes") == 0) {
+            trip_manager_confirm_restore(true);
+        } else if (strcmp(arg, "no") == 0) {
+            trip_manager_confirm_restore(false);
+        } else {
+            char summary[96];
+            trip_manager_get_pending_restore_summary(summary, sizeof(summary));
+            printf("%s\nUsage: trip restore yes|no\n", summary);
+        }
     } else if (strcmp(p, "info") == 0) {
         _show_info();
     } else {

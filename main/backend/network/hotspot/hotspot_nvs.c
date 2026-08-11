@@ -63,12 +63,14 @@ void hotspot_nvs_init(void) {
     s.channel     = _nvs_get_u8("channel", HOTSPOT_DEFAULT_CHANNEL);
     s.max_clients = _nvs_get_u8("max_clients", HOTSPOT_MAX_CLIENTS);
     s.hidden      = _nvs_get_u8("hidden", 0) != 0;
+    s.enabled     = _nvs_get_u8("enabled", HOTSPOT_DEFAULT_ENABLED) != 0;
 
     if (s.channel < 1 || s.channel > 13) s.channel = HOTSPOT_DEFAULT_CHANNEL;         // corrupt/out-of-range NVS value — don't hand a bad channel to the WiFi driver
     if (s.max_clients < 1 || s.max_clients > 10) s.max_clients = HOTSPOT_MAX_CLIENTS;
 
-    ESP_LOGI(TAG, "Hotspot config loaded: ssid=\"%s\" channel=%d max_clients=%d hidden=%s "
-             "(password not logged)", s.ssid, s.channel, s.max_clients, s.hidden ? "yes" : "no");
+    ESP_LOGI(TAG, "Hotspot config loaded: ssid=\"%s\" channel=%d max_clients=%d hidden=%s enabled=%s "
+             "(password not logged)", s.ssid, s.channel, s.max_clients, s.hidden ? "yes" : "no",
+             s.enabled ? "yes" : "no");
 }
 
 void hotspot_nvs_get(hotspot_config_t *out) {
@@ -136,13 +138,23 @@ esp_err_t hotspot_nvs_reset_to_defaults(void) {
     s.channel     = HOTSPOT_DEFAULT_CHANNEL;
     s.max_clients = HOTSPOT_MAX_CLIENTS;
     s.hidden      = false;
+    s.enabled     = HOTSPOT_DEFAULT_ENABLED;
 
     _nvs_set_str("ssid", s.ssid);
     _nvs_set_str("password", s.password);
     _nvs_set_u8("channel", s.channel);
     _nvs_set_u8("max_clients", s.max_clients);
     _nvs_set_u8("hidden", 0);
+    _nvs_set_u8("enabled", s.enabled ? 1 : 0);
 
     ESP_LOGW(TAG, "Hotspot credentials RESET to factory defaults (ssid=\"%s\") — AP restart needed", s.ssid);
+    return ESP_OK;
+}
+
+esp_err_t hotspot_nvs_set_enabled(bool enabled) {
+    s.enabled = enabled;
+    _nvs_set_u8("enabled", enabled ? 1 : 0);
+    ESP_LOGI(TAG, "Hotspot enabled-state persisted: %s (will %sstart automatically next boot)",
+             enabled ? "yes" : "no", enabled ? "" : "NOT ");
     return ESP_OK;
 }

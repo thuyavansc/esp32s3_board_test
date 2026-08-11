@@ -78,6 +78,16 @@
 #include "reference_data.h"
 #include "directions_client.h"
 
+// PHASE 0 (doc 179 §2/§6): must be called ONCE, before any other
+// fare_calc_* function — allocates fare_calc's ~35KB state block in
+// PSRAM rather than internal SRAM .bss (doc 179's single biggest RAM
+// win; internal SRAM measured at 7.4KB free, PSRAM at 7.98MB free).
+// Called from trip_manager_init(). Safe to call more than once (no-op
+// after the first successful call). If the PSRAM allocation fails,
+// every other fare_calc_* call becomes a safe no-op (logged loudly) —
+// the meter simply cannot start, rather than crashing.
+void fare_calc_init(void);
+
 #define FARE_CALC_TICK_MS  2000   // matches Android's TRIP_POINT_INTERVAL_MILLIS
 
 // 7.2 m/s = 25.92 km/h — the exact speed threshold the reference app uses.
@@ -215,6 +225,24 @@ typedef struct {
 // and opens the first TimeFrame (Hybrid — matches Android's default
 // state at trip start, doc 150 §3).
 void fare_calc_start(const tariff_t *tariff);
+
+// doc 184 §7.2 — resumes a trip that was running before a reboot.
+// `carried` is a snapshot taken BEFORE the reboot (reloaded from
+// trip_manager.c's persisted trip_<id>.json) — its accumulated totals
+// become a baseline that every fare_calc_get_snapshot() call from now
+// on adds on top of. `carried->started_at` is kept as the trip's
+// original start time (not "now"), so trip duration reported later
+// stays correct across the restart.
+//
+// A FRESH TimeFrame history starts from this call onward — only the
+// aggregate totals survive a reboot (that's all trip_manager.c
+// persists), not the full per-segment breakdown, so the frames that
+// existed before the crash cannot be reconstructed. The fare TOTAL is
+// exactly correct either way; only the per-segment sync detail for the
+// pre-reboot portion of the trip is lost (the same class of acceptable
+// degradation this module already applies when FARE_CALC_MAX_TIME_FRAMES
+// is exceeded — see frames_truncated in fare_calc.c).
+void fare_calc_restore(const tariff_t *tariff, const fare_calc_snapshot_t *carried);
 
 // Stop — closes the current TimeFrame (if any) and freezes every
 // total (still readable via fare_calc_get_snapshot()/

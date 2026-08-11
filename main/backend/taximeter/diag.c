@@ -24,6 +24,53 @@
 static const char *TAG = "diag";
 
 // ═══════════════════════════════════════════════════════════════
+//  "stacks" — per-task high-water marks (doc 184 §10.2)
+//
+//  This project had ZERO stack instrumentation until this — which is
+//  exactly why nobody could see trip_tick's 4096-byte stack was too
+//  small before it overflowed 3 times (doc 184 §1). uxTaskGetStack
+//  HighWaterMark() is unconditionally available on ESP-IDF (INCLUDE_
+//  uxTaskGetStackHighWaterMark is hardcoded =1 in FreeRTOSConfig.h,
+//  not a Kconfig option) — no sdkconfig change needed. Not every task
+//  in this firmware is registered, only the ones that do blocking
+//  network/UART I/O or otherwise matter for stack sizing — see each
+//  xTaskCreate() call site for where diag_register_task() was added.
+// ═══════════════════════════════════════════════════════════════
+#define DIAG_MAX_TRACKED_TASKS 8
+typedef struct {
+    TaskHandle_t handle;
+    char         name[16];
+} _tracked_task_t;
+static _tracked_task_t s_tasks[DIAG_MAX_TRACKED_TASKS];
+static int s_task_count = 0;
+
+void diag_register_task(TaskHandle_t handle, const char *name) {
+    if (!handle || s_task_count >= DIAG_MAX_TRACKED_TASKS) return;
+    s_tasks[s_task_count].handle = handle;
+    strlcpy(s_tasks[s_task_count].name, name ? name : "?", sizeof(s_tasks[s_task_count].name));
+    s_task_count++;
+}
+
+static void _cmd_stacks(void) {
+    ESP_LOGI(TAG, "══════════════════════════════════════");
+    ESP_LOGI(TAG, "TASK STACK HIGH-WATER MARKS");
+    ESP_LOGI(TAG, "──────────────────────────────────────");
+    ESP_LOGI(TAG, "  \"free\" = the LOWEST this task's stack has ever come down to since");
+    ESP_LOGI(TAG, "  boot — not current usage. Low/zero here means it nearly (or did)");
+    ESP_LOGI(TAG, "  overflow at some point — see doc 184 §1/§10 for why this matters.");
+    if (s_task_count == 0) {
+        ESP_LOGI(TAG, "  (no tasks registered — see diag_register_task())");
+    }
+    for (int i = 0; i < s_task_count; i++) {
+        UBaseType_t free_bytes = uxTaskGetStackHighWaterMark(s_tasks[i].handle);
+        const char *flag = (free_bytes < 512)  ? "  <-- LOW, investigate" :
+                            (free_bytes < 1024) ? "  <-- getting tight"    : "";
+        ESP_LOGI(TAG, "  %-14s %6u bytes free (minimum ever)%s", s_tasks[i].name, (unsigned)free_bytes, flag);
+    }
+    ESP_LOGI(TAG, "══════════════════════════════════════\n");
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  "mem" — RAM
 // ═══════════════════════════════════════════════════════════════
 // Phase 0 (doc 155 §12) — this command was REWRITTEN because the old
@@ -154,6 +201,7 @@ static void _cmd_store(void) {
 static void _show_help(void) {
     printf("\n  mem       Free heap / largest block / PSRAM\n");
     printf("  store     SPIFFS usage + every stored file + full session (NVS) dump\n");
+    printf("  stacks    Per-task stack high-water marks (doc 184 §10.2)\n");
     printf("  diag help Show this help\n\n");
 }
 
@@ -167,6 +215,10 @@ bool diag_process_command(const char *line) {
     }
     if (strcmp(line, "store") == 0) {
         _cmd_store();
+        return true;
+    }
+    if (strcmp(line, "stacks") == 0) {
+        _cmd_stacks();
         return true;
     }
     if (strncmp(line, "diag", 4) == 0) {

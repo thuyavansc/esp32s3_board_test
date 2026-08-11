@@ -1,0 +1,370 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0xb (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f3c
+entry 0x403c8920
+I (27) boot: ESP-IDF 5.4.0 2nd stage bootloader
+I (27) boot: compile time Aug  6 2026 08:44:50
+I (27) boot: Multicore bootloader
+I (27) boot: chip revision: v0.2
+I (30) boot: efuse block revision: v1.4
+I (33) boot.esp32s3: Boot SPI Speed : 80MHz
+I (37) boot.esp32s3: SPI Mode       : DIO
+I (41) boot.esp32s3: SPI Flash Size : 16MB
+I (45) boot: Enabling RNG early entropy source...
+I (49) boot: Partition Table:
+I (52) boot: ## Label            Usage          Type ST Offset   Length
+I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (65) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (71) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (78) boot:  3 factory          factory app      00 00 00020000 00300000
+I (84) boot:  4 ota_0            OTA app          00 10 00320000 00300000
+I (91) boot:  5 ota_1            OTA app          00 11 00620000 00300000
+I (97) boot:  6 storage          Unknown data     01 82 00920000 004e0000
+I (104) boot:  7 llm              Unknown data     01 82 00e00000 00200000
+I (110) boot: End of partition table
+I (114) boot: Defaulting to factory image
+I (117) esp_image: segment 0: paddr=00020020 vaddr=3c120020 size=7f5ech (521708) map
+I (217) esp_image: segment 1: paddr=0009f614 vaddr=3fc9ed00 size=00a04h (  2564) load
+I (218) esp_image: segment 2: paddr=000a0020 vaddr=42000020 size=116838h (1140792) map
+I (422) esp_image: segment 3: paddr=001b6860 vaddr=3fc9f704 size=04a70h ( 19056) load
+I (426) esp_image: segment 4: paddr=001bb2d8 vaddr=40374000 size=1acb4h (109748) load
+I (450) esp_image: segment 5: paddr=001d5f94 vaddr=600fe100 size=0001ch (    28) load
+I (461) boot: Loaded app from partition at offset 0x20000
+I (461) boot: Disabling RNG early entropy source...
+I (472) octal_psram: vendor id    : 0x0d (AP)
+I (472) octal_psram: dev id       : 0x02 (generation 3)
+I (472) octal_psram: density      : 0x03 (64 Mbit)
+I (474) octal_psram: good-die     : 0x01 (Pass)
+I (478) octal_psram: Latency      : 0x01 (Fixed)
+I (482) octal_psram: VCC          : 0x01 (3V)
+I (487) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (491) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (496) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (501) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (506) octal_psram: DriveStrength: 0x00 (1/1)
+I (511) MSPI Timing: PSRAM timing tuning index: 5
+I (515) esp_psram: Found 8MB PSRAM device
+I (518) esp_psram: Speed: 80MHz
+I (521) cpu_start: Multicore app
+I (957) esp_psram: SPI SRAM memory test OK
+I (966) cpu_start: Pro cpu start user code
+I (966) cpu_start: cpu freq: 240000000 Hz
+I (966) app_init: Application information:
+I (966) app_init: Project name:     esp32s3_board
+I (970) app_init: App version:      5d4c9e0-dirty
+I (975) app_init: Compile time:     Aug  6 2026 08:34:47
+I (980) app_init: ELF file SHA256:  aed3fa1f1...
+I (984) app_init: ESP-IDF:          5.4.0
+I (988) efuse_init: Min chip rev:     v0.0
+I (992) efuse_init: Max chip rev:     v0.99 
+I (996) efuse_init: Chip rev:         v0.2
+I (1000) heap_init: Initializing. RAM available for dynamic allocation:
+I (1006) heap_init: At 3FCC4750 len 00024FC0 (147 KiB): RAM
+I (1011) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1016) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1022) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (1027) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1035) spi_flash: detected chip: generic
+I (1037) spi_flash: flash io: dio
+W (1041) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
+I (1050) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1057) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1064) main_task: Started on CPU0
+I (1078) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1079) main_task: Calling app_main()
+I (1102) nvs_state: OTA state namespace 'ota_state' ready
+I (1107) session: Session store loaded from NVS (namespace 'session')
+I (1107) bgworker: Background worker task started (persistent, one-time stack allocation)
+
+Type 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all' | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help' | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store' | 'time' | 'net uplink wifi|cellular|auto' | 'cell up|status' | 'hotspot on|off|status' | 'smsc send|list|status' | 'sms <command>' | 'factory reset' | 'nvs status'
+> I (1160) pp: pp rom version: e7ae62f
+I (1162) net80211: net80211 rom version: e7ae62f
+I (1168) wifi:wifi driver task: 3fcdbccc, prio:23, stack:6656, core=0
+I (1183) wifi:wifi firmware version: 48ea317a7
+I (1183) wifi:wifi certification version: v7.0
+I (1183) wifi:config NVS flash: enabled
+I (1184) wifi:config nano formatting: disabled
+I (1189) wifi:Init data frame dynamic rx buffer num: 16
+I (1194) wifi:Init static rx mgmt buffer num: 5
+I (1198) wifi:Init management short buffer num: 32
+I (1202) wifi:Init dynamic tx buffer num: 32
+I (1206) wifi:Init static tx FG buffer num: 2
+I (1210) wifi:Init static rx buffer size: 1600
+I (1214) wifi:Init static rx buffer num: 6
+I (1218) wifi:Init dynamic rx buffer num: 16
+I (1223) wifi_init: rx ba win: 6
+I (1225) wifi_init: accept mbox: 6
+I (1228) wifi_init: tcpip mbox: 32
+I (1231) wifi_init: udp mbox: 6
+I (1234) wifi_init: tcp mbox: 6
+I (1237) wifi_init: tcp tx win: 5760
+I (1240) wifi_init: tcp rx win: 5760
+I (1244) wifi_init: tcp mss: 1440
+I (1247) wifi_init: WiFi IRAM OP enabled
+I (1250) wifi_init: WiFi RX IRAM OP enabled
+I (1256) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10
+I (1291) wifi:mode : sta (a4:cb:8f:d6:98:f8)
+I (1292) wifi:enable tsf
+I (1293) wifi:Set ps type: 0, coexist: 0
+
+I (1294) wifi_sta: WiFi STA config loaded: ssid="Mobitel 4G-489E" auto_connect=yes (password not logged)
+W (1301) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1310) wifi_sta: WiFi connecting to 'Mobitel 4G-489E' (timeout 15000ms)...
+I (1322) wifi:new:<8,0>, old:<1,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (1323) wifi:state: init -> auth (0xb0)
+I (1329) wifi:state: auth -> assoc (0x0)
+I (1333) wifi:state: assoc -> init (0x3a0)
+I (1335) wifi:new:<8,0>, old:<8,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+W (1342) wifi_sta: WiFi disconnected — reconnecting (auto-connect is on)...
+W (3757) wifi_sta: WiFi disconnected — reconnecting (auto-connect is on)...
+I (3764) wifi:new:<8,0>, old:<8,0>, ap:<255,255>, sta:<8,0>, prof:6, snd_ch_cfg:0x0
+I (3764) wifi:state: init -> auth (0xb0)
+I (3768) wifi:state: auth -> assoc (0x0)
+I (3773) wifi:state: assoc -> run (0x10)
+I (3795) wifi:connected with Mobitel 4G-489E, aid = 3, channel 8, BW20, bssid = 1c:13:86:d6:48:9e
+I (3795) wifi:security: WPA2-PSK, phy: bgn, rssi: -55
+I (3799) wifi:pm start, type: 0
+
+I (3800) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (3808) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (3877) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (4870) esp_netif_handlers: sta ip: 192.168.8.140, mask: 255.255.255.0, gw: 192.168.8.1
+I (4870) wifi_sta: WiFi connected — IP: 192.168.8.140
+I (4872) hotspot_nvs: Hotspot config loaded: ssid="TaxiMeter-200" channel=6 max_clients=8 hidden=no enabled=yes (password not logged)
+I (4884) cellular: ══════════════════════════════════════
+I (4895) cellular: CELLULAR PPP INIT — USB CDC modem (A7670E)
+I (4901) cellular:   Requires board DIP switch USB=OFF — confirmed on this exact board that
+I (4909) cellular:   GNSS/AT/console (UART1/UART0) are unaffected by this setting (doc 155 §12.6).
+I (4918) USBH_CDC: iot usbh cdc version: 3.1.0
+I (4953) cellular: USB CDC driver installed — waiting for A7670E enumeration...
+I (4953) modem_board: iot_usbh_modem, version: 2.2.0
+I (4954) iot_eth: IoT ETH Version: 1.1.0
+I (4958) esp-modem-dte: USB PPP network interface init success
+I (4964) cellular: Modem installed — APN="default" — PPP auto-connect DISABLED (manual control)
+I (4972) cellular:   Use 'cell up' or let net_manager.c bring it up per NET_UPLINK_PREFER_CELLULAR.
+I (4981) cellular: ══════════════════════════════════════
+
+I (4993) hotspot_ap: Hotspot module ready (AP event handlers registered)
+I (4999) hotspot_ap: Hotspot was ON last time (persisted) — starting automatically
+I (5007) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 1.1.1.1 (secondary)
+I (5013) wifi:mode : sta (a4:cb:8f:d6:98:f8) + softAP (a4:cb:8f:d6:98:f9)
+I (5022) wifi:Total power save buffer number: 16
+I (5024) wifi:Init max length of beacon: 752/752
+I (5028) wifi:Init max length of beacon: 752/752
+I (5035) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (5040) wifi:Total power save buffer number: 16
+I (5045) hotspot_ap: ══════════════════════════════════════
+I (5046) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (5065) hotspot_ap: HOTSPOT STARTED — ssid="TaxiMeter-200" channel=6 ip=192.168.4.1 max_clients=8
+I (5074) hotspot_ap:   (NAT not yet enabled — net_manager.c enables it once an uplink is ready)
+I (5082) hotspot_ap: ══════════════════════════════════════
+
+I (5094) net_mgr: NET_UPLINK_PREFER_CELLULAR=1 — attempting cellular uplink in the background...
+I (5103) cellular: Dialling PPP (APN="default", timeout=30000ms)...
+I (5335) USBH_CDC: New device connected, address: 1
+I (5335) esp-modem-dte: USB CDC device connected, VID: 0x1e0e, PID: 0x9011
+I (5336) esp-modem-dte: Matched USB Modem: "SIMCOM A7670E (Waveshare)", Modem Interface: 5, AT Interface: -1
+I (5345) cdc_descriptor: Found NOTIF endpoint: 8
+I (5349) cdc_descriptor: Found OUT endpoint: 10
+I (5353) cdc_descriptor: Found IN endpoint: 1
+I (5358) modem_board: DTE connected
+I (5361) modem_board: Handling stage = STAGE_SYNC
+I (7209) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs; try 'time' to check current status)
+I (7209) trips_api: ══════════════════════════════════════
+I (7221) trips_api: TRIPS REST API + JSON Storage Init
+I (7226) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (7233) trips_api:   Default trip ID: 12772
+I (7237) trips_api:   Storage backend: 2
+E (7365) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (7365) esp-modem-dte: Retry 1/5 failed. Retrying in 2000 milliseconds...
+I (7542) trips_api: Created storage directory: /spiffs/store
+I (7542) trips_api: SPIFFS partition: 4581 KB total | 93 KB used | 4487 KB free
+I (7543) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (7549) trips_api: TRIPS API Storage — READY ✓
+I (7554) trips_api: Type 'api help' for available commands.
+I (7559) trips_api: ══════════════════════════════════════
+
+I (7705) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8230 KB, largest block=8064 KB
+I (7718) refdata: tariffs: 8 rows loaded
+I (7719) refdata:   Reading /spiffs/store/ref/fixed_rates.json (905 bytes) — free heap=8229 KB, largest block=8064 KB
+I (7723) refdata: fixed_rates: 2 rows loaded
+I (7726) refdata:   Reading /spiffs/store/ref/special_fares.json (1930 bytes) — free heap=8229 KB, largest block=8064 KB
+I (7740) refdata: special_fares: 9 rows loaded
+I (7833) refdata:   Reading /spiffs/store/ref/public_holidays.json (75459 bytes) — free heap=8229 KB, largest block=8064 KB
+I (8084) refdata: public_holidays: 22 rows loaded (year window 2025-2027; 428 out-of-window rows skipped)
+I (8084) refdata: Reference data restored from cache: tariffs=8 fixed_rates=2 special_fares=9 holidays=22
+I (8092) gps: ══════════════════════════════════════
+I (8103) gps: GPS Client Init — default active source: GNSS
+I (8108) gps:   Starting GNSS backend (A7670E, UART1)...
+I (8114) gps_gnss: ══════════════════════════════════════
+I (8125) gps_gnss: GNSS (A7670E) Init
+I (8129) gps_gnss:   A-GPS: ENABLED in config.h
+I (8133) gps_gnss: ══════════════════════════════════════
+I (8145) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (8151) gps_gnss: AT handshake...
+I (8154) gps:   NEO-6M backend NOT compiled in (ENABLE_GPS_NEO6M=0)
+I (8157) gps_gnss:   AT -> OK
+I (8163) gps_gnss: Modem responding ✓
+I (8166) gps:   Injection ('gps set ...') always available regardless of the above.
+I (8172) gps_gnss:   AT+CGNSSPWR=1,1 -> OK
+I (8178) gps: ══════════════════════════════════════
+
+I (8190) farecalc: fare_calc_init: state (35648 bytes) allocated in PSRAM, internal SRAM untouched
+I (8198) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (8205) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (8214) chipinfo: ########################################
+I (8219) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (8225) chipinfo: ########################################
+I (8231) version: ======================================
+I (8235) version: FIRMWARE VERSION
+I (8239) version: --------------------------------------
+I (8244) version:   Project:   esp32s3_board
+I (8248) version:   Version:   26.07.23 (code 1)
+I (8252) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (8265) version:   Running from partition: factory
+I (8269) chipinfo: ======================================
+I (8274) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (8281) chipinfo: --------------------------------------
+I (8282) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (8293) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (8298) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (8303) chipinfo:   Crystal is 40 MHz
+I (8306) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (8310) chipinfo: ======================================
+I (8315) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (8322) chipinfo: --------------------------------------
+I (8327) chipinfo:   Model:       ESP32-S3
+I (8331) chipinfo:   Cores:       2
+I (8334) chipinfo:   Revision:    v0.2
+I (8337) chipinfo:   Features:    WiFi BLE External-Flash
+I (8342) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (8347) chipinfo:   IDF version: 5.4.0
+I (8351) chipinfo: ======================================
+I (8356) chipinfo: FLASH INFO  (live-probed)
+I (8360) chipinfo: --------------------------------------
+I (8365) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (8372) chipinfo:   JEDEC ID:        0x852018
+I (8376) chipinfo: ======================================
+I (8381) chipinfo: RAM / HEAP INFO  (live)
+I (8385) chipinfo: --------------------------------------
+I (8390) chipinfo:   Free heap now (all capabilities): 8375432 bytes | 8179.1 KB (7.99 MB)
+I (8398) chipinfo:   Minimum ever free:                8131368 bytes | 7940.8 KB (7.75 MB)
+I (8406) chipinfo:   --------------------------------------
+I (8411) chipinfo:   PSRAM initialized: YES
+I (8415) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (8423) chipinfo:   SRAM  total:          247215 bytes | 241.4 KB (0.24 MB)
+I (8430) chipinfo:   SRAM  free now:       75207 bytes | 73.4 KB (0.07 MB)
+I (8436) chipinfo:   SRAM  min free ever:  32047 bytes | 31.3 KB (0.03 MB)
+I (8443) chipinfo:   SRAM  largest block:  31744 bytes | 31.0 KB (0.03 MB)
+I (8450) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (8457) chipinfo:   PSRAM free now:          8332256 bytes | 8137.0 KB (7.95 MB)
+I (8464) chipinfo:   PSRAM min free ever:     8131352 bytes | 7940.8 KB (7.75 MB)
+I (8471) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (8478) chipinfo: ======================================
+I (8482) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (8487) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (8494) chipinfo: --------------------------------------
+I (8499) chipinfo:   Name       Type   SubType   Offset     Size
+I (8506) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (8513) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (8521) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (8529) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (8538) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (8546) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (8554) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (8563) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (8571) chipinfo: ======================================
+I (8576) chipinfo: NVS INFO  (live)
+I (8579) chipinfo: --------------------------------------
+I (8585) chipinfo:   Used entries:  216
+I (8588) chipinfo:   Free entries:  540
+I (8592) chipinfo:   Total entries: 756
+I (8595) chipinfo: ======================================
+I (8600) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (8606) chipinfo: --------------------------------------
+I (8612) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (8617) chipinfo:   Used:  96133 bytes | 93.9 KB (0.09 MB)
+I (8622) chipinfo:   Free:  4595308 bytes | 4487.6 KB (4.38 MB)
+I (8628) chipinfo: ########################################
+
+I (8633) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (8639) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (8647) display: SD_CS (TF slot) → GPIO9 HIGH (disabled)
+I (8653) display: Backlight PWM init — GPIO5, 5kHz, 10-bit
+I (8658) display: Backlight ON (GPIO5, PWM 100%)
+I (8663) display: SPI: MOSI=11 SCLK=12 CS=10 DC=14 RST=21 (hardware reset)
+I (8670) gpio: GPIO[14]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (8678) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (8794) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (8794) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (8796) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (8814) gps_gnss: A-GPS preconditions OK — SIM ready, network registered.
+I (8815) gps_gnss:   A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...
+I (9026) display: ST7796S init complete — 320x480 RGB565
+I (9026) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (9030) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (9033) display: DISPLAY — READY ✓
+I (9036) touch: TOUCH INIT — FT6336U via I2C
+I (9041) touch: I2C init: SDA=6 SCL=4
+I (9044) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (9112) touch: FT6336U reset pulsed on GPIO1
+I (9112) touch: FT6336U init — addr: 0x38
+I (9112) touch: Touch input registered with LVGL ✓
+W (9114) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (9120) touch: TOUCH — READY ✓
+I (9123) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (9497) ui: UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)
+I (9498) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (9502) additional_work: Additional work module ready (try: "sms reboot")
+I (9508) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (9515) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (9522) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (9529) chipinfo: READY — Touch UI Active ✓
+I (10373) gps_gnss:   AT+CAGPS -> +AGPS: success.
+I (10374) gps_gnss: A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular
+I (10375) gps_gnss:   connection (not WiFi — see doc 140). Cold fix should now be faster.
+E (11367) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (11367) esp-modem-dte: Retry 2/5 failed. Retrying in 2000 milliseconds...
+I (12515) ram_test: ══════════════════════════════════════
+I (12515) ram_test: PSRAM periodic health-check
+I (12520) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (12527) ram_test:   Before: free=8306936 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12676) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (12677) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7258356 bytes (6.92 MB)
+I (12684) ram_test:   After free: free=8306936 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (12693) ram_test: ══════════════════════════════════════
+E (15369) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (15369) esp-modem-dte: Retry 3/5 failed. Retrying in 2000 milliseconds...
+E (19371) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (19371) esp-modem-dte: Retry 4/5 failed. Retrying in 2000 milliseconds...
+E (23373) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (23373) esp-modem-dte: Retry 5/5 failed. Retrying in 2000 milliseconds...
+W (25376) esp-modem-dte: Operation failed.
+W (25376) esp-modem-dte: Failed to sync with modem DCE, trying to exit data mode
+I (25407) modem_board: Modem manufacturer ID: INCORPORATED
+I (25408) modem_board: Modem module ID: A7670E-FASE
+I (25409) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (25512) modem_board: Handling stage = STAGE_IDLE
+I (25512) net_mgr: DNS resolver -> 8.8.8.8
+I (25513) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (25517) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (25525) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (25531) net_mgr: Active uplink -> CELLULAR
+I (25535) bgworker: Job finished: OK
+I (25612) modem_board: Handling stage = STAGE_START_PPP
+I (25612) modem_board: Check SIM card state...
+I (25613) modem_board: Check signal quality...
+I (25617) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (25621) modem_board: Check network registration...
+I (25627) modem_board: Check PDP context...
+I (25629) modem_board: Set PDP context: cid=1, type=IP, apn=default
+I (25640) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (25643) modem_board: PPP Dial up...

@@ -1,0 +1,283 @@
+> gps infoI (886906) gps: ══════════════════════════════════════
+> gps infoI (891914) gps: ══════════════════════════════════════
+> hotspot on
+> hotspot onI (893073) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 1.1.1.1 (secondary)
+I (893074) wifi:mode : sta (a4:cb:8f:d6:98:f8) + softAP (a4:cb:8f:d6:98:f9)
+I (893079) wifi:Total power save buffer number: 16
+I (893081) wifi:Init max length of beacon: 752/752
+I (893085) wifi:Init max length of beacon: 752/752
+I (893450) wifi:Total power save buffer number: 16
+I (893451) hotspot_ap: ══════════════════════════════════════
+I (893452) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (893457) hotspot_ap: HOTSPOT STARTED — ssid="TaxiMeter-200" channel=6 ip=192.168.4.1 max_clients=8
+I (893465) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (893478) hotspot_ap:   (NAT not yet enabled — net_manager.c enables it once an uplink is ready)
+I (893490) hotspot_ap: ══════════════════════════════════════
+> gps infoI (896953) gps: ══════════════════════════════════════
+> I (901138) gps_gnss: GNSS: no fix | reads=7235 [ACTIVE] (idle — waiting for satellites)
+gps infoI (901961) gps: ══════════════════════════════════════
+I (901986) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+> gps infoI (906927) gps: ══════════════════════════════════════
+> gps infoI (911985) gps: ══════════════════════════════════════
+> I (913829) ram_test: ══════════════════════════════════════
+I (913830) ram_test: PSRAM periodic health-check
+I (913834) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (913841) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (913991) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (913991) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (913999) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (914008) ram_test: ══════════════════════════════════════
+gps infoI (917008) gps: ══════════════════════════════════════
+> gps infoI (922015) gps: ══════════════════════════════════════
+> gps infoI (927023) gps: ══════════════════════════════════════
+> I (931139) gps_gnss: GNSS: no fix | reads=7478 [ACTIVE] (idle — waiting for satellites)
+I (932028) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (932031) gps: ══════════════════════════════════════
+> gps infoI (937044) gps: ══════════════════════════════════════
+> gps infoI (942052) gps: ══════════════════════════════════════
+> gps infoI (947110) gps: ══════════════════════════════════════
+> gps infoI (952118) gps: ══════════════════════════════════════
+> gps infoI (957126) gps: ══════════════════════════════════════
+> I (961140) gps_gnss: GNSS: no fix | reads=7721 [ACTIVE] (idle — waiting for satellites)
+I (962058) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (962134) gps: ══════════════════════════════════════
+[gui] Copied selection to clipboard.
+> gps infoI (967192) gps: ══════════════════════════════════════
+> gps infoI (972200) gps: ══════════════════════════════════════
+> gps infoI (977208) gps: ══════════════════════════════════════
+> gps infoI (982216) gps: ══════════════════════════════════════
+> gps infoI (987224) gps: ══════════════════════════════════════
+> I (991141) gps_gnss: GNSS: no fix | reads=7964 [ACTIVE] (idle — waiting for satellites)
+I (992088) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (992232) gps: ══════════════════════════════════════
+> gps infoI (997240) gps: ══════════════════════════════════════
+> gps infoI (1002248) gps: ══════════════════════════════════════
+> gps infoI (1007257) gps: ══════════════════════════════════════
+> gps infoI (1012266) gps: ══════════════════════════════════════
+> gps infoI (1017325) gps: ══════════════════════════════════════
+> hotspot status
+> hotspot statusI (1020584) hotspot_ap: ══════════════════════════════════════
+I (1020587) hotspot_ap: HOTSPOT STATUS
+I (1020590) hotspot_ap:   Running:      yes
+I (1020594) hotspot_ap:   SSID:         TaxiMeter-200
+I (1020599) hotspot_ap:   Channel:      6
+I (1020602) hotspot_ap:   Max clients:  8
+I (1020606) hotspot_ap:   IP:           192.168.4.1
+I (1020611) hotspot_ap:   Clients now:  0
+I (1020615) hotspot_ap:   NAPT:         disabled (no uplink routed yet)
+I (1020621) hotspot_ap: ══════════════════════════════════════
+> I (1021142) gps_gnss: GNSS: no fix | reads=8207 [ACTIVE] (idle — waiting for satellites)
+I (1022118) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1022333) gps: ══════════════════════════════════════
+> gps infoI (1027342) gps: ══════════════════════════════════════
+> gps infoI (1032351) gps: ══════════════════════════════════════
+> gps infoI (1037360) gps: ══════════════════════════════════════
+> gps infoI (1042369) gps: ══════════════════════════════════════
+> gps infoI (1047378) gps: ══════════════════════════════════════
+> I (1051143) gps_gnss: GNSS: no fix | reads=8450 [ACTIVE] (idle — waiting for satellites)
+I (1052148) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1052387) gps: ══════════════════════════════════════
+> gps infoI (1057396) gps: ══════════════════════════════════════
+> gps infoI (1062405) gps: ══════════════════════════════════════
+> gps infoI (1067414) gps: ══════════════════════════════════════
+> gps infoI (1072423) gps: ══════════════════════════════════════
+> gps infoI (1077432) gps: ══════════════════════════════════════
+> I (1081144) gps_gnss: GNSS: no fix | reads=8693 [ACTIVE] (idle — waiting for satellites)
+I (1082178) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1082441) gps: ══════════════════════════════════════
+> gps infoI (1087450) gps: ══════════════════════════════════════
+> gps infoI (1092459) gps: ══════════════════════════════════════
+> I (1096048) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+I (1096049) wifi:station: d6:1e:eb:98:c9:15 join, AID=1, bgn, 20
+W (1096051) wifi:m f assoc rsp l=122
+W (1097130) wifi:m f auth
+gps infoI (1097468) gps: ══════════════════════════════════════
+> W (1097662) wifi:m f auth
+W (1098871) wifi:m f auth
+W (1099422) wifi:m f auth
+W (1099980) wifi:m f auth
+W (1100058) wifi:m f deauth reason:15
+I (1100058) wifi:station: d6:1e:eb:98:c9:15 leave, AID = 1, reason = 15, bss_flags is 691298, bss:0x600fe29c
+I (1100060) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+I (1100515) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+I (1100515) wifi:station: d6:1e:eb:98:c9:15 join, AID=1, bgn, 20
+W (1100517) wifi:m f assoc rsp l=122
+gps infoI (1102477) gps: ══════════════════════════════════════
+> W (1102757) wifi:m f null
+W (1102859) wifi:m f null
+W (1102962) wifi:m f null
+W (1103064) wifi:m f null
+W (1103167) wifi:m f null
+W (1103269) wifi:m f null
+W (1103371) wifi:m f null
+W (1103576) wifi:m f null
+W (1103679) wifi:m f null
+W (1103781) wifi:m f null
+W (1103883) wifi:m f null
+W (1103986) wifi:m f null
+W (1104088) wifi:m f null
+W (1104293) wifi:m f null
+W (1104395) wifi:m f null
+W (1104498) wifi:m f null
+W (1104522) wifi:m f deauth reason:15
+I (1104523) wifi:station: d6:1e:eb:98:c9:15 leave, AID = 1, reason = 15, bss_flags is 34245730, bss:0x600fe29c
+I (1104525) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+gps infoI (1107486) gps: ══════════════════════════════════════
+> I (1111145) gps_gnss: GNSS: no fix | reads=8936 [ACTIVE] (idle — waiting for satellites)
+I (1112208) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1112496) gps: ══════════════════════════════════════
+> gps infoI (1117505) gps: ══════════════════════════════════════
+> gps infoI (1122464) gps: ══════════════════════════════════════
+> gps infoI (1127473) gps: ══════════════════════════════════════
+> gps infoI (1132482) gps: ══════════════════════════════════════
+> gps infoI (1137541) gps: ══════════════════════════════════════
+> hotspot status
+> hotspot statusI (1139700) hotspot_ap: ══════════════════════════════════════
+I (1139703) hotspot_ap: HOTSPOT STATUS
+I (1139706) hotspot_ap:   Running:      yes
+I (1139710) hotspot_ap:   SSID:         TaxiMeter-200
+I (1139715) hotspot_ap:   Channel:      6
+I (1139718) hotspot_ap:   Max clients:  8
+I (1139722) hotspot_ap:   IP:           192.168.4.1
+I (1139727) hotspot_ap:   Clients now:  0
+I (1139731) hotspot_ap:   NAPT:         disabled (no uplink routed yet)
+I (1139737) hotspot_ap: ══════════════════════════════════════
+> I (1141146) gps_gnss: GNSS: no fix | reads=9179 [ACTIVE] (idle — waiting for satellites)
+I (1142238) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1142549) gps: ══════════════════════════════════════
+> I (1146198) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+I (1146199) wifi:station: d6:1e:eb:98:c9:15 join, AID=1, bgn, 20
+W (1146201) wifi:m f assoc rsp l=122
+W (1147308) wifi:m f auth
+gps infoI (1147558) gps: ══════════════════════════════════════
+> W (1147840) wifi:m f auth
+W (1149040) wifi:m f auth
+W (1149568) wifi:m f auth
+W (1150125) wifi:m f auth
+W (1150206) wifi:m f deauth reason:15
+I (1150207) wifi:station: d6:1e:eb:98:c9:15 leave, AID = 1, reason = 15, bss_flags is 691298, bss:0x600fe29c
+I (1150209) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+I (1150668) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+I (1150668) wifi:station: d6:1e:eb:98:c9:15 join, AID=1, bgn, 20
+W (1150671) wifi:m f assoc rsp l=122
+gps infoI (1152567) gps: ══════════════════════════════════════
+> W (1154675) wifi:m f deauth reason:15
+I (1154676) wifi:station: d6:1e:eb:98:c9:15 leave, AID = 1, reason = 15, bss_flags is 34245730, bss:0x600fe29c
+I (1154678) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+gps infoI (1157578) gps: ══════════════════════════════════════
+> gps infoI (1162587) gps: ══════════════════════════════════════
+> I (1167095) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+I (1167096) wifi:station: d6:1e:eb:98:c9:15 join, AID=1, bgn, 20
+W (1167098) wifi:m f assoc rsp l=122
+gps infoI (1167597) gps: ══════════════════════════════════════
+> W (1168205) wifi:m f auth
+W (1168737) wifi:m f auth
+W (1170141) wifi:m f null
+W (1170243) wifi:m f null
+W (1170345) wifi:m f null
+W (1170448) wifi:m f null
+W (1170550) wifi:m f null
+W (1170652) wifi:m f null
+W (1170754) wifi:m f null
+W (1170857) wifi:m f null
+W (1170960) wifi:m f null
+W (1171103) wifi:m f deauth reason:15
+I (1171103) wifi:station: d6:1e:eb:98:c9:15 leave, AID = 1, reason = 15, bss_flags is 691298, bss:0x600fe29c
+I (1171105) wifi:new:<9,0>, old:<9,0>, ap:<9,0>, sta:<9,0>, prof:6, snd_ch_cfg:0x0
+I (1171147) gps_gnss: GNSS: no fix | reads=9422 [ACTIVE] (idle — waiting for satellites)
+I (1172268) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1172612) gps: ══════════════════════════════════════
+> gps infoI (1177621) gps: ══════════════════════════════════════
+> gps infoI (1182630) gps: ══════════════════════════════════════
+> gps infoI (1187639) gps: ══════════════════════════════════════
+> gps infoI (1192648) gps: ══════════════════════════════════════
+> gps infoI (1197657) gps: ══════════════════════════════════════
+> I (1201148) gps_gnss: GNSS: no fix | reads=9665 [ACTIVE] (idle — waiting for satellites)
+> mem
+memI (1202016) diag: ══════════════════════════════════════
+I (1202017) diag: MEMORY (RAM)
+I (1202020) diag: ──────────────────────────────────────
+I (1202032) diag:   INTERNAL SRAM  ← the pool that actually limits this board
+I (1202039) diag:     Total:                   193 KB
+I (1202043) diag:     Free NOW:                  7 KB
+I (1202048) diag:     Lowest EVER:               3 KB  ← how close we've come to running out
+I (1202057) diag:     Largest free block:        5 KB  ← a big single alloc can't exceed this,
+I (1202065) diag:                                      no matter how much total is free
+I (1202073) diag:     Largest DMA block:         0 KB  (display draw buffers, WiFi, USB host)
+I (1202081) diag:   PSRAM  (plentiful — but CANNOT serve DMA or <16KB allocations)
+I (1202089) diag:     Total:                  8192 KB
+I (1202093) diag:     Free NOW:               8170 KB
+I (1202098) diag:     Largest free block:     8064 KB
+I (1202103) diag:   LVGL POOL  (static, carved out of internal SRAM above)
+I (1202109) diag:     Pool size:               112 KB  (= CONFIG_LV_MEM_SIZE_KILOBYTES)
+I (1202117) diag:     Used now:                 71 KB  (64%)
+I (1202123) diag:     PEAK used since boot:     71 KB  ← size the pool from THIS, + headroom
+I (1202131) diag:     Largest free in pool:     40 KB  | fragmentation 0%
+I (1202137) diag:     (visit every screen + run a trip before trusting PEAK — it only
+I (1202145) diag:      reflects what the UI has actually been asked to draw so far)
+I (1202153) diag: ──────────────────────────────────────
+W (1202164) diag:   ⚠ Internal SRAM under 20KB — an HTTPS/TLS call may fail right now
+W (1202172) diag:     (mbedTLS is on PSRAM here, but WiFi/lwIP/task stacks still need internal).
+I (1202181) diag: ══════════════════════════════════════
+> I (1202298) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1202643) gps: ══════════════════════════════════════
+> gps infoI (1207652) gps: ══════════════════════════════════════
+> ram info
+> ram infoI (1209611) ram_test: ======================================
+I (1209611) ram_test: RAM INFO (live — no allocation)
+I (1209611) ram_test: --------------------------------------
+I (1209616) ram_test:   PSRAM initialized: YES
+I (1209621) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (1209628) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=198135 (193.5 KB) free=7559 (7.4 KB) min-free=3707 (3.6 KB) largest-block=5632 (5.5 KB)
+I (1209641) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 (8.00 MB) free=8366628 (7.98 MB) min-free=7318048 (6.98 MB) largest-block=8257536 (7.88 MB)
+> gps infoI (1212705) gps: ══════════════════════════════════════
+> I (1214020) ram_test: ══════════════════════════════════════
+I (1214021) ram_test: PSRAM periodic health-check
+I (1214025) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (1214032) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1214182) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (1214183) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (1214190) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1214200) ram_test: ══════════════════════════════════════
+> ram info
+ram infoI (1216614) ram_test: ======================================
+I (1216614) ram_test: RAM INFO (live — no allocation)
+I (1216614) ram_test: --------------------------------------
+I (1216619) ram_test:   PSRAM initialized: YES
+I (1216624) ram_test:   PSRAM total (esp_psram_get_size): 8388608 bytes (8.00 MB)
+I (1216631) ram_test:   SRAM  (MALLOC_CAP_INTERNAL) total=198135 (193.5 KB) free=7495 (7.3 KB) min-free=3695 (3.6 KB) largest-block=5632 (5.5 KB)
+I (1216644) ram_test:   PSRAM (MALLOC_CAP_SPIRAM)   total=8388608 (8.00 MB) free=8366628 (7.98 MB) min-free=7318048 (6.98 MB) largest-block=8257536 (7.88 MB)
+> gps infoI (1217708) gps: ══════════════════════════════════════
+> gps infoI (1222717) gps: ══════════════════════════════════════
+> mem
+> memI (1223526) diag: ══════════════════════════════════════
+I (1223527) diag: MEMORY (RAM)
+I (1223530) diag: ──────────────────────────────────────
+I (1223542) diag:   INTERNAL SRAM  ← the pool that actually limits this board
+I (1223549) diag:     Total:                   193 KB
+I (1223554) diag:     Free NOW:                  7 KB
+I (1223558) diag:     Lowest EVER:               3 KB  ← how close we've come to running out
+I (1223567) diag:     Largest free block:        5 KB  ← a big single alloc can't exceed this,
+I (1223575) diag:                                      no matter how much total is free
+I (1223583) diag:     Largest DMA block:         0 KB  (display draw buffers, WiFi, USB host)
+I (1223591) diag:   PSRAM  (plentiful — but CANNOT serve DMA or <16KB allocations)
+I (1223599) diag:     Total:                  8192 KB
+I (1223603) diag:     Free NOW:               8170 KB
+I (1223608) diag:     Largest free block:     8064 KB
+I (1223613) diag:   LVGL POOL  (static, carved out of internal SRAM above)
+I (1223620) diag:     Pool size:               112 KB  (= CONFIG_LV_MEM_SIZE_KILOBYTES)
+I (1223627) diag:     Used now:                 71 KB  (64%)
+I (1223633) diag:     PEAK used since boot:     71 KB  ← size the pool from THIS, + headroom
+I (1223641) diag:     Largest free in pool:     40 KB  | fragmentation 0%
+I (1223647) diag:     (visit every screen + run a trip before trusting PEAK — it only
+I (1223655) diag:      reflects what the UI has actually been asked to draw so far)
+I (1223663) diag: ──────────────────────────────────────
+W (1223674) diag:   ⚠ Internal SRAM under 20KB — an HTTPS/TLS call may fail right now
+W (1223682) diag:     (mbedTLS is on PSRAM here, but WiFi/lwIP/task stacks still need internal).
+I (1223691) diag: ══════════════════════════════════════
+> gps infoI (1227703) gps: ══════════════════════════════════════
+> I (1231149) gps_gnss: GNSS: no fix | reads=9908 [ACTIVE] (idle — waiting for satellites)
+I (1232328) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+gps infoI (1232762) gps: ══════════════════════════════════════
+> gps infoI (1237771) gps: ══════════════════════════════════════
+> gps infoI (1242780) gps: ══════════════════════════════════════

@@ -1,10 +1,10 @@
-# sdkconfig.defaults — esp32s3_board
+# sdkconfig.defaults - esp32s3_board
 #
-# Only OVERRIDES from ESP-IDF's own factory defaults live here (doc 92 §2.2)
-# — never a full generated sdkconfig. If you add/change anything below,
+# Only OVERRIDES from ESP-IDF's own factory defaults live here (doc 92 sec.2.2)
+# - never a full generated sdkconfig. If you add/change anything below,
 # delete sdkconfig.esp32s3_board and run `pio run -t clean -e esp32s3_board`
-# before `pio run` again — the generated file is CACHED and silently
-# ignores sdkconfig.defaults edits otherwise (doc 92 §5 — this exact trap
+# before `pio run` again - the generated file is CACHED and silently
+# ignores sdkconfig.defaults edits otherwise (doc 92 sec.5 - this exact trap
 # already cost 2+ days on esp32_display_taxi and esp32_chip_info_test).
 
 CONFIG_IDF_TARGET="esp32s3"
@@ -13,15 +13,15 @@ CONFIG_ESP_WIFI_SSID_CONFIG=y
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
 CONFIG_FREERTOS_HZ=1000
 
-# ── PHASE 1 (2026-07-26, doc 155/158): cellular PPP + WiFi hotspot ────
+# -- PHASE 1 (2026-07-26, doc 155/158): cellular PPP + WiFi hotspot ----
 #
-# USB Host — required for USB CDC modem (iot_usbh_modem/iot_usbh_cdc,
+# USB Host - required for USB CDC modem (iot_usbh_modem/iot_usbh_cdc,
 # idf_component.yml). This is genuinely new hardware usage for this
-# firmware — GPIO 19/20 (native USB D-/D+) were previously unused.
+# firmware - GPIO 19/20 (native USB D-/D+) were previously unused.
 CONFIG_USB_OTG_SUPPORTED=y
 CONFIG_USB_HOST_CONTROL_TRANSFER_MAX_SIZE=512
 
-# lwIP — PPP protocol + IP forwarding + NAT (NAPT). Matches the proven
+# lwIP - PPP protocol + IP forwarding + NAT (NAPT). Matches the proven
 # esp32s3_4g_hotspotWorkingClaude reference project's own working values
 # (docs 14/15) exactly for these four.
 CONFIG_LWIP_PPP_SUPPORT=y
@@ -31,33 +31,33 @@ CONFIG_LWIP_PPP_CHAP_SUPPORT=y
 CONFIG_LWIP_IP_FORWARD=y
 CONFIG_LWIP_IPV4_NAPT=y
 
-# WiFi SoftAP support — alongside the existing STA support above
+# WiFi SoftAP support - alongside the existing STA support above
 # (APSTA mode, app_main.c) so the hotspot can run at the same time as
 # the WiFi-uplink connection.
 CONFIG_ESP_WIFI_SOFTAP_SUPPORT=y
 
-# ⚠ DELIBERATELY NOT COPIED from the reference project (doc 155 §F1 /
-# doc 157): its own aggressive lwIP buffer tuning —
+# !! DELIBERATELY NOT COPIED from the reference project (doc 155 sec.F1 /
+# doc 157): its own aggressive lwIP buffer tuning -
 #   CONFIG_LWIP_TCP_SND_BUF_DEFAULT=65535
 #   CONFIG_LWIP_TCP_WND_DEFAULT=65535
 #   CONFIG_LWIP_TCPIP_RECVMBOX_SIZE=64
-# — that project had ~3x this board's internal-SRAM headroom (no
+# - that project had ~3x this board's internal-SRAM headroom (no
 # display/LVGL/LLM/GNSS/NEO-6M competing for it). Copying those values
 # here would directly fight Phase 0's entire internal-SRAM recovery
 # effort. ESP-IDF's own (much smaller) lwIP defaults are kept instead;
 # revisit ONLY if a measured throughput problem appears, not preemptively.
 CONFIG_LOG_DEFAULT_LEVEL_INFO=y
 
-# ── TLS ──────────────────────────────────────────────────────────────
+# -- TLS --------------------------------------------------------------
 # CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN = max size of a single INCOMING TLS
 # record mbedTLS can buffer. ESP-IDF's own factory default is 16384 (16KB,
 # the full TLS-standard max). A prior project (esp32_chip_info_test)
 # copied a WROOM-only RAM-saving hack (4096) into this same setting and
 # it caused a 2+ day HTTPS binary-download failure against every real
 # internet server tried (certificate validated, then a raw TLS read
-# error mid-transfer) — see
+# error mid-transfer) - see
 # docs/TestFunctionalities/ota-updates/73_2026-07-14_postmortem_ota_download_fix_complete.md.
-# This board has 8MB PSRAM — there is no RAM pressure reason to shrink
+# This board has 8MB PSRAM - there is no RAM pressure reason to shrink
 # this here, so it stays at the real ESP-IDF default.
 CONFIG_MBEDTLS_SSL_PROTO_TLS1_2=y
 CONFIG_MBEDTLS_CERTIFICATE_BUNDLE=y
@@ -66,119 +66,214 @@ CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN=16384
 CONFIG_MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH=y
 CONFIG_MBEDTLS_HARDWARE_MPI=n
 
-# mbedTLS memory allocation mode — ESP-IDF's own factory default is
+# mbedTLS memory allocation mode - ESP-IDF's own factory default is
 # MBEDTLS_INTERNAL_MEM_ALLOC (internal SRAM only, for every allocation
 # mbedTLS makes: TLS session buffers, X.509 parsing, RSA/ECC verify
 # scratch math). On this board that pool is small and shared with WiFi/
 # every task's stack/LVGL/both GPS UART read tasks, and under load this
 # caused real HTTPS failures (esp-x509-crt-bundle "PK verify failed" /
 # mbedtls_ssl_handshake -0x3000, decoding to MBEDTLS_ERR_MPI_ALLOC_FAILED
-# — see docs/TestFunctionalities/esp32s3_board/143_2026-07-25_https_tls_
+# - see docs/TestFunctionalities/esp32s3_board/143_2026-07-25_https_tls_
 # failure_mbedtls_memory_allocation_analysis.md). This board has 8MB
-# PSRAM with no such contention — switching mbedTLS to draw from it
+# PSRAM with no such contention - switching mbedTLS to draw from it
 # instead removes the failure for every HTTPS call project-wide (doc
-# 145 §1). Trade-off (accepted, see doc 145 §3): TLS working memory now
-# crosses the external PSRAM bus instead of staying on-chip-only — a
+# 145 sec.1). Trade-off (accepted, see doc 145 sec.3): TLS working memory now
+# crosses the external PSRAM bus instead of staying on-chip-only - a
 # physical-access security nuance, not a functional one, and this board
 # doesn't have flash encryption enabled to close that gap anyway.
 CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
 CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM=6
 CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM=16
 
-# ── Flash — 16MB, confirmed via esptool flash_id on this board family ──
+# -- Flash - 16MB, confirmed via esptool flash_id on this board family --
 CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
 CONFIG_ESPTOOLPY_FLASHSIZE="16MB"
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ=240
 
-# ── PSRAM — 8MB embedded Octal, confirmed on this board family ────────
+# -- PSRAM - 8MB embedded Octal, confirmed on this board family --------
 CONFIG_SPIRAM=y
 CONFIG_SPIRAM_MODE_OCT=y
 CONFIG_SPIRAM_SPEED_80M=y
 
-# ⚠ PHASE 0 ADDITION (2026-07-26, doc 155/157 — internal-SRAM recovery
+# !! PHASE 0 ADDITION (2026-07-26, doc 155/157 - internal-SRAM recovery
 # for cellular/hotspot): lower the automatic-PSRAM-eligibility floor.
 #
-# ESP-IDF's own factory default is 16384 (16KB) — ANY plain malloc()/
+# ESP-IDF's own factory default is 16384 (16KB) - ANY plain malloc()/
 # calloc() request smaller than this is forced into internal SRAM,
 # even when PSRAM is completely empty and the caller made no explicit
-# request either way (doc 144 §2.2's "Mechanism B"). Lowered to 4096
+# request either way (doc 144 sec.2.2's "Mechanism B"). Lowered to 4096
 # so 4-16KB requests become PSRAM-eligible too.
 #
-# WHY THIS IS SAFE — the short version: DMA-bound allocations (WiFi
+# WHY THIS IS SAFE - the short version: DMA-bound allocations (WiFi
 # driver buffers, the display's draw buffers, and the USB-host
 # descriptors Phase 1 will add) are excluded by CAPABILITY matching,
-# not by this size threshold — PSRAM has no MALLOC_CAP_DMA capability
+# not by this size threshold - PSRAM has no MALLOC_CAP_DMA capability
 # on this chip at all, so heap_caps_malloc() never even considers it
 # for a DMA request regardless of what this value is set to. This
 # threshold only ever affects code that called plain malloc()/calloc()
-# with NO capability request at all — which, by definition, does not
+# with NO capability request at all - which, by definition, does not
 # care which pool it lands in; only the access latency differs
 # (slightly slower on PSRAM's external bus vs. internal SRAM), not
 # correctness. mbedTLS is unaffected (it has its own private allocator,
-# already on PSRAM — doc 144 §2.3); the UART ring buffers stay internal
+# already on PSRAM - doc 144 sec.2.3); the UART ring buffers stay internal
 # regardless (1024 bytes, still well under even this lower floor).
 CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=4096
 
-# lwIP IPv6 — nothing in this project uses it (no IPv6 code anywhere in
+# lwIP IPv6 - nothing in this project uses it (no IPv6 code anywhere in
 # this codebase). Disabling removes real internal-SRAM state lwIP
 # otherwise carries per network interface (address lists, ND6/MLD
-# state) — pure savings, no functional loss. Same setting the reference
+# state) - pure savings, no functional loss. Same setting the reference
 # hotspot project (esp32s3_4g_hotspotWorkingClaude) already ships with.
 CONFIG_LWIP_IPV6=n
 
-# ── App rollback — required for the always-on "factory reset" safety
+# -- App rollback - required for the always-on "factory reset" safety
 # net (factory_reset.c) even while ENABLE_OTA=0 in config.h; it still
 # calls esp_ota_set_boot_partition()/esp_restart() against a real
 # factory/ota_0/ota_1 partition layout (partitions_16mb.csv).
 CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
 
-# ── Storage — SPIFFS "storage" partition (trips_api.c) ────────────────
+# -- Storage - SPIFFS "storage" partition (trips_api.c) ----------------
 CONFIG_VFS_SUPPORT_TERMIOS=y
 CONFIG_SPIFFS_USE_MTIME=y
 CONFIG_SPIFFS_OBJ_NAME_LEN=128
 
-# ── LVGL — display feature (ported from esp32_display_taxi_3) ────────
+# -- LVGL - display feature (ported from esp32_display_taxi_3) --------
 #
-# ⚠ PHASE 0 CHANGE (2026-07-26, doc 155 §12.4): LV_MEM_SIZE_KILOBYTES
+# !! PHASE 0 CHANGE (2026-07-26, doc 155 sec.12.4): LV_MEM_SIZE_KILOBYTES
 # reduced 128 -> 64.
 #
 # WHY: LVGL's pool is a STATIC array carved out of INTERNAL SRAM (.bss)
-# — LV_MEM_CUSTOM is not set, so LVGL manages its own fixed block. At
+# - LV_MEM_CUSTOM is not set, so LVGL manages its own fixed block. At
 # 128KB it was consuming 60% of this board's entire 214KB internal SRAM,
 # more than WiFi + every task stack + lwIP combined. A real `getinfo` on
 # hardware measured only 38KB internal SRAM free / 24.9KB lowest-ever,
 # which is far too little to add the USB-host + SoftAP + PPP stack that
-# doc 155 §6 estimates needs 55-80KB internal.
+# doc 155 sec.6 estimates needs 55-80KB internal.
 #
 # PSRAM does NOT solve this: LVGL's own allocations are small (hundreds
 # of bytes each) and CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=16384 forces
-# anything under 16KB to internal anyway (doc 144 §2.2), so switching
+# anything under 16KB to internal anyway (doc 144 sec.2.2), so switching
 # LV_MEM_CUSTOM=1 would save little and could fragment worse. Cutting
 # the pool is the honest fix.
 #
-# WHY 64 AND NOT LOWER: 64KB is a deliberate first step, not a final
-# answer — it halves the footprint while staying generous for a UI of
-# this size. The real peak is now MEASURABLE at runtime via the "mem"
-# command's "LVGL POOL / PEAK used since boot" line (added in the same
-# Phase 0 pass). Read that after visiting every screen and running a
-# trip, then tune this number to (peak + ~30% headroom). Do NOT lower it
-# further on a guess — an exhausted LVGL pool shows up as widgets
-# silently failing to appear, which is nasty to debug.
+# WHY 64 AND NOT LOWER (original Phase 0 reasoning, now SUPERSEDED -
+# see the Phase 1+2 correction directly below): 64KB halved the
+# footprint while staying generous for a UI of that size *at the time*
+# - before the Network screen (doc 158: 2 screens, 3 cards, ~20 labels/
+# buttons) and SMS screen (doc 159) existed. Doc 157 sec.7 had ALREADY
+# measured the pool at 94% used (59/64KB) from the dashboard ALONE,
+# flagged as "very likely an undercount" pending a full UI tour - that
+# predicted shortfall is exactly what happened.
+#
+# !! PHASE 1+2 CORRECTION (2026-07-28): 64 -> 112. First real flash after
+# adding the Network+SMS screens hard-crashed during boot
+# (Guru Meditation LoadProhibited, backtrace inside lv_obj_create() ->
+# lv_obj_class_init_obj(), triggered from sms_screen.c's very first
+# widget) - the pool ran out mid-construction while test_menu_init()
+# pre-creates every registered screen (test_pax_meter + color palette
+# grid/detail + Network main/clients + SMS = 7 screens' worth of
+# widgets, all held simultaneously, before the dashboard's own 59KB
+# baseline is even counted). 112KB chosen from THIS exact board's own
+# "getinfo" reading immediately before display_init() in the crashing
+# boot: 87.1KB internal SRAM free at that point (already net of WiFi +
+# USB-host modem + hotspot-handler-registration + GNSS/NEO-6M/SMS
+# backend init - i.e., already the REAL runtime cost of Phase 1+2's
+# backend, not a guess). Reserving +48KB more for the pool (64->112)
+# leaves ~39KB of that 87KB still free for the display's own DMA draw
+# buffers (~17.5KB, see LVGL_BUF_SIZE_PCT below) plus touch + margin -
+# comfortably clear of doc 157's original 128KB-was-too-much finding,
+# since that finding predates PPP+SoftAP+SMS actually running
+# successfully within THIS exact 87KB budget (confirmed in the same
+# crashing boot's log - cellular dialed and got a carrier IP before the
+# crash). Re-measure via "mem" once boot succeeds (doc 160 sec.4) and tune
+# from the real peak - this is a reasoned budget, not a final answer,
+# same discipline as the original 64KB figure.
+#
+# !! CORRECTION #2 (2026-07-30, doc 161 sec.9): 112 -> 96. The 112KB figure
+# DID stop the crash (confirmed on hardware - 200+s clean boot) but was
+# never actually measured against, only estimated from a pre-display
+# heap reading. The first real post-boot "mem" reading told a different
+# story: "LVGL POOL: PEAK used since boot: 71 KB (64%)" - the pool only
+# ever needed 71KB, so 112KB was reserving ~40KB of internal SRAM the
+# pool wasn't using at all, at the direct expense of the general/DMA
+# heap everything else shares. That heap was measured at the SAME
+# moment as: "Largest DMA block: 4 KB" - critically low, and the DIRECT
+# cause of a real functional failure in the SAME session: the Trips API
+# HTTPS call failed with "esp-aes: Failed to allocate memory" (mbedTLS's
+# hardware AES accelerator needs a DMA-capable buffer - PSRAM cannot
+# serve DMA on this chip, doc 157/160, so this can ONLY come from
+# internal SRAM, the same pool the LVGL cut was crowding). 96KB = 71KB
+# real peak + ~35% headroom (doc 157's own "peak + ~30%" formula,
+# rounded up) - gives the pool comfortable margin above its OWN measured
+# need while returning ~16KB to the general heap where the DMA/TLS path
+# actually needs it. See LVGL_BUF_SIZE_PCT below for the second, smaller
+# lever pulled in the same pass for the same reason.
+# !!!! BOOL OPTIONS MUST BE WRITTEN "=y", NEVER "=1" (doc 177) !!!!
+#
+# Kconfig has typed symbols. For a `bool`, the ONLY valid values are y and
+# n - a numeric "1" is not accepted, and kconfgen silently DISCARDS the
+# line rather than failing the build. The option then stays at its Kconfig
+# default and the generated sdkconfig ends up with
+# "# CONFIG_LV_XXX is not set", even though this file plainly appears to
+# set it. `int` symbols (LV_COLOR_DEPTH, LV_MEM_SIZE_KILOBYTES,
+# LV_DISP_DEF_REFR_PERIOD...) DO take a number - which is exactly why the
+# mistake is so easy to make and so hard to spot.
+#
+# Three options in this block were silently inert for that reason,
+# confirmed by reading the freshly-regenerated sdkconfig.esp32s3_board:
+#   CONFIG_LV_COLOR_16_SWAP=1  -> "# CONFIG_LV_COLOR_16_SWAP is not set"
+#   CONFIG_LV_TICK_CUSTOM=1    -> "# CONFIG_LV_TICK_CUSTOM is not set"
+#   CONFIG_LV_USE_LOG=1        -> "# CONFIG_LV_USE_LOG is not set"
+#
+# LV_COLOR_16_SWAP is the important one: it is the documented fix for this
+# exact ST7796S panel's scrambled colours AND its blurry small text
+# (doc 41 Bugs 5a - the byte-order fix that also made glyph edges render
+# as the intended smooth gradient instead of per-pixel noise). Because the
+# "=1" never applied, that fix has NEVER been active in this project.
+#
+# This also corrects an earlier misdiagnosis: doc 161 sec.3b blamed
+# LV_USE_LOG staying off on the stale-generated-sdkconfig cache trap. The
+# cache trap is real and separate, but it was NOT the cause here - the
+# line simply had the wrong syntax and would have been ignored no matter
+# how many clean rebuilds were done.
 CONFIG_LV_COLOR_DEPTH=16
-CONFIG_LV_COLOR_16_SWAP=1
-CONFIG_LV_MEM_SIZE_KILOBYTES=64
+CONFIG_LV_COLOR_16_SWAP=y
+CONFIG_LV_MEM_SIZE_KILOBYTES=96
 CONFIG_LV_DISP_DEF_REFR_PERIOD=30
 CONFIG_LV_INDEV_DEF_READ_PERIOD=30
-CONFIG_LV_TICK_CUSTOM=1
-CONFIG_LV_TICK_CUSTOM_INCLUDE="freertos/FreeRTOS.h"
-CONFIG_LV_TICK_CUSTOM_SYS_TIME_EXPR="(xTaskGetTickCount() * portTICK_PERIOD_MS)"
+
+# LV_TICK_CUSTOM deliberately left OFF (doc 177). It was written "=1" and
+# has therefore been inactive all along - and the firmware already feeds
+# LVGL from its own lv_tick_task (app_main.c: vTaskDelay + lv_tick_inc),
+# which is the mechanism LVGL uses when this option is off. That
+# arrangement is proven working, so turning the option on now would swap
+# the tick source on a system that is behaving correctly, for no gain.
+# Left commented rather than "fixed" so the file states what is actually
+# in effect. To adopt the FreeRTOS tick instead, uncomment all three AND
+# drop lv_tick_task - do it as its own deliberate change, not bundled.
+# CONFIG_LV_TICK_CUSTOM=y
+# CONFIG_LV_TICK_CUSTOM_INCLUDE="freertos/FreeRTOS.h"
+# CONFIG_LV_TICK_CUSTOM_SYS_TIME_EXPR="(xTaskGetTickCount() * portTICK_PERIOD_MS)"
 
 # LVGL logging turned ON (was 0) specifically so a pool exhaustion after
 # the cut above is LOUD instead of silent. With logging off, LVGL drops
 # failed allocations quietly and the only symptom is a missing widget.
-# LEVEL_WARN keeps normal operation quiet — it only speaks up when
+# LEVEL_WARN keeps normal operation quiet - it only speaks up when
 # something actually goes wrong. Revert to CONFIG_LV_USE_LOG=0 once the
-# 64KB figure is confirmed safe on hardware, if the log noise is unwanted.
-CONFIG_LV_USE_LOG=1
-CONFIG_LV_LOG_LEVEL_WARN=1
+# 96KB figure is confirmed safe on hardware, if the log noise is unwanted.
+#
+# !! THIS SETTING NEVER ACTUALLY TOOK EFFECT - and the reason recorded
+# here previously was WRONG. It was blamed on the stale-generated-
+# sdkconfig cache trap (doc 157 sec.4.1 / doc 161 sec.3b). That trap is real,
+# but it was not the cause: these are `bool` symbols and were written
+# "=1", which Kconfig does not accept for a bool, so kconfgen discarded
+# both lines. No number of clean rebuilds would ever have helped. Now
+# written "=y" - see the full explanation at the top of the LVGL block
+# above, and doc 177.
+#
+# This is also why the pool-exhaustion crash produced ZERO LVGL warning
+# before hard-faulting: LVGL's own out-of-memory log call had nowhere to
+# go, because logging was never actually compiled in.
+CONFIG_LV_USE_LOG=y
+CONFIG_LV_LOG_LEVEL_WARN=y

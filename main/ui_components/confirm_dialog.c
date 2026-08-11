@@ -9,6 +9,7 @@
 typedef struct {
     lv_obj_t *backdrop;
     confirm_dialog_cb_t on_confirm;
+    confirm_dialog_cb_t on_cancel;
     void *user_data;
 } confirm_ctx_t;
 
@@ -28,13 +29,17 @@ static void _confirm_event(lv_event_t *e) {
 
 static void _cancel_event(lv_event_t *e) {
     confirm_ctx_t *ctx = (confirm_ctx_t *)lv_event_get_user_data(e);
+    confirm_dialog_cb_t cb = ctx->on_cancel;
+    void *user_data = ctx->user_data;
     lv_obj_t *backdrop = ctx->backdrop;
     free(ctx);
     _close(backdrop);
+    if (cb) cb(user_data);
 }
 
 void confirm_dialog_show(lv_obj_t *screen, const char *message,
-                          confirm_dialog_cb_t on_confirm, void *user_data) {
+                          confirm_dialog_cb_t on_confirm, confirm_dialog_cb_t on_cancel,
+                          void *user_data) {
     if (!screen) return;
 
     // Semi-transparent backdrop, catches taps so the screen behind can't
@@ -69,15 +74,25 @@ void confirm_dialog_show(lv_obj_t *screen, const char *message,
     confirm_ctx_t *ctx = (confirm_ctx_t *)malloc(sizeof(confirm_ctx_t));
     ctx->backdrop   = backdrop;
     ctx->on_confirm = on_confirm;
+    ctx->on_cancel  = on_cancel;
     ctx->user_data  = user_data;
 
+    // doc 182 10.10: "No"/"Yes" — matching Android's own confirm-dialog
+    // convention (setNegativeBtn("No")/setPositiveBtn("Yes"), e.g.
+    // PickUpFragment11's pickupAlert()). Was hardcoded "Cancel"/"Delete"
+    // — a leftover from this dialog's original single use ("Delete trip
+    // #12772?"), which then read wrong on every OTHER caller added since
+    // (doc 182 §8 — "Go OFF duty?" showing a "Delete" button). The
+    // message itself always states the actual action, so a generic
+    // Yes/No pair reads correctly everywhere, same as Android's own
+    // callers rely on.
     lv_obj_t *cancel_btn = lv_btn_create(panel);
     lv_obj_set_size(cancel_btn, 110, 40);
     lv_obj_align(cancel_btn, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     lv_obj_set_style_bg_color(cancel_btn, C_BTN, 0);
     lv_obj_set_style_shadow_width(cancel_btn, 0, 0);
     lv_obj_set_style_radius(cancel_btn, 8, 0);
-    lv_obj_t *cancel_lbl = ui_label(cancel_btn, "Cancel", C_TEXT);
+    lv_obj_t *cancel_lbl = ui_label(cancel_btn, "No", C_TEXT);
     lv_obj_center(cancel_lbl);
     lv_obj_add_event_cb(cancel_btn, _cancel_event, LV_EVENT_CLICKED, ctx);
 
@@ -87,7 +102,7 @@ void confirm_dialog_show(lv_obj_t *screen, const char *message,
     lv_obj_set_style_bg_color(confirm_btn, C_ERROR, 0);
     lv_obj_set_style_shadow_width(confirm_btn, 0, 0);
     lv_obj_set_style_radius(confirm_btn, 8, 0);
-    lv_obj_t *confirm_lbl = ui_label(confirm_btn, "Delete", C_TEXT);
+    lv_obj_t *confirm_lbl = ui_label(confirm_btn, "Yes", C_TEXT);
     lv_obj_center(confirm_lbl);
     lv_obj_add_event_cb(confirm_btn, _confirm_event, LV_EVENT_CLICKED, ctx);
 }

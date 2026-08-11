@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_heap_caps.h"
@@ -39,7 +40,17 @@ static fixed_rate_t     s_fixed_rates[REF_MAX_FIXED_RATES];
 static int               s_fixed_rate_count = 0;
 static special_fare_t   s_special_fares[REF_MAX_SPECIAL_FARES];
 static int               s_special_fare_count = 0;
-static public_holiday_t s_holidays[REF_MAX_PUBLIC_HOLIDAYS];
+
+// doc 184 §3.1/§7.3 — PSRAM-allocated, not a plain static array like the
+// three above: REF_MAX_PUBLIC_HOLIDAYS was raised 16 -> 128 to actually
+// hold a real year's worth of holidays (the old 16 silently dropped
+// almost everything — see reference_data.h's own comment), and at 128
+// rows this is ~9KB, worth keeping off internal SRAM the same way doc
+// 181 moved fare_calc's much larger state. Allocated once in
+// reference_data_init(); every read path is safe even if the
+// allocation fails, because s_holiday_count simply stays 0 in that case
+// (see _parse_holidays_buf()'s own guard).
+static public_holiday_t *s_holidays = NULL;
 static int               s_holiday_count = 0;
 
 static time_t s_last_fetch_all_at = 0;
@@ -122,29 +133,12 @@ static void _split_tariff_name(const char *tariff_name, char *number, size_t num
     type[type_len] = '\0';
 }
 
-static esp_err_t _fetch_and_parse_tariffs(void) {
-    int64_t vehicle_type_id = session_store_get_vehicle_type_id();
-    if (vehicle_type_id <= 0) {
-        ESP_LOGE(TAG, "tariffs: no vehicle_type_id in session — run 'setup vehicle' / login first");
-        return ESP_ERR_INVALID_STATE;
-    }
-
-    char path[128];
-    snprintf(path, sizeof(path), EP_TARIFFS_FMT, (long)vehicle_type_id);
-
-    int status = 0;
-    _ensure_dir();
-    if (api_client_request_to_file(API_METHOD_GET, path, NULL, true, REF_TARIFFS_FILE, &status) != ESP_OK) {
-        ESP_LOGE(TAG, "tariffs: fetch failed (HTTP %d)", status);
-        return ESP_FAIL;
-    }
-
-    size_t len = 0;
-    char *buf = _read_file_alloc(REF_TARIFFS_FILE, &len);
-    if (!buf) return ESP_FAIL;
-
+// Parses the SAME shape whether the bytes just came off the network or
+// were read back from the SPIFFS cache (doc 182 Fix A) — one parser,
+// two callers (_fetch_and_parse_tariffs() below, and _load_cached_
+// tariffs(), called from reference_data_init() at boot).
+static esp_err_t _parse_tariffs_buf(const char *buf, size_t len) {
     cJSON *json = cJSON_ParseWithLength(buf, len);
-    free(buf);
     if (!json) { ESP_LOGE(TAG, "tariffs: response is not valid JSON"); return ESP_FAIL; }
 
     cJSON *success = cJSON_GetObjectItemCaseSensitive(json, "success");
@@ -203,23 +197,52 @@ static esp_err_t _fetch_and_parse_tariffs(void) {
     return ESP_OK;
 }
 
+// Reads REF_TARIFFS_FILE back off SPIFFS and parses it — no network
+// call. This is what makes reference_data_init() actually restore a
+// previous session's data (doc 182 Fix A): before this, init() opened
+// the file, parsed it, and threw the result away.
+static esp_err_t _load_cached_tariffs(void) {
+    size_t len = 0;
+    char *buf = _read_file_alloc(REF_TARIFFS_FILE, &len);
+    if (!buf) return ESP_FAIL;
+    esp_err_t err = _parse_tariffs_buf(buf, len);
+    free(buf);
+    return err;
+}
+
+static esp_err_t _fetch_and_parse_tariffs(void) {
+    int64_t vehicle_type_id = session_store_get_vehicle_type_id();
+    if (vehicle_type_id <= 0) {
+        ESP_LOGE(TAG, "tariffs: no vehicle_type_id in session — run 'setup vehicle' / login first");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    char path[128];
+    snprintf(path, sizeof(path), EP_TARIFFS_FMT, (long)vehicle_type_id);
+
+    int status = 0;
+    _ensure_dir();
+    if (api_client_request_to_file(API_METHOD_GET, path, NULL, true, REF_TARIFFS_FILE, &status) != ESP_OK) {
+        // doc 182 10.11 (Fix L) / matches Android's LoadTariffsUseCase:
+        // a failed fetch does NOT wipe s_tariffs — it was never touched.
+        // Whether that's "fine, still on real (if slightly older) data"
+        // or "nothing to fall back on" depends entirely on whether cache
+        // data already exists — say which one this actually is.
+        if (s_tariff_count > 0) {
+            ESP_LOGW(TAG, "tariffs: fetch failed (HTTP %d) — continuing with %d cached row(s) from an earlier fetch", status, s_tariff_count);
+        } else {
+            ESP_LOGE(TAG, "tariffs: fetch failed (HTTP %d) — no cached data available either", status);
+        }
+        return ESP_FAIL;
+    }
+    return _load_cached_tariffs();
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  FIXED RATES — GET taxis-api/api/FixedFares
 // ═══════════════════════════════════════════════════════════════
-static esp_err_t _fetch_and_parse_fixed_rates(void) {
-    int status = 0;
-    _ensure_dir();
-    if (api_client_request_to_file(API_METHOD_GET, EP_FIXED_FARES, NULL, true, REF_FIXED_RATES_FILE, &status) != ESP_OK) {
-        ESP_LOGE(TAG, "fixed_rates: fetch failed (HTTP %d)", status);
-        return ESP_FAIL;
-    }
-
-    size_t len = 0;
-    char *buf = _read_file_alloc(REF_FIXED_RATES_FILE, &len);
-    if (!buf) return ESP_FAIL;
-
+static esp_err_t _parse_fixed_rates_buf(const char *buf, size_t len) {
     cJSON *json = cJSON_ParseWithLength(buf, len);
-    free(buf);
     if (!json) { ESP_LOGE(TAG, "fixed_rates: response is not valid JSON"); return ESP_FAIL; }
 
     cJSON *success = cJSON_GetObjectItemCaseSensitive(json, "success");
@@ -263,24 +286,35 @@ static esp_err_t _fetch_and_parse_fixed_rates(void) {
     return ESP_OK;
 }
 
+static esp_err_t _load_cached_fixed_rates(void) {
+    size_t len = 0;
+    char *buf = _read_file_alloc(REF_FIXED_RATES_FILE, &len);
+    if (!buf) return ESP_FAIL;
+    esp_err_t err = _parse_fixed_rates_buf(buf, len);
+    free(buf);
+    return err;
+}
+
+static esp_err_t _fetch_and_parse_fixed_rates(void) {
+    int status = 0;
+    _ensure_dir();
+    if (api_client_request_to_file(API_METHOD_GET, EP_FIXED_FARES, NULL, true, REF_FIXED_RATES_FILE, &status) != ESP_OK) {
+        if (s_fixed_rate_count > 0) {
+            ESP_LOGW(TAG, "fixed_rates: fetch failed (HTTP %d) — continuing with %d cached row(s) from an earlier fetch", status, s_fixed_rate_count);
+        } else {
+            ESP_LOGW(TAG, "fixed_rates: fetch failed (HTTP %d) — no cached data available either (not fare-blocking — no fixed-rate trips will be offered)", status);
+        }
+        return ESP_FAIL;
+    }
+    return _load_cached_fixed_rates();
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  SPECIAL FARES — GET taxis-api/api/SpecialFare (flat list only —
 //  see file header re: the motorway/gantry tree being out of scope here)
 // ═══════════════════════════════════════════════════════════════
-static esp_err_t _fetch_and_parse_special_fares(void) {
-    int status = 0;
-    _ensure_dir();
-    if (api_client_request_to_file(API_METHOD_GET, EP_SPECIAL_FARES, NULL, true, REF_SPECIAL_FARES_FILE, &status) != ESP_OK) {
-        ESP_LOGE(TAG, "special_fares: fetch failed (HTTP %d)", status);
-        return ESP_FAIL;
-    }
-
-    size_t len = 0;
-    char *buf = _read_file_alloc(REF_SPECIAL_FARES_FILE, &len);
-    if (!buf) return ESP_FAIL;
-
+static esp_err_t _parse_special_fares_buf(const char *buf, size_t len) {
     cJSON *json = cJSON_ParseWithLength(buf, len);
-    free(buf);
     if (!json) { ESP_LOGE(TAG, "special_fares: response is not valid JSON"); return ESP_FAIL; }
 
     cJSON *success = cJSON_GetObjectItemCaseSensitive(json, "success");
@@ -322,23 +356,46 @@ static esp_err_t _fetch_and_parse_special_fares(void) {
     return ESP_OK;
 }
 
+static esp_err_t _load_cached_special_fares(void) {
+    size_t len = 0;
+    char *buf = _read_file_alloc(REF_SPECIAL_FARES_FILE, &len);
+    if (!buf) return ESP_FAIL;
+    esp_err_t err = _parse_special_fares_buf(buf, len);
+    free(buf);
+    return err;
+}
+
+static esp_err_t _fetch_and_parse_special_fares(void) {
+    int status = 0;
+    _ensure_dir();
+    if (api_client_request_to_file(API_METHOD_GET, EP_SPECIAL_FARES, NULL, true, REF_SPECIAL_FARES_FILE, &status) != ESP_OK) {
+        if (s_special_fare_count > 0) {
+            ESP_LOGW(TAG, "special_fares: fetch failed (HTTP %d) — continuing with %d cached row(s) from an earlier fetch", status, s_special_fare_count);
+        } else {
+            ESP_LOGW(TAG, "special_fares: fetch failed (HTTP %d) — no cached data available either (the 'Levy' auto-charge and other special fares won't apply this trip)", status);
+        }
+        return ESP_FAIL;
+    }
+    return _load_cached_special_fares();
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  PUBLIC HOLIDAYS — GET devices-api/api/PublicHolidays
 // ═══════════════════════════════════════════════════════════════
-static esp_err_t _fetch_and_parse_public_holidays(void) {
-    int status = 0;
-    _ensure_dir();
-    if (api_client_request_to_file(API_METHOD_GET, EP_PUBLIC_HOLIDAYS, NULL, true, REF_HOLIDAYS_FILE, &status) != ESP_OK) {
-        ESP_LOGE(TAG, "public_holidays: fetch failed (HTTP %d)", status);
+// date is "yyyyMMdd" (see the struct's own comment in reference_data.h)
+// — first 4 characters are the year.
+static int _year_from_yyyymmdd(const char *date) {
+    if (!date || strlen(date) < 4) return 0;
+    char buf[5] = { date[0], date[1], date[2], date[3], '\0' };
+    return atoi(buf);
+}
+
+static esp_err_t _parse_holidays_buf(const char *buf, size_t len) {
+    if (!s_holidays) {
+        ESP_LOGE(TAG, "public_holidays: PSRAM array unavailable (allocation failed at init) — cannot parse");
         return ESP_FAIL;
     }
-
-    size_t len = 0;
-    char *buf = _read_file_alloc(REF_HOLIDAYS_FILE, &len);
-    if (!buf) return ESP_FAIL;
-
     cJSON *json = cJSON_ParseWithLength(buf, len);
-    free(buf);
     if (!json) { ESP_LOGE(TAG, "public_holidays: response is not valid JSON"); return ESP_FAIL; }
 
     cJSON *success = cJSON_GetObjectItemCaseSensitive(json, "success");
@@ -349,18 +406,43 @@ static esp_err_t _fetch_and_parse_public_holidays(void) {
         return ESP_FAIL;
     }
 
+    // doc 184 §3.1/§7.3: the server returns EVERY holiday on record — a
+    // real capture was 75459 bytes (~700+ rows). Keeping the first
+    // REF_MAX_PUBLIC_HOLIDAYS in SERVER ORDER (the old behavior) kept
+    // whatever the server happened to list first, which silently
+    // dropped every current-year row when older years sorted first —
+    // holiday-rate selection then never fired, with no error anywhere.
+    // Filtered by RELEVANCE (a window around the current year) instead
+    // of by list position — this is the actual fix; raising the cap
+    // alone would not have been, since server ordering was never
+    // guaranteed to put relevant rows first.
+    time_t now = time(NULL);
+    struct tm tm_now;
+    gmtime_r(&now, &tm_now);
+    int this_year = tm_now.tm_year + 1900;
+    int min_year = this_year - 1, max_year = this_year + 1;
+
     int count = 0;
+    int skipped_out_of_window = 0;
     cJSON *item;
     cJSON_ArrayForEach(item, data) {
-        if (count >= REF_MAX_PUBLIC_HOLIDAYS) {
-            ESP_LOGW(TAG, "public_holidays: more rows than REF_MAX_PUBLIC_HOLIDAYS (%d) — extra rows dropped.", REF_MAX_PUBLIC_HOLIDAYS);
-            break;
-        }
         cJSON *id   = cJSON_GetObjectItemCaseSensitive(item, "id");
         cJSON *date = cJSON_GetObjectItemCaseSensitive(item, "date");
         cJSON *name = cJSON_GetObjectItemCaseSensitive(item, "name");
         if (!cJSON_IsNumber(id) || !cJSON_IsString(date) || !cJSON_IsString(name)) continue;
 
+        int row_year = _year_from_yyyymmdd(date->valuestring);
+        if (row_year != 0 && (row_year < min_year || row_year > max_year)) {
+            skipped_out_of_window++;
+            continue;
+        }
+
+        if (count >= REF_MAX_PUBLIC_HOLIDAYS) {
+            ESP_LOGW(TAG, "public_holidays: more IN-WINDOW (%d-%d) rows than REF_MAX_PUBLIC_HOLIDAYS (%d) — extra dropped "
+                     "(unusual — a 3-year window rarely has this many). Raise the limit in reference_data.h if this recurs.",
+                     min_year, max_year, REF_MAX_PUBLIC_HOLIDAYS);
+            break;
+        }
         public_holiday_t *h = &s_holidays[count];
         memset(h, 0, sizeof(*h));
         h->id = (int64_t)id->valuedouble;
@@ -370,8 +452,32 @@ static esp_err_t _fetch_and_parse_public_holidays(void) {
     }
     s_holiday_count = count;
     cJSON_Delete(json);
-    ESP_LOGI(TAG, "public_holidays: %d rows loaded", s_holiday_count);
+    ESP_LOGI(TAG, "public_holidays: %d rows loaded (year window %d-%d; %d out-of-window rows skipped)",
+             s_holiday_count, min_year, max_year, skipped_out_of_window);
     return ESP_OK;
+}
+
+static esp_err_t _load_cached_holidays(void) {
+    size_t len = 0;
+    char *buf = _read_file_alloc(REF_HOLIDAYS_FILE, &len);
+    if (!buf) return ESP_FAIL;
+    esp_err_t err = _parse_holidays_buf(buf, len);
+    free(buf);
+    return err;
+}
+
+static esp_err_t _fetch_and_parse_public_holidays(void) {
+    int status = 0;
+    _ensure_dir();
+    if (api_client_request_to_file(API_METHOD_GET, EP_PUBLIC_HOLIDAYS, NULL, true, REF_HOLIDAYS_FILE, &status) != ESP_OK) {
+        if (s_holiday_count > 0) {
+            ESP_LOGW(TAG, "public_holidays: fetch failed (HTTP %d) — continuing with %d cached row(s) from an earlier fetch", status, s_holiday_count);
+        } else {
+            ESP_LOGW(TAG, "public_holidays: fetch failed (HTTP %d) — no cached data available either (the tariff-by-time selector may pick the wrong band on a holiday)", status);
+        }
+        return ESP_FAIL;
+    }
+    return _load_cached_holidays();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -379,19 +485,46 @@ static esp_err_t _fetch_and_parse_public_holidays(void) {
 // ═══════════════════════════════════════════════════════════════
 esp_err_t reference_data_init(void) {
     _ensure_dir();
-    // Load whatever was saved from a previous session, if anything —
-    // don't force a network fetch just to boot. Failures here are
-    // expected/normal on a brand-new device (nothing saved yet).
-    size_t len;
-    char *buf;
 
-    if ((buf = _read_file_alloc(REF_TARIFFS_FILE, &len))) {
-        cJSON *j = cJSON_ParseWithLength(buf, len);
-        free(buf);
-        if (j) cJSON_Delete(j);   // just proving the file is readable; a real reload uses _fetch_and_parse_* after a fresh fetch
+    // doc 184 §3.1/§7.3 — must happen before any cache-load call below
+    // (_load_cached_holidays() needs s_holidays non-NULL).
+    s_holidays = (public_holiday_t *)heap_caps_calloc(REF_MAX_PUBLIC_HOLIDAYS, sizeof(public_holiday_t), MALLOC_CAP_SPIRAM);
+    if (!s_holidays) {
+        ESP_LOGE(TAG, "reference_data_init: PSRAM allocation for holidays FAILED (%u bytes) — holiday rates will never apply this boot",
+                 (unsigned)(REF_MAX_PUBLIC_HOLIDAYS * sizeof(public_holiday_t)));
     }
-    ESP_LOGI(TAG, "Reference data module ready (call 'ref fetch' or go on-duty to load data)");
+
+    // doc 182 Fix A: actually restore whatever was cached from a
+    // previous session — this used to open the file, parse it, and
+    // discard the result (a pure readability smoke-test), which is why
+    // s_tariff_count was always 0 at boot regardless of what was on
+    // flash. This is the OFFLINE FALLBACK only — the real "get fresh
+    // data" trigger is login (auth_client.c calls reference_data_fetch_
+    // all_if_stale() after a successful login, doc 182 Fix B, matching
+    // Android's CheckValidityUseCase), not this function. A brand-new
+    // device with nothing cached yet simply loads 0 rows here, same as
+    // before — that's normal, not an error.
+    _load_cached_tariffs();
+    _load_cached_fixed_rates();
+    _load_cached_special_fares();
+    _load_cached_holidays();
+    ESP_LOGI(TAG, "Reference data restored from cache: tariffs=%d fixed_rates=%d special_fares=%d holidays=%d",
+             s_tariff_count, s_fixed_rate_count, s_special_fare_count, s_holiday_count);
     return ESP_OK;
+}
+
+// doc 182 Fix C: a taxi should never start metering with zero tariff
+// rows loaded, no matter how it got into that state (never fetched,
+// cache went stale, duty status persisted ON across reboot so the only
+// other auto-fetch trigger got skipped — see doc 182 §1.4). Called from
+// trip_manager's start-trip path; MUST run on bg_worker, never the LVGL
+// thread — reference_data_fetch_all() makes up to 4 blocking HTTPS
+// calls when it actually has to fetch.
+bool reference_data_ensure_loaded(void) {
+    if (s_tariff_count > 0) return true;
+    ESP_LOGW(TAG, "ensure_loaded: no tariffs available — attempting a fetch now");
+    reference_data_fetch_all();
+    return s_tariff_count > 0;
 }
 
 esp_err_t reference_data_fetch_all(void) {
@@ -413,10 +546,20 @@ esp_err_t reference_data_fetch_all(void) {
     bool all_ok = (r1 == ESP_OK) && (r2 == ESP_OK) && (r3 == ESP_OK) && (r4 == ESP_OK);
     if (all_ok) {
         s_last_fetch_all_at = time(NULL);
-        ESP_LOGI(TAG, "REFERENCE DATA — all 4 categories OK \xE2\x9C\x93");
+        ESP_LOGI(TAG, "REFERENCE DATA — all 4 categories OK \xE2\x9C\x93 (fresh)");
+    } else if (s_tariff_count > 0) {
+        // doc 182 10.11 (Fix L) — matches Android's LoadTariffsUseCase
+        // returning Outcome.ok(true, "...continuing with local cache.")
+        // rather than a hard error when a refresh fails but usable
+        // cached tariff data already exists. s_last_fetch_all_at is
+        // deliberately NOT updated in this branch — the data genuinely
+        // isn't fresh, so the 12h staleness clock shouldn't reset as if
+        // it were (the next fetch_all_if_stale() should keep trying).
+        ESP_LOGW(TAG, "REFERENCE DATA — some categories failed (see above), continuing with cached data");
+        ESP_LOGW(TAG, "  where available. Tariffs specifically: %d row(s) usable — the meter CAN start.", s_tariff_count);
     } else {
-        ESP_LOGW(TAG, "REFERENCE DATA — one or more categories failed (see above). Continuing with");
-        ESP_LOGW(TAG, "  whatever was already loaded/cached for the categories that did fail.");
+        ESP_LOGE(TAG, "REFERENCE DATA — failed, and no cached tariff data exists to fall back on.");
+        ESP_LOGE(TAG, "  The meter cannot start until this succeeds (or 'ref fetch' is retried).");
     }
     ESP_LOGI(TAG, "══════════════════════════════════════\n");
     return all_ok ? ESP_OK : ESP_FAIL;

@@ -138,6 +138,7 @@
 #include "backend/taximeter/diag.h"
 #include "backend/taximeter/rest_api_storage.h"
 #include "backend/gps/gps_client.h"
+#include "backend/network/wifi/wifi_sta.h"
 #include "backend/network/cellular/cellular_ppp.h"
 #include "backend/network/hotspot/hotspot_nvs.h"
 #include "backend/network/hotspot/hotspot_ap.h"
@@ -149,6 +150,7 @@
 #include "display/ui_main.h"
 #include "display/network/network_screen.h"
 #include "display/sms/sms_screen.h"
+#include "display/login/login_screen.h"
 #include "ui_components/confirm_dialog.h"
 #include "llm/llm_runner.h"
 
@@ -398,48 +400,43 @@ static void print_full_report(void) {
 //  those can never silently take WiFi down too.
 // ═══════════════════════════════════════════════════════════════
 #if NETWORK_NEEDED
-#define BIT_WIFI_CONNECTED BIT0
-static EventGroupHandle_t s_wifi_events;
-
-static void _wifi_event(void *arg, esp_event_base_t base, int32_t id, void *data) {
-    if (id == WIFI_EVENT_STA_START) {
-        esp_wifi_connect();
-    } else if (id == WIFI_EVENT_STA_DISCONNECTED) {
-        xEventGroupClearBits(s_wifi_events, BIT_WIFI_CONNECTED);
-        ESP_LOGW(TAG, "WiFi disconnected — reconnecting...");
-        esp_wifi_connect();
-    }
-}
-
-static void _ip_event(void *arg, esp_event_base_t base, int32_t id, void *data) {
-    if (id == IP_EVENT_STA_GOT_IP) {
-        xEventGroupSetBits(s_wifi_events, BIT_WIFI_CONNECTED);
-        ip_event_got_ip_t *e = (ip_event_got_ip_t *)data;
-        ESP_LOGI(TAG, "WiFi connected — IP: " IPSTR, IP2STR(&e->ip_info.ip));
-    }
-}
-
-static void wifi_init_and_wait(void) {
-    s_wifi_events = xEventGroupCreate();
-
+// doc 169 — the OLD version of this function hardcoded one SSID/password
+// from config.h and blocked boot FOREVER (xEventGroupWaitBits(...,
+// portMAX_DELAY)) until that exact network was found — not viable in
+// production, where the deployed vehicle's WiFi (if any) isn't known at
+// build time and a missing/out-of-range network must never hang the
+// device. All of the SSID/password storage, connect/disconnect
+// decision-making, and the event handlers that used to live here have
+// moved to wifi_sta.c (NVS-backed, runtime-configurable via the "wifi
+// ..." serial commands / the PC GUI's WiFi screen) — this function now
+// only brings the WiFi DRIVER up (always needed, cellular/hotspot/etc.
+// all assume esp_netif+esp_wifi exist) and hands off to
+// app_wifi_init(), which does a single BOUNDED connect attempt and
+// returns either way so boot always proceeds.
+static void wifi_driver_bringup(void) {
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     esp_netif_create_default_wifi_sta();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, _wifi_event, NULL);
-    esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, _ip_event, NULL);
 
-    wifi_config_t wc = {0};
-    strlcpy((char *)wc.sta.ssid, WIFI_SSID, sizeof(wc.sta.ssid));
-    strlcpy((char *)wc.sta.password, WIFI_PASS, sizeof(wc.sta.password));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wc));
     ESP_ERROR_CHECK(esp_wifi_start());
 
-    ESP_LOGI(TAG, "WiFi connecting to '%s' ...", WIFI_SSID);
-    xEventGroupWaitBits(s_wifi_events, BIT_WIFI_CONNECTED, pdFALSE, pdFALSE, portMAX_DELAY);
+    // Doc 165 §hotspot investigation: SoftAP clients (hotspot_ap.c) were
+    // seen failing the WPA2 4-way handshake repeatedly ("m f auth"/
+    // "m f null" retries -> "deauth reason:15" = handshake timeout, in a
+    // loop, never actually connecting). ESP-IDF's default WiFi power-save
+    // (modem-sleep) periodically pauses the radio between DTIM beacons —
+    // a well-known cause of exactly this symptom on ESP32 APSTA mode,
+    // since a client's EAPOL handshake frames can arrive while the radio
+    // is asleep and get delayed past the handshake's own timeout. This
+    // device is always mains/vehicle powered (no battery-saving need),
+    // so there's no downside to disabling it outright.
+    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
+
+    app_wifi_init();
 }
 #endif // NETWORK_NEEDED
 
@@ -452,16 +449,59 @@ static void wifi_init_and_wait(void) {
 //  validation.
 // ═══════════════════════════════════════════════════════════════
 #if NETWORK_NEEDED
+// doc 182 10.8: the old loop condition was `while (status == RESET)` —
+// but SNTP moves out of RESET into IN_PROGRESS almost the instant the
+// first request goes out (well under 1s after esp_sntp_init()), so the
+// loop was exiting there, not waiting for the real answer. It then
+// logged "FAILED" regardless of whether the sync went on to actually
+// succeed a moment later — a near-guaranteed false negative, confirmed
+// against a real boot log (doc 182 §5: WiFi connected at 4863ms,
+// "FAILED" logged at 6299ms — ~14 iterations of the 100ms loop, not the
+// full 200/20s budget). Fixed to wait for the REAL terminal state
+// (either COMPLETED or, per esp_sntp's own reset-on-failure behavior,
+// back to RESET after a failed attempt) — see doc 182 §5's own honest
+// caveat: this fixes the LOGGING; it doesn't change how SNTP itself
+// behaves. s_ntp_synced_at_boot is exposed via a "time" serial command
+// so the wall clock's real state can be checked on demand, not just
+// inferred from one boot-time log line.
+static bool s_ntp_synced_at_boot = false;
+
 static void time_sync_init(void) {
     esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
     esp_sntp_setservername(0, "pool.ntp.org");
     esp_sntp_init();
+    // Waits through BOTH RESET (before the first request is even sent —
+    // this is the phase the old `while (status == RESET)` condition
+    // exited on immediately, the actual bug) and IN_PROGRESS (waiting
+    // for the server's response), stopping only on a genuine terminal
+    // result: COMPLETED, or the budget running out.
     int retry = 0;
-    while (esp_sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < 200) {
+    while (esp_sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED && ++retry < 200) {
         vTaskDelay(pdMS_TO_TICKS(100));
     }
+    s_ntp_synced_at_boot = (esp_sntp_get_sync_status() == SNTP_SYNC_STATUS_COMPLETED);
     ESP_LOGI(TAG, "NTP sync: %s",
-        esp_sntp_get_sync_status() == SNTP_SYNC_STATUS_COMPLETED ? "OK \xE2\x9C\x93" : "FAILED (tariff time-of-day lookups may be wrong until it syncs)");
+        s_ntp_synced_at_boot ? "OK \xE2\x9C\x93" : "FAILED (tariff time-of-day lookups may be wrong until it syncs; try 'time' to check current status)");
+}
+
+// doc 182 10.8 — lets you actually verify the clock's real state
+// instead of trusting a single boot-time log line (SNTP keeps syncing
+// in the background in SNTP_OPMODE_POLL after boot, so "FAILED at boot"
+// doesn't necessarily mean "still wrong now").
+static bool time_process_command(const char *line) {
+    if (!line || strcmp(line, "time") != 0) return false;
+    time_t now = time(NULL);
+    struct tm tm_now;
+    localtime_r(&now, &tm_now);
+    char buf[32];
+    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S UTC", &tm_now);
+    sntp_sync_status_t st = esp_sntp_get_sync_status();
+    ESP_LOGI(TAG, "Wall clock: %s | epoch=%lld | SNTP status: %s | synced at boot: %s",
+             buf, (long long)now,
+             st == SNTP_SYNC_STATUS_COMPLETED ? "COMPLETED" :
+             st == SNTP_SYNC_STATUS_IN_PROGRESS ? "IN_PROGRESS" : "RESET (never synced)",
+             s_ntp_synced_at_boot ? "yes" : "no");
+    return true;
 }
 #endif
 
@@ -544,7 +584,7 @@ static void serial_cmd_task(void *arg) {
 
     printf("\nType 'help' for the full command list. Quick start: 'getinfo' | 'getversion' | 'ram info' | 'ram test sram|psram|download|all'"
            " | 'net info' | 'net test' | 'AT+CSQ' (any AT<command>, raw modem passthrough) | 'api help' | 'gps set|info' | 'setup help' | 'auth help' | 'ref help'"
-           " | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store'"
+           " | 'duty on|off|info' | 'trip help' | 'sync now|status' | 'directions test' | 'session info' | 'mem' | 'store' | 'time'"
            " | 'net uplink wifi|cellular|auto' | 'cell up|status' | 'hotspot on|off|status'"
 #if ENABLE_SMS
            " | 'smsc send|list|status'"
@@ -618,6 +658,8 @@ static void serial_cmd_task(void *arg) {
                     // handled
                 } else if (auth_client_process_command(line)) {
                     // handled
+                } else if (login_screen_process_command(line)) {
+                    // handled — "login gate hard|soft|info" (doc 179 D1c)
                 } else if (reference_data_process_command(line)) {
                     // handled
                 } else if (duty_client_process_command(line)) {
@@ -628,6 +670,8 @@ static void serial_cmd_task(void *arg) {
                     // handled — "sync now" / "sync status"
                 } else if (directions_client_process_command(line)) {
                     // handled — "directions test <lat1> <lon1> <lat2> <lon2>"
+                } else if (app_wifi_process_command(line)) {
+                    // handled — "wifi scan|connect|disconnect|autoconnect|status" (doc 169)
                 } else if (cellular_ppp_process_command(line)) {
                     // handled — "cell up|down|status|apn|ip" (Phase 1, doc 155/158)
                 } else if (hotspot_ap_process_command(line)) {
@@ -638,6 +682,10 @@ static void serial_cmd_task(void *arg) {
 #endif
                 } else if (diag_process_command(line)) {
                     // handled — "mem" / "store" / "diag help"
+#if NETWORK_NEEDED
+                } else if (time_process_command(line)) {
+                    // handled — "time" (doc 182 10.8 — real wall-clock/SNTP status, not inferred from one boot log line)
+#endif
 #if ENABLE_OTA
                 } else if (ota_client_process_command(line)) {
                     // handled
@@ -699,19 +747,13 @@ static StackType_t *s_lv_tick_stack = NULL;
 #endif
 
 // ═══════════════════════════════════════════════════════════════
-//  DASHBOARD — fed by the REAL meter (fare_calc.c), not a simulation.
-//  Zeros while no trip is running; live speed/distance/fare once "trip
-//  start" is issued (serial command or, later, a touchscreen control).
-//
-//  Runs as an LVGL timer callback (lv_timer_create(), registered in
-//  app_main() after ui_init()) — NOT a separate FreeRTOS task calling
-//  LVGL functions directly. LVGL is not thread-safe: calling
-//  lv_label_set_text() (via ui_update_dashboard()) from a separate
-//  task while the "main" task concurrently runs lv_timer_handler() is
-//  a real, previously-documented class of bug (doc 116) — an lv_timer's
-//  callback runs INSIDE lv_timer_handler() itself, on the same task,
-//  which is what actually satisfies LVGL's single-thread-access
-//  requirement.
+//  This timer's job is now just the SMS-reboot dialog courtesy + LVGL
+//  mem-pool sampling below. Live meter values (doc 179 §5 restructure,
+//  2026-08-06) are no longer relayed through here — meter_screen.c and
+//  test_meter_dev.c each own a 1s lv_timer that reads
+//  fare_calc_get_snapshot() directly, same self-contained pattern
+//  network_screen.c/trip_screen.c already use. Still an LVGL timer
+//  callback, not a separate task calling LVGL directly (doc 116).
 // ═══════════════════════════════════════════════════════════════
 // Phase 2 (doc 155/159) — SMS REBOOT interlock's GUI courtesy. Backend
 // code (sms_commands.c) can never call LVGL directly (doc 116) — it
@@ -729,15 +771,7 @@ static void _dashboard_timer_cb(lv_timer_t *timer) {
     if (sms_commands_reboot_ui_pending()) {
         char msg[128];
         sms_commands_reboot_ui_consume(msg, sizeof(msg));
-        confirm_dialog_show(lv_scr_act(), msg, _on_sms_reboot_confirm, NULL);
-    }
-
-    if (trip_manager_is_trip_active()) {
-        fare_calc_snapshot_t snap;
-        fare_calc_get_snapshot(&snap);
-        ui_update_dashboard(snap.speed_kmh, snap.distance_km, snap.total_fare_cents / 100.0);
-    } else {
-        ui_update_dashboard(0.0, 0.0, 0.0);
+        confirm_dialog_show(lv_scr_act(), msg, _on_sms_reboot_confirm, NULL, NULL);
     }
 
     // Phase 0 (doc 155 §12.4): sample LVGL's own memory pool from HERE
@@ -761,8 +795,36 @@ void app_main(void) {
     // later once WiFi/display/SPIFFS have fragmented/consumed most of it.
     bg_worker_init();
 
+    // Serial console — SAME reasoning as bg_worker_init() above, and
+    // moved here 2026-07-30 after a real hardware incident: this task
+    // used to be created near the very END of app_main() (after
+    // display_init()/touch_init()/ui_init()/ram_test_init()), so its
+    // 8KB stack request competed for internal-SRAM's LARGEST CONTIGUOUS
+    // block against the LVGL pool (112KB, doc 160/161), the display's
+    // DMA draw buffers, and everything else touched by then. On real
+    // hardware this request failed — and because xTaskCreate()'s return
+    // value was never checked, the failure was completely silent: no
+    // crash, no log line, the rest of the system ran fine, but the
+    // serial console simply never existed (confirmed: its own startup
+    // banner never printed, and zero typed commands ever got a
+    // response, in a log that otherwise ran cleanly for 200+ seconds —
+    // see doc 161 §5). Creating it here, before WiFi/display/anything
+    // else fragments the heap, is the same fix bg_worker_init() and
+    // cellular_ppp_init() already apply for their own large one-time
+    // allocations. The explicit pdPASS check below is new too — so if
+    // this EVER fails again for any reason, it is loud, not silent.
+    TaskHandle_t serial_cmd_handle = NULL;
+    if (xTaskCreate(serial_cmd_task, "serial_cmd", 8192, NULL, 2, &serial_cmd_handle) != pdPASS) {
+        ESP_LOGE(TAG, "xTaskCreate(serial_cmd_task) FAILED — serial console will not respond to "
+                      "any typed command this boot (see doc 161 §5). Likely out of contiguous "
+                      "internal SRAM even this early in boot — check 'mem' isn't reachable either, "
+                      "in which case this log line itself is the only diagnostic you'll get.");
+    } else {
+        diag_register_task(serial_cmd_handle, "serial_cmd");   // doc 184 §10.2 — see 'stacks'
+    }
+
 #if NETWORK_NEEDED
-    wifi_init_and_wait();
+    wifi_driver_bringup();
 
     // ── PHASE 1 (doc 155/158): cellular + hotspot ──────────────────
     // Deliberately placed HERE — right after WiFi-STA connects, BEFORE
@@ -836,12 +898,6 @@ void app_main(void) {
     // is loaded lazily on the first "llm run" command, not here (doc 125).
     llm_runner_init();
 #endif
-
-    // Raised 4096 -> 8192: this task's own command buffer plus every
-    // module's process_command() call chain (trips_api/ota/remote_config/
-    // additional_work all get a turn on this same stack) left too little
-    // headroom at 4096 on this larger, more heavily-flagged codebase.
-    xTaskCreate(serial_cmd_task, "serial_cmd", 8192, NULL, 2, NULL);
 
 #if ENABLE_PSRAM_TASK_STACKS
     // PSRAM-backed stack — see this task's own comment above + config.h's

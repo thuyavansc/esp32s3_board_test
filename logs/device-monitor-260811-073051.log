@@ -1,0 +1,1022 @@
+�*� Init
+I (6851) gps_gnss:   A-GPS: ENABLED in config.h
+I (6855) gps_gnss: ══════════════════════════════════════
+I (6868) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (6874) gps_gnss: AT handshake...
+I (6877) gps:   NEO-6M backend NOT compiled in (ENABLE_GPS_NEO6M=0)
+I (6883) gps:   Injection ('gps set ...') always available regardless of the above.
+I (6890) gps: ══════════════════════════════════════
+
+I (6903) farecalc: fare_calc_init: state (35648 bytes) allocated in PSRAM, internal SRAM untouched
+I (6910) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (6918) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (6926) chipinfo: ########################################
+I (6932) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (6938) chipinfo: ########################################
+I (6943) version: ======================================
+I (6948) version: FIRMWARE VERSION
+I (6951) version: --------------------------------------
+I (6956) version:   Project:   esp32s3_board
+I (6960) version:   Version:   26.07.23 (code 1)
+I (6964) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (6977) version:   Running from partition: factory
+I (6982) chipinfo: ======================================
+I (6987) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (6993) chipinfo: --------------------------------------
+I (6999) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (7003) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (7009) chipinfo:   Crystal is 40 MHz
+I (7012) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (7016) chipinfo: ======================================
+I (7021) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (7027) chipinfo: --------------------------------------
+I (7032) chipinfo:   Model:       ESP32-S3
+I (7036) chipinfo:   Cores:       2
+I (7039) chipinfo:   Revision:    v0.2
+I (7043) chipinfo:   Features:    WiFi BLE External-Flash
+I (7048) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (7053) chipinfo:   IDF version: 5.4.0
+I (7057) chipinfo: ======================================
+I (7061) chipinfo: FLASH INFO  (live-probed)
+I (7065) chipinfo: --------------------------------------
+I (7070) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (7077) chipinfo:   JEDEC ID:        0x852018
+I (7081) chipinfo: ======================================
+I (7087) chipinfo: RAM / HEAP INFO  (live)
+I (7090) chipinfo: --------------------------------------
+I (7096) chipinfo:   Free heap now (all capabilities): 8385304 bytes | 8188.8 KB (8.00 MB)
+I (7104) chipinfo:   Minimum ever free:                8141252 bytes | 7950.4 KB (7.76 MB)
+I (7112) chipinfo:   --------------------------------------
+I (7117) chipinfo:   PSRAM initialized: YES
+I (7121) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (7129) chipinfo:   SRAM  total:          247215 bytes | 241.4 KB (0.24 MB)
+I (7136) chipinfo:   SRAM  free now:       83919 bytes | 82.0 KB (0.08 MB)
+I (7142) chipinfo:   SRAM  min free ever:  32047 bytes | 31.3 KB (0.03 MB)
+I (7149) chipinfo:   SRAM  largest block:  31744 bytes | 31.0 KB (0.03 MB)
+I (7155) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (7163) chipinfo:   PSRAM free now:          8333416 bytes | 8138.1 KB (7.95 MB)
+I (7170) chipinfo:   PSRAM min free ever:     8141236 bytes | 7950.4 KB (7.76 MB)
+I (7177) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (7184) chipinfo: ======================================
+I (7189) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (7196) chipinfo: --------------------------------------
+I (7201) chipinfo:   Name       Type   SubType   Offset     Size
+I (7207) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (7216) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (7223) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (7231) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (7240) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (7248) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (7257) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (7265) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (7273) chipinfo: ======================================
+I (7278) chipinfo: NVS INFO  (live)
+I (7281) chipinfo: --------------------------------------
+I (7287) chipinfo:   Used entries:  216
+I (7290) chipinfo:   Free entries:  540
+I (7294) chipinfo:   Total entries: 756
+I (7297) chipinfo: ======================================
+I (7302) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (7308) chipinfo: --------------------------------------
+I (7313) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (7319) chipinfo:   Used:  96133 bytes | 93.9 KB (0.09 MB)
+I (7325) chipinfo:   Free:  4595308 bytes | 4487.6 KB (4.38 MB)
+I (7330) chipinfo: ########################################
+
+I (7335) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (7341) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (7349) display: SD_CS (TF slot) → GPIO9 HIGH (disabled)
+I (7355) display: Backlight PWM init — GPIO5, 5kHz, 10-bit
+I (7360) display: Backlight ON (GPIO5, PWM 100%)
+I (7365) display: SPI: MOSI=11 SCLK=12 CS=10 DC=14 RST=21 (hardware reset)
+I (7372) gpio: GPIO[14]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7380) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7577) USBH_CDC: New device connected, address: 1
+I (7578) esp-modem-dte: USB CDC device connected, VID: 0x1e0e, PID: 0x9011
+I (7578) esp-modem-dte: Matched USB Modem: "SIMCOM A7670E (Waveshare)", Modem Interface: 5, AT Interface: -1
+I (7588) cdc_descriptor: Found NOTIF endpoint: 8
+I (7592) cdc_descriptor: Found OUT endpoint: 10
+I (7596) cdc_descriptor: Found IN endpoint: 1
+I (7601) modem_board: DTE connected
+I (7603) modem_board: Handling stage = STAGE_SYNC
+I (7728) display: ST7796S init complete — 320x480 RGB565
+I (7728) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (7733) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (7735) display: DISPLAY — READY ✓
+I (7738) touch: TOUCH INIT — FT6336U via I2C
+I (7743) touch: I2C init: SDA=6 SCL=4
+I (7746) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (7814) touch: FT6336U reset pulsed on GPIO1
+I (7814) touch: FT6336U init — addr: 0x38
+I (7814) touch: Touch input registered with LVGL ✓
+W (7816) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (7822) touch: TOUCH — READY ✓
+I (7825) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (8201) ui: UI INIT: remembered session still valid — skipping login screen
+I (8202) ui: UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)
+I (8206) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (8212) additional_work: Additional work module ready (try: "sms reboot")
+I (8219) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (8225) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (8233) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (8240) chipinfo: READY — Touch UI Active ✓
+I (8921) gps_gnss:   AT -> no OK (see raw response below)
+W (8921) gps_gnss:     raw: 
+*ATREADY: 1
+
+I (8926) sms_client: SMS runtime SETUP FAILED — check modem/SIM, retry with 'smsc status' (AT+CMGF=1: failed, AT+CNMI=2,1,0,0,0: ok)
+E (9608) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (9608) esp-modem-dte: Retry 1/5 failed. Retrying in 2000 milliseconds...
+W (9674) Modem AT: AT parser handle_line is NULL but receive: "
++CPIN: READY
+"
+I (9925) gps_gnss:   AT -> OK
+I (9925) gps_gnss: Modem responding ✓
+I (9930) gps_gnss:   AT+CGNSSPWR=1,1 -> OK
+I (10238) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (10545) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (10545) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (10546) gps_gnss:   AT+CGNSSPORTSWITCH attempt 1/6 failed — retrying in 2000ms (likely raced with
+W (10555) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+W (10602) Modem AT: AT parser handle_line is NULL but receive: "
++CPIN: READY
+
+SMS DONE
+"
+W (11115) Modem AT: AT parser handle_line is NULL but receive: "
++CPIN: READY
+
+SMS DONE
+
++CGEV: EPS PDN ACT 1
+"
+I (11226) ram_test: ══════════════════════════════════════
+I (11226) ram_test: PSRAM periodic health-check
+I (11231) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (11238) ram_test:   Before: free=8306936 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11399) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (11400) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7258356 bytes (6.92 MB)
+I (11407) ram_test:   After free: free=8306936 bytes (7.92 MB) | largest free block=8257536 bytes (7.88 MB)
+I (11416) ram_test: ══════════════════════════════════════
+I (11612) modem_board: Modem manufacturer ID: INCORPORATED
+I (11613) modem_board: Modem module ID: A7670E-FASE
+I (11613) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (11716) modem_board: Handling stage = STAGE_IDLE
+I (11716) net_mgr: DNS resolver -> 8.8.8.8
+I (11717) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (11721) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (11729) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (11735) net_mgr: Active uplink -> CELLULAR
+I (11739) bgworker: Job finished: OK
+I (11816) modem_board: Handling stage = STAGE_START_PPP
+I (11816) modem_board: Check SIM card state...
+I (11817) modem_board: Check signal quality...
+I (11821) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (11825) modem_board: Check network registration...
+I (11831) modem_board: Check PDP context...
+I (11833) modem_board: Set PDP context: cid=1, type=IP, apn=default
+I (11843) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (11847) modem_board: PPP Dial up...
+I (12451) iot_eth: Ethernet link up
+W (12453) iot_eth: Driver does not support get_addr
+I (12461) esp-netif_lwip-ppp: Connected
+I (12461) cellular: ══════════════════════════════════════
+I (12466) cellular: PPP CONNECTED — carrier IP: 10.181.21.36
+I (12471) cellular: ══════════════════════════════════════
+
+I (12483) iot_eth.netif_glue: netif "USB PPP" Got IP Address
+I (12489) iot_eth.netif_glue: ~~~~~~~~~~~
+I (12492) iot_eth.netif_glue: ETHIP:10.181.21.36
+I (12497) iot_eth.netif_glue: ETHMASK:255.255.255.255
+I (12501) iot_eth.netif_glue: ETHGW:10.64.64.64
+I (12506) iot_eth.netif_glue: Main DNS: 10.4.4.12
+I (12510) iot_eth.netif_glue: Backup DNS: 8.8.8.8
+I (12514) iot_eth.netif_glue: ~~~~~~~~~~~
+I (12551) modem_board: Handling stage = STAGE_RUNNING
+I (12551) modem_board: Modem is running
+I (12570) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (12571) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (12572) gps_gnss:   AT+CGNSSPORTSWITCH attempt 2/6 failed — retrying in 2000ms (likely raced with
+W (12581) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (14595) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (14596) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (14597) gps_gnss:   AT+CGNSSPORTSWITCH attempt 3/6 failed — retrying in 2000ms (likely raced with
+W (14606) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (16621) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (16622) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (16623) gps_gnss:   AT+CGNSSPORTSWITCH attempt 4/6 failed — retrying in 2000ms (likely raced with
+W (16632) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (18647) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (18647) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (18649) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (18668) gps_gnss: A-GPS preconditions OK — SIM ready, network registered.
+I (18668) gps_gnss:   A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...
+I (22686) gps_gnss:   AT+CAGPS -> +AGPS: success.
+I (22687) gps_gnss: A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular
+I (22688) gps_gnss:   connection (not WiFi — see doc 140). Cold fix should now be faster.
+I (28916) touch: Touch: (192,446) [direct px]
+I (29035) ui: NAV -> TRIPS (1)
+I (29036) ui: Screen: 1
+I (29041) tripsync: ══════════════════════════════════════
+I (29042) tripsync: GET TRIP HISTORY — page 1, pageSize 10, search=Dropedoff/Status
+I (29051) api_client: → POST /taxis-api/api/Job/GetAllBySearch
+I (29056) api_client:   Heap before perform()       free=8121 KB | largest free block=8064 KB
+I (29986) esp-x509-crt-bundle: Certificate validated
+I (31120) gps_gnss: GNSS: no fix | reads=64 [ACTIVE] (idle — waiting for satellites)
+I (32162) api_client:   Heap after perform()        free=8104 KB | largest free block=7936 KB
+I (32162) api_client: ← HTTP 200 (POST /taxis-api/api/Job/GetAllBySearch)
+W (32169) api_client:   Response TRUNCATED at 8191 bytes (buffer is 8192 bytes) — increase out_buf_size if this response needs to be read in full.
+E (32193) tripsync: GET TRIP HISTORY: response is not valid JSON (HTTP 200)
+I (32193) tripsync: ══════════════════════════════════════
+
+I (32201) bgworker: Job finished: OK
+I (32340) ui: History fetch page 1: +0 item(s), loaded=0/0
+I (33051) touch: Touch: (282,444) [direct px]
+I (33146) ui: NAV -> SETTINGS (2)
+I (33147) ui: Screen: 2
+I (38755) touch: Touch: (59,450) [direct px]
+I (38844) ui: NAV -> METER (0)
+I (38844) ui: Screen: 0
+I (45049) touch: Touch: (103,393) [direct px]
+I (45107) ui: METER: START TRIP tapped
+I (46455) touch: Touch: (207,276) [direct px]
+I (47702) touch: Touch: (93,321) [direct px]
+I (49213) touch: Touch: (291,431) [direct px]
+W (49378) farecalc:   No GPS fix yet at trip start — billing plain time until the first fix arrives (D2, doc 151 §7.1)
+I (49379) farecalc: TimeFrame opened: status=2 (odometer carry-in=0.0m)
+I (49384) farecalc: ══════════════════════════════════════
+I (49396) farecalc: METER STARTED — tariff #6 "Maxi Night (10:00-05:59)" (Maxi) flagfall=775.00¢ distRate=465.00¢/km distRate2=423.00¢/km@12.0km timeRate=169.50¢/min
+I (49411) farecalc: ══════════════════════════════════════
+
+W (49423) trip:   No GPS fix yet at trip start — pickup location will be missing until one arrives
+I (49432) trip:   Auto-added special fare: Levy Fare (132.00¢)
+I (49438) trip: TRIP #12 STARTED — customer="s"
+I (49787) bgworker: Job finished: OK
+W (49787) tripsync: add_job: no pickup GPS fix recorded yet — sending 0,0 (server may reject this, matching Android's own "Invalid pickup location" guard for the same case)
+I (49797) tripsync: ══════════════════════════════════════
+I (49806) tripsync: ADD JOB — local trip #12, pickup=0.000000,0.000000
+I (49814) api_client: → POST /taxis-api/api/Job/AddJobByDriver
+I (49819) api_client:   Heap before perform()       free=8120 KB | largest free block=8064 KB
+I (50723) esp-x509-crt-bundle: Certificate validated
+I (52385) api_client:   Heap after perform()        free=8103 KB | largest free block=7936 KB
+I (52385) api_client: ← HTTP 200 (POST /taxis-api/api/Job/AddJobByDriver)
+I (52398) tripsync: ADD JOB OK ✓ — local #12 -> server job id 12817
+I (52400) tripsync: ══════════════════════════════════════
+
+I (52407) bgworker: Job finished: OK
+I (61121) gps_gnss: GNSS: no fix | reads=304 [ACTIVE] (idle — waiting for satellites)
+I (91123) gps_gnss: GNSS: no fix | reads=544 [ACTIVE] (idle — waiting for satellites)
+I (109551) tripsync: ══════════════════════════════════════
+I (109552) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1008 bytes
+I (109560) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (109570) api_client: → POST /taxis-api/api/Trips
+I (109573) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (110585) esp-x509-crt-bundle: Certificate validated
+I (111941) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (111941) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (111947) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (111953) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (111957) tripsync: ══════════════════════════════════════
+
+I (111969) bgworker: Job finished: OK
+I (121160) gps_gnss: GNSS: no fix | reads=792 [ACTIVE] (idle — waiting for satellites)
+I (151161) gps_gnss: GNSS: no fix | reads=1032 [ACTIVE] (idle — waiting for satellites)
+I (170189) tripsync: ══════════════════════════════════════
+I (170190) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1003 bytes
+I (170199) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (170208) api_client: → POST /taxis-api/api/Trips
+I (170212) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (171123) esp-x509-crt-bundle: Certificate validated
+I (172415) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (172415) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (172421) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (172428) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (172431) tripsync: ══════════════════════════════════════
+
+I (172443) bgworker: Job finished: OK
+I (181162) gps_gnss: GNSS: no fix | reads=1272 [ACTIVE] (idle — waiting for satellites)
+I (211163) gps_gnss: GNSS: no fix | reads=1512 [ACTIVE] (idle — waiting for satellites)
+I (230824) tripsync: ══════════════════════════════════════
+I (230826) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1009 bytes
+I (230834) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (230843) api_client: → POST /taxis-api/api/Trips
+I (230847) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (233124) esp-x509-crt-bundle: Certificate validated
+I (234420) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (234421) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (234426) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (234433) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (234436) tripsync: ══════════════════════════════════════
+
+I (234448) bgworker: Job finished: OK
+I (241165) gps_gnss: GNSS: no fix | reads=1752 [ACTIVE] (idle — waiting for satellites)
+I (271169) gps_gnss: GNSS: no fix | reads=1984 [ACTIVE] (idle — waiting for satellites)
+I (291461) tripsync: ══════════════════════════════════════
+I (291462) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1003 bytes
+I (291470) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (291480) api_client: → POST /taxis-api/api/Trips
+I (291483) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (292441) esp-x509-crt-bundle: Certificate validated
+I (293808) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (293809) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (293814) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (293821) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (293825) tripsync: ══════════════════════════════════════
+
+I (293836) bgworker: Job finished: OK
+I (301171) gps_gnss: GNSS: no fix | reads=2224 [ACTIVE] (idle — waiting for satellites)
+I (311428) ram_test: ══════════════════════════════════════
+I (311429) ram_test: PSRAM periodic health-check
+I (311433) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (311440) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (311678) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (311679) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (311686) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (311696) ram_test: ══════════════════════════════════════
+I (331172) gps_gnss: GNSS: no fix | reads=2464 [ACTIVE] (idle — waiting for satellites)
+I (352108) tripsync: ══════════════════════════════════════
+I (352110) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1009 bytes
+I (352118) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (352128) api_client: → POST /taxis-api/api/Trips
+I (352131) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (353003) esp-x509-crt-bundle: Certificate validated
+I (354125) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (354125) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (354130) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (354138) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (354141) tripsync: ══════════════════════════════════════
+
+I (354153) bgworker: Job finished: OK
+I (361173) gps_gnss: GNSS: no fix | reads=2704 [ACTIVE] (idle — waiting for satellites)
+I (391174) gps_gnss: GNSS: no fix | reads=2936 [ACTIVE] (idle — waiting for satellites)
+I (412738) tripsync: ══════════════════════════════════════
+I (412739) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1005 bytes
+I (412747) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (412757) api_client: → POST /taxis-api/api/Trips
+I (412760) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (413633) esp-x509-crt-bundle: Certificate validated
+I (414918) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (414919) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (414924) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (414931) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (414934) tripsync: ══════════════════════════════════════
+
+I (414946) bgworker: Job finished: OK
+I (421175) gps_gnss: GNSS: no fix | reads=3176 [ACTIVE] (idle — waiting for satellites)
+,memmemI (439907) diag: ══════════════════════════════════════
+I (439908) diag: MEMORY (RAM)
+I (439911) diag: ──────────────────────────────────────
+I (439922) diag:   INTERNAL SRAM  ← the pool that actually limits this board
+I (439929) diag:     Total:                   241 KB
+I (439934) diag:     Free NOW:                 57 KB
+I (439938) diag:     Lowest EVER:              17 KB  ← how close we've come to running out
+I (439947) diag:     Largest free block:       21 KB  ← a big single alloc can't exceed this,
+I (439955) diag:                                      no matter how much total is free
+I (439963) diag:     Largest DMA block:        21 KB  (display draw buffers, WiFi, USB host)
+I (439971) diag:   PSRAM  (plentiful — but CANNOT serve DMA or <16KB allocations)
+I (439978) diag:     Total:                  8192 KB
+I (439983) diag:     Free NOW:               8096 KB
+I (439988) diag:     Largest free block:     8064 KB
+I (439992) diag:   LVGL POOL  (static, carved out of internal SRAM above)
+I (439999) diag:     Pool size:                96 KB  (= CONFIG_LV_MEM_SIZE_KILOBYTES)
+I (440007) diag:     Used now:                 44 KB  (47%)
+I (440012) diag:     PEAK used since boot:     46 KB  ← size the pool from THIS, + headroom
+I (440020) diag:     Largest free in pool:     49 KB  | fragmentation 4%
+I (440027) diag:     (visit every screen + run a trip before trusting PEAK — it only
+I (440034) diag:      reflects what the UI has actually been asked to draw so far)
+I (440041) diag: ──────────────────────────────────────
+W (440053) diag:   ⚠ Internal SRAM under 60KB — too tight to add USB-host + SoftAP + PPP
+W (440061) diag:     (doc 155 §6 estimates that feature needs 55-80KB internal).
+I (440068) diag: ══════════════════════════════════════
+
+> I (451175) gps_gnss: GNSS: no fix | reads=3416 [ACTIVE] (idle — waiting for satellites)
+I (473378) tripsync: ══════════════════════════════════════
+I (473379) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1011 bytes
+I (473387) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (473396) api_client: → POST /taxis-api/api/Trips
+I (473400) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (474326) esp-x509-crt-bundle: Certificate validated
+I (475583) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (475583) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (475589) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (475596) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (475599) tripsync: ══════════════════════════════════════
+
+I (475611) bgworker: Job finished: OK
+I (481176) gps_gnss: GNSS: no fix | reads=3656 [ACTIVE] (idle — waiting for satellites)
+I (511178) gps_gnss: GNSS: no fix | reads=3896 [ACTIVE] (idle — waiting for satellites)
+I (534011) tripsync: ══════════════════════════════════════
+I (534012) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1005 bytes
+I (534020) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (534030) api_client: → POST /taxis-api/api/Trips
+I (534033) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (535866) esp-x509-crt-bundle: Certificate validated
+I (537081) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (537082) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (537087) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (537094) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (537097) tripsync: ══════════════════════════════════════
+
+I (537109) bgworker: Job finished: OK
+I (541180) gps_gnss: GNSS: no fix | reads=4136 [ACTIVE] (idle — waiting for satellites)
+I (571181) gps_gnss: GNSS: no fix | reads=4368 [ACTIVE] (idle — waiting for satellites)
+I (594651) tripsync: ══════════════════════════════════════
+I (594652) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1011 bytes
+I (594660) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (594669) api_client: → POST /taxis-api/api/Trips
+I (594673) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (595604) esp-x509-crt-bundle: Certificate validated
+I (596701) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (596701) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (596707) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (596714) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (596717) tripsync: ══════════════════════════════════════
+
+I (596729) bgworker: Job finished: OK
+I (601182) gps_gnss: GNSS: no fix | reads=4608 [ACTIVE] (idle — waiting for satellites)
+I (611707) ram_test: ══════════════════════════════════════
+I (611708) ram_test: PSRAM periodic health-check
+I (611712) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (611719) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (611869) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (611870) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (611877) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (611887) ram_test: ══════════════════════════════════════
+I (631182) gps_gnss: GNSS: no fix | reads=4848 [ACTIVE] (idle — waiting for satellites)
+I (655291) tripsync: ══════════════════════════════════════
+I (655292) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1006 bytes
+I (655300) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (655310) api_client: → POST /taxis-api/api/Trips
+I (655313) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (656178) esp-x509-crt-bundle: Certificate validated
+I (657351) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (657351) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (657357) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (657364) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (657367) tripsync: ══════════════════════════════════════
+
+I (657379) bgworker: Job finished: OK
+I (661183) gps_gnss: GNSS: no fix | reads=5088 [ACTIVE] (idle — waiting for satellites)
+I (691184) gps_gnss: GNSS: no fix | reads=5320 [ACTIVE] (idle — waiting for satellites)
+I (715926) tripsync: ══════════════════════════════════════
+I (715928) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1012 bytes
+I (715936) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (715945) api_client: → POST /taxis-api/api/Trips
+I (715949) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (716822) esp-x509-crt-bundle: Certificate validated
+I (718236) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (718236) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (718242) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (718249) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (718252) tripsync: ══════════════════════════════════════
+
+I (718264) bgworker: Job finished: OK
+I (721185) gps_gnss: GNSS: no fix | reads=5560 [ACTIVE] (idle — waiting for satellites)
+I (751186) gps_gnss: GNSS: no fix | reads=5800 [ACTIVE] (idle — waiting for satellites)
+I (776565) tripsync: ══════════════════════════════════════
+I (776567) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1006 bytes
+I (776575) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (776584) api_client: → POST /taxis-api/api/Trips
+I (776588) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (777507) esp-x509-crt-bundle: Certificate validated
+I (778872) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (778872) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (778877) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (778884) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (778888) tripsync: ══════════════════════════════════════
+
+I (778900) bgworker: Job finished: OK
+I (781187) gps_gnss: GNSS: no fix | reads=6040 [ACTIVE] (idle — waiting for satellites)
+I (811188) gps_gnss: GNSS: no fix | reads=6280 [ACTIVE] (idle — waiting for satellites)
+I (837200) tripsync: ══════════════════════════════════════
+I (837201) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1012 bytes
+I (837210) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (837220) api_client: → POST /taxis-api/api/Trips
+I (837223) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (838288) esp-x509-crt-bundle: Certificate validated
+I (839681) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (839682) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (839687) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (839694) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (839697) tripsync: ══════════════════════════════════════
+
+I (839709) bgworker: Job finished: OK
+I (841189) gps_gnss: GNSS: no fix | reads=6520 [ACTIVE] (idle — waiting for satellites)
+I (871191) gps_gnss: GNSS: no fix | reads=6752 [ACTIVE] (idle — waiting for satellites)
+I (897838) tripsync: ══════════════════════════════════════
+I (897839) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1006 bytes
+I (897847) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (897857) api_client: → POST /taxis-api/api/Trips
+I (897860) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (898771) esp-x509-crt-bundle: Certificate validated
+I (899906) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (899906) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (899912) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (899919) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (899922) tripsync: ══════════════════════════════════════
+
+I (899934) bgworker: Job finished: OK
+I (901191) gps_gnss: GNSS: no fix | reads=6992 [ACTIVE] (idle — waiting for satellites)
+I (911899) ram_test: ══════════════════════════════════════
+I (911900) ram_test: PSRAM periodic health-check
+I (911904) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (911911) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (912062) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (912063) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (912071) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (912080) ram_test: ══════════════════════════════════════
+I (931192) gps_gnss: GNSS: no fix | reads=7232 [ACTIVE] (idle — waiting for satellites)
+I (958477) tripsync: ══════════════════════════════════════
+I (958478) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1012 bytes
+I (958486) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (958496) api_client: → POST /taxis-api/api/Trips
+I (958499) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (959357) esp-x509-crt-bundle: Certificate validated
+I (960607) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (960607) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (960612) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (960619) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (960623) tripsync: ══════════════════════════════════════
+
+I (960635) bgworker: Job finished: OK
+I (961193) gps_gnss: GNSS: no fix | reads=7472 [ACTIVE] (idle — waiting for satellites)
+I (991194) gps_gnss: GNSS: no fix | reads=7710 [ACTIVE] (idle — waiting for satellites)
+I (1019111) tripsync: ══════════════════════════════════════
+I (1019112) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1006 bytes
+I (1019120) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1019130) api_client: → POST /taxis-api/api/Trips
+I (1019134) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1020000) esp-x509-crt-bundle: Certificate validated
+I (1021195) gps_gnss: GNSS: no fix | reads=7950 [ACTIVE] (idle — waiting for satellites)
+I (1021249) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1021250) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1021255) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1021262) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1021266) tripsync: ══════════════════════════════════════
+
+I (1021278) bgworker: Job finished: OK
+I (1051196) gps_gnss: GNSS: no fix | reads=8190 [ACTIVE] (idle — waiting for satellites)
+I (1079751) tripsync: ══════════════════════════════════════
+I (1079753) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1013 bytes
+I (1079761) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1079770) api_client: → POST /taxis-api/api/Trips
+I (1079774) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1080676) esp-x509-crt-bundle: Certificate validated
+I (1081197) gps_gnss: GNSS: no fix | reads=8430 [ACTIVE] (idle — waiting for satellites)
+I (1081812) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1081812) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1081818) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1081825) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1081829) tripsync: ══════════════════════════════════════
+
+I (1081840) bgworker: Job finished: OK
+I (1111198) gps_gnss: GNSS: no fix | reads=8670 [ACTIVE] (idle — waiting for satellites)
+I (1140385) tripsync: ══════════════════════════════════════
+I (1140386) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1007 bytes
+I (1140394) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1140404) api_client: → POST /taxis-api/api/Trips
+I (1140407) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1141199) gps_gnss: GNSS: no fix | reads=8910 [ACTIVE] (idle — waiting for satellites)
+I (1141473) esp-x509-crt-bundle: Certificate validated
+I (1142870) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1142870) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1142876) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1142883) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1142886) tripsync: ══════════════════════════════════════
+
+I (1142898) bgworker: Job finished: OK
+I (1171200) gps_gnss: GNSS: no fix | reads=9142 [ACTIVE] (idle — waiting for satellites)
+I (1201021) tripsync: ══════════════════════════════════════
+I (1201023) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1013 bytes
+I (1201031) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1201040) api_client: → POST /taxis-api/api/Trips
+I (1201044) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1201201) gps_gnss: GNSS: no fix | reads=9382 [ACTIVE] (idle — waiting for satellites)
+I (1201986) esp-x509-crt-bundle: Certificate validated
+I (1203281) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1203282) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1203287) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1203294) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1203298) tripsync: ══════════════════════════════════════
+
+I (1203310) bgworker: Job finished: OK
+I (1212092) ram_test: ══════════════════════════════════════
+I (1212093) ram_test: PSRAM periodic health-check
+I (1212097) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (1212105) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1212255) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (1212255) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (1212263) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1212273) ram_test: ══════════════════════════════════════
+I (1231202) gps_gnss: GNSS: no fix | reads=9622 [ACTIVE] (idle — waiting for satellites)
+I (1261203) gps_gnss: GNSS: no fix | reads=9862 [ACTIVE] (idle — waiting for satellites)
+I (1261658) tripsync: ══════════════════════════════════════
+I (1261660) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1007 bytes
+I (1261668) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1261678) api_client: → POST /taxis-api/api/Trips
+I (1261681) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1262560) esp-x509-crt-bundle: Certificate validated
+I (1263968) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1263969) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1263974) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1263981) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1263985) tripsync: ══════════════════════════════════════
+
+I (1263997) bgworker: Job finished: OK
+I (1291203) gps_gnss: GNSS: no fix | reads=10102 [ACTIVE] (idle — waiting for satellites)
+I (1321204) gps_gnss: GNSS: no fix | reads=10342 [ACTIVE] (idle — waiting for satellites)
+I (1322291) tripsync: ══════════════════════════════════════
+I (1322293) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1013 bytes
+I (1322301) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1322310) api_client: → POST /taxis-api/api/Trips
+I (1322314) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1323207) esp-x509-crt-bundle: Certificate validated
+I (1324403) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1324403) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1324409) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1324416) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1324420) tripsync: ══════════════════════════════════════
+
+I (1324431) bgworker: Job finished: OK
+I (1351205) gps_gnss: GNSS: no fix | reads=10574 [ACTIVE] (idle — waiting for satellites)
+I (1381206) gps_gnss: GNSS: no fix | reads=10814 [ACTIVE] (idle — waiting for satellites)
+I (1382930) tripsync: ══════════════════════════════════════
+I (1382932) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1007 bytes
+I (1382940) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1382949) api_client: → POST /taxis-api/api/Trips
+I (1382953) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1383909) esp-x509-crt-bundle: Certificate validated
+I (1385171) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1385171) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1385177) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1385184) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1385187) tripsync: ══════════════════════════════════════
+
+I (1385199) bgworker: Job finished: OK
+I (1411206) gps_gnss: GNSS: no fix | reads=11054 [ACTIVE] (idle — waiting for satellites)
+I (1441207) gps_gnss: GNSS: no fix | reads=11294 [ACTIVE] (idle — waiting for satellites)
+I (1443564) tripsync: ══════════════════════════════════════
+I (1443566) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1013 bytes
+I (1443574) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1443583) api_client: → POST /taxis-api/api/Trips
+I (1443587) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1445406) esp-x509-crt-bundle: Certificate validated
+I (1446523) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1446523) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1446529) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1446536) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1446540) tripsync: ══════════════════════════════════════
+
+I (1446551) bgworker: Job finished: OK
+I (1471208) gps_gnss: GNSS: no fix | reads=11526 [ACTIVE] (idle — waiting for satellites)
+I (1501209) gps_gnss: GNSS: no fix | reads=11766 [ACTIVE] (idle — waiting for satellites)
+I (1504204) tripsync: ══════════════════════════════════════
+I (1504205) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1007 bytes
+I (1504213) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1504223) api_client: → POST /taxis-api/api/Trips
+I (1504226) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1505147) esp-x509-crt-bundle: Certificate validated
+I (1506530) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1506530) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1506535) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1506543) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1506546) tripsync: ══════════════════════════════════════
+
+I (1506558) bgworker: Job finished: OK
+I (1512284) ram_test: ══════════════════════════════════════
+I (1512285) ram_test: PSRAM periodic health-check
+I (1512289) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (1512297) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1512446) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (1512447) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (1512454) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1512464) ram_test: ══════════════════════════════════════
+I (1531210) gps_gnss: GNSS: no fix | reads=12006 [ACTIVE] (idle — waiting for satellites)
+I (1561211) gps_gnss: GNSS: no fix | reads=12246 [ACTIVE] (idle — waiting for satellites)
+I (1564841) tripsync: ══════════════════════════════════════
+I (1564843) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1013 bytes
+I (1564851) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1564860) api_client: → POST /taxis-api/api/Trips
+I (1564864) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1565897) esp-x509-crt-bundle: Certificate validated
+I (1567141) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1567142) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1567147) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1567154) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1567158) tripsync: ══════════════════════════════════════
+
+I (1567170) bgworker: Job finished: OK
+I (1591212) gps_gnss: GNSS: no fix | reads=12486 [ACTIVE] (idle — waiting for satellites)
+I (1621213) gps_gnss: GNSS: no fix | reads=12726 [ACTIVE] (idle — waiting for satellites)
+I (1625475) tripsync: ══════════════════════════════════════
+I (1625476) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1007 bytes
+I (1625484) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1625494) api_client: → POST /taxis-api/api/Trips
+I (1625498) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1626363) esp-x509-crt-bundle: Certificate validated
+I (1628731) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1628732) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1628737) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1628744) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1628748) tripsync: ══════════════════════════════════════
+
+I (1628760) bgworker: Job finished: OK
+I (1651214) gps_gnss: GNSS: no fix | reads=12958 [ACTIVE] (idle — waiting for satellites)
+I (1681215) gps_gnss: GNSS: no fix | reads=13198 [ACTIVE] (idle — waiting for satellites)
+I (1686111) tripsync: ══════════════════════════════════════
+I (1686113) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1013 bytes
+I (1686121) api_client:   Heap before Trips POST      free=8125 KB | largest free block=8064 KB
+I (1686130) api_client: → POST /taxis-api/api/Trips
+I (1686134) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1687038) esp-x509-crt-bundle: Certificate validated
+I (1688262) api_client:   Heap after perform()        free=8102 KB | largest free block=7936 KB
+I (1688263) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1688268) api_client:   Heap after Trips POST       free=8125 KB | largest free block=8064 KB
+I (1688275) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1688279) tripsync: ══════════════════════════════════════
+
+I (1688291) bgworker: Job finished: OK
+I (1711216) gps_gnss: GNSS: no fix | reads=13438 [ACTIVE] (idle — waiting for satellites)
+I (1741217) gps_gnss: GNSS: no fix | reads=13678 [ACTIVE] (idle — waiting for satellites)
+I (1746757) tripsync: ══════════════════════════════════════
+I (1746759) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1091 bytes
+I (1746767) api_client:   Heap before Trips POST      free=8124 KB | largest free block=8064 KB
+I (1746777) api_client: → POST /taxis-api/api/Trips
+I (1746780) api_client:   Heap before perform()       free=8118 KB | largest free block=8064 KB
+I (1747849) esp-x509-crt-bundle: Certificate validated
+I (1749134) api_client:   Heap after perform()        free=8101 KB | largest free block=7936 KB
+I (1749134) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1749140) api_client:   Heap after Trips POST       free=8124 KB | largest free block=8064 KB
+I (1749147) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1749150) tripsync: ══════════════════════════════════════
+
+I (1749162) bgworker: Job finished: OK
+I (1771218) gps_gnss: GNSS: no fix | reads=13910 [ACTIVE] (idle — waiting for satellites)
+I (1801219) gps_gnss: GNSS: no fix | reads=14150 [ACTIVE] (idle — waiting for satellites)
+I (1807388) tripsync: ══════════════════════════════════════
+I (1807389) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1013 bytes
+I (1807397) api_client:   Heap before Trips POST      free=8124 KB | largest free block=8064 KB
+I (1807406) api_client: → POST /taxis-api/api/Trips
+I (1807410) api_client:   Heap before perform()       free=8118 KB | largest free block=8064 KB
+I (1808327) esp-x509-crt-bundle: Certificate validated
+I (1809617) api_client:   Heap after perform()        free=8101 KB | largest free block=7936 KB
+I (1809617) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1809623) api_client:   Heap after Trips POST       free=8124 KB | largest free block=8064 KB
+I (1809630) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1809634) tripsync: ══════════════════════════════════════
+
+I (1809645) bgworker: Job finished: OK
+I (1812476) ram_test: ══════════════════════════════════════
+I (1812477) ram_test: PSRAM periodic health-check
+I (1812481) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (1812488) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1812640) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (1812641) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (1812648) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (1812658) ram_test: ══════════════════════════════════════
+I (1831220) gps_gnss: GNSS: no fix | reads=14390 [ACTIVE] (idle — waiting for satellites)
+I (1861221) gps_gnss: GNSS: no fix | reads=14630 [ACTIVE] (idle — waiting for satellites)
+I (1868023) tripsync: ══════════════════════════════════════
+I (1868024) tripsync: UPDATE TRIP — server job id 12817, meterStatus=1, body=1007 bytes
+I (1868032) api_client:   Heap before Trips POST      free=8124 KB | largest free block=8064 KB
+I (1868042) api_client: → POST /taxis-api/api/Trips
+I (1868046) api_client:   Heap before perform()       free=8118 KB | largest free block=8064 KB
+I (1868934) esp-x509-crt-bundle: Certificate validated
+I (1870046) api_client:   Heap after perform()        free=8101 KB | largest free block=7936 KB
+I (1870046) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1870052) api_client:   Heap after Trips POST       free=8124 KB | largest free block=8064 KB
+I (1870059) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1870062) tripsync: ══════════════════════════════════════
+
+I (1870074) bgworker: Job finished: OK
+I (1891221) gps_gnss: GNSS: no fix | reads=14870 [ACTIVE] (idle — waiting for satellites)
+I (1908790) touch: Touch: (224,391) [direct px]
+I (1908823) ui: METER: END TRIP tapped
+I (1910273) touch: Touch: (216,276) [direct px]
+I (1910301) farecalc: TimeFrame closed: status=2 distance=0.0m activeT=1840s inactiveT=0s fare=5198.00¢
+I (1910302) farecalc: METER STOPPED — distance=0.00km total=6105.00¢ (1 TimeFrame segment(s))
+I (1910415) trip: TRIP #12 STOPPED (not yet synced to server)
+I (1910419) tripsync: ══════════════════════════════════════
+I (1910422) tripsync: UPDATE TRIP — server job id 12817, meterStatus=5, body=1023 bytes
+I (1910425) trip: TRIP #12 FINALIZE queued — watch below for ADD JOB/UPDATE TRIP/SAVE JOB FARES logs
+I (1910430) api_client:   Heap before Trips POST      free=8124 KB | largest free block=8064 KB
+I (1910449) api_client: → POST /taxis-api/api/Trips
+I (1910452) api_client:   Heap before perform()       free=8118 KB | largest free block=8064 KB
+I (1911400) esp-x509-crt-bundle: Certificate validated
+I (1912727) api_client:   Heap after perform()        free=8101 KB | largest free block=7936 KB
+I (1912727) api_client: ← HTTP 200 (POST /taxis-api/api/Trips)
+I (1912733) api_client:   Heap after Trips POST       free=8124 KB | largest free block=8064 KB
+I (1912740) tripsync: UPDATE TRIP OK ✓ (HTTP 200)
+I (1912744) tripsync: ══════════════════════════════════════
+
+I (1912761) tripsync: ══════════════════════════════════════
+I (1912767) tripsync: SAVE JOB FARES — server job id 12817, total=6105.00¢, cancelled=no
+I (1912778) api_client: → POST /taxis-api/api/Job/SaveJobFares
+I (1912782) api_client:   Heap before perform()       free=8118 KB | largest free block=8064 KB
+I (1913611) esp-x509-crt-bundle: Certificate validated
+I (1915423) touch: Touch: (180,447) [direct px]
+I (1915485) ui: NAV -> TRIPS (1)
+I (1915485) ui: Screen: 1
+I (1915673) api_client:   Heap after perform()        free=8101 KB | largest free block=7936 KB
+I (1915674) api_client: ← HTTP 200 (POST /taxis-api/api/Job/SaveJobFares)
+I (1915689) tripsync: SAVE JOB FARES OK ✓ (HTTP 200)
+I (1915691) tripsync: ══════════════════════════════════════
+
+I (1915698) trip: TRIP FINALIZED ✓ and synced — ready for a new 'trip start'
+I (1915703) bgworker: Job finished: OK
+I (1915707) tripsync: ══════════════════════════════════════
+I (1915718) tripsync: GET TRIP HISTORY — page 1, pageSize 10, search=Dropedoff/Status
+I (1915727) api_client: → POST /taxis-api/api/Job/GetAllBySearch
+I (1915732) api_client:   Heap before perform()       free=8119 KB | largest free block=8064 KB
+I (1916594) esp-x509-crt-bundle: Certificate validated
+I (1918830) api_client:   Heap after perform()        free=8101 KB | largest free block=7936 KB
+I (1918830) api_client: ← HTTP 200 (POST /taxis-api/api/Job/GetAllBySearch)
+W (1918837) api_client:   Response TRUNCATED at 8191 bytes (buffer is 8192 bytes) — increase out_buf_size if this response needs to be read in full.
+E (1918861) tripsync: GET TRIP HISTORY: response is not valid JSON (HTTP 200)
+I (1918862) tripsync: ══════════════════════════════════════
+
+I (1918870) bgworker: Job finished: OK
+I (1918950) ui: History fetch page 1: +0 item(s), loaded=0/0
+I (1921221) gps_gnss: GNSS: no fix | reads=15110 [ACTIVE] (idle — waiting for satellites)
+I (1924883) touch: Touch: (244,60) [direct px]
+I (1928138) touch: Touch: (85,48) [direct px]
+I (1929319) touch: Touch: (292,83) [direct px]
+I (1929449) tripsync: ══════════════════════════════════════
+I (1929450) tripsync: GET TRIP HISTORY — page 1, pageSize 10, search=Dropedoff/Status
+I (1929459) api_client: → POST /taxis-api/api/Job/GetAllBySearch
+I (1929464) api_client:   Heap before perform()       free=8118 KB | largest free block=8064 KB
+I (1930393) esp-x509-crt-bundle: Certificate validated
+I (1932468) api_client:   Heap after perform()        free=8101 KB | largest free block=7936 KB
+I (1932468) api_client: ← HTTP 200 (POST /taxis-api/api/Job/GetAllBySearch)
+W (1932475) api_client:   Response TRUNCATED at 8191 bytes (buffer is 8192 bytes) — increase out_buf_size if this response needs to be read in full.
+E (1932499) tripsync: GET TRIP HISTORY: response is not valid JSON (HTTP 200)
+I (1932499) tripsync: ══════════════════════════════════════
+
+I (1932507) bgworker: Job finished: OK
+I (1932595) ui: History fetch page 1: +0 item(s), loaded=0/0
+I (1941860) touch: Touch: (262,477) [direct px]
+I (1942611) touch: Touch: (263,444) [direct px]
+I (1942642) ui: NAV -> SETTINGS (2)
+I (1942642) ui: Screen: 2
+I (1945754) touch: Touch: (244,295) [direct px]
+I (1949349) touch: Touch: (204,229) [direct px]
+I (1951222) gps_gnss: GNSS: no fix | reads=15342 [ACTIVE] (idle — waiting for satellites)
+I (1952238) touch: Touch: (257,292) [direct px]
+I (1953527) touch: Touch: (193,281) [direct px]
+I (1955358) touch: Touch: (105,288) [direct px]
+I (1956397) touch: Touch: (276,187) [direct px]
+I (1958982) touch: Touch: (166,439) [direct px]
+I (1959042) ui: NAV -> TRIPS (1)
+I (1959042) ui: Screen: 1
+I (1959047) tripsync: ══════════════════════════════════════
+I (1959049) tripsync: GET TRIP HISTORY — page 1, pageSize 10, search=Dropedoff/Status
+I (1959058) api_client: → POST /taxis-api/api/Job/GetAllBySearch
+I (1959063) api_client:   Heap before perform()       free=8118 KB | largest free block=8064 KB
+I (1960017) esp-x509-crt-bundle: Certificate validated
+I (1962242) api_client:   Heap after perform()        free=8101 KB | largest free block=7936 KB
+I (1962243) api_client: ← HTTP 200 (POST /taxis-api/api/Job/GetAllBySearch)
+W (1962250) api_client:   Response TRUNCATED at 8191 bytes (buffer is 8192 bytes) — increase out_buf_size if this response needs to be read in full.
+E (1962276) tripsync: GET TRIP HISTORY: response is not valid JSON (HTTP 200)
+I (1962276) tripsync: ══════════════════════════════════════
+
+I (1962284) bgworker: Job finished: OK
+I (1962400) ui: History fetch page 1: +0 item(s), loaded=0/0
+I (1963630) touch: Touch: (66,441) [direct px]
+I (1963779) ui: NAV -> METER (0)
+I (1963780) ui: Screen: 0
+I (1968577) touch: Touch: (271,458) [direct px]
+I (1968608) ui: NAV -> SETTINGS (2)
+I (1968609) ui: Screen: 2
+I (1970329) touch: Touch: (163,184) [direct px]
+I (1971748) touch: Touch: (197,113) [direct px]
+I (1971809) ui: Test Features -> Meter Dev View
+I (1981223) gps_gnss: GNSS: no fix | reads=15582 [ACTIVE] (idle — waiting for satellites)
+I (2011224) gps_gnss: GNSS: no fix | reads=15822 [ACTIVE] (idle — waiting for satellites)
+I (2041225) gps_gnss: GNSS: no fix | reads=16062 [ACTIVE] (idle — waiting for satellites)
+I (2071227) gps_gnss: GNSS: no fix | reads=16294 [ACTIVE] (idle — waiting for satellites)
+I (2101228) gps_gnss: GNSS: no fix | reads=16534 [ACTIVE] (idle — waiting for satellites)
+I (2112670) ram_test: ══════════════════════════════════════
+I (2112671) ram_test: PSRAM periodic health-check
+I (2112675) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (2112683) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (2112832) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (2112833) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (2112840) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (2112850) ram_test: ══════════════════════════════════════
+I (2131229) gps_gnss: GNSS: no fix | reads=16774 [ACTIVE] (idle — waiting for satellites)
+I (2161230) gps_gnss: GNSS: no fix | reads=17014 [ACTIVE] (idle — waiting for satellites)
+I (2191231) gps_gnss: GNSS: no fix | reads=17254 [ACTIVE] (idle — waiting for satellites)
+I (2221231) gps_gnss: GNSS: no fix | reads=17494 [ACTIVE] (idle — waiting for satellites)
+I (2251233) gps_gnss: GNSS: no fix | reads=17726 [ACTIVE] (idle — waiting for satellites)
+I (2281234) gps_gnss: GNSS: no fix | reads=17966 [ACTIVE] (idle — waiting for satellites)
+I (2311235) gps_gnss: GNSS: no fix | reads=18206 [ACTIVE] (idle — waiting for satellites)
+I (2341236) gps_gnss: GNSS: no fix | reads=18446 [ACTIVE] (idle — waiting for satellites)
+I (2371236) gps_gnss: GNSS: no fix | reads=18678 [ACTIVE] (idle — waiting for satellites)
+I (2401237) gps_gnss: GNSS: no fix | reads=18918 [ACTIVE] (idle — waiting for satellites)
+I (2412862) ram_test: ══════════════════════════════════════
+I (2412863) ram_test: PSRAM periodic health-check
+I (2412867) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (2412875) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (2413033) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (2413034) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (2413041) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (2413051) ram_test: ══════════════════════════════════════
+I (2431238) gps_gnss: GNSS: no fix | reads=19158 [ACTIVE] (idle — waiting for satellites)
+I (2455273) touch: Touch: (48,26) [direct px]
+I (2455364) ui: Meter Dev View: back to Test Features
+I (2457569) touch: Touch: (35,27) [direct px]
+I (2457628) ui: Screen: 2
+I (2459309) touch: Touch: (175,377) [direct px]
+I (2460245) touch: Touch: (158,306) [direct px]
+I (2461239) gps_gnss: GNSS: no fix | reads=19398 [ACTIVE] (idle — waiting for satellites)
+I (2461675) touch: Touch: (209,382) [direct px]
+I (2462494) touch: Touch: (180,312) [direct px]
+I (2464751) touch: Touch: (176,242) [direct px]
+I (2465380) touch: Touch: (176,293) [direct px]
+I (2465406) ui: Click: WiFi: CONNECTED
+[UI] WiFi: CONNECTED
+I (2466882) touch: Touch: (208,285) [direct px]
+I (2467865) touch: Touch: (188,229) [direct px]
+I (2468964) touch: Touch: (152,186) [direct px]
+I (2481738) touch: Touch: (32,25) [direct px]
+I (2481828) ui: Screen: 2
+I (2491240) gps_gnss: GNSS: no fix | reads=19638 [ACTIVE] (idle — waiting for satellites)
+I (2521241) gps_gnss: GNSS: no fix | reads=19878 [ACTIVE] (idle — waiting for satellites)
+I (2551242) gps_gnss: GNSS: no fix | reads=20110 [ACTIVE] (idle — waiting for satellites)
+I (2581243) gps_gnss: GNSS: no fix | reads=20350 [ACTIVE] (idle — waiting for satellites)
+I (2611244) gps_gnss: GNSS: no fix | reads=20590 [ACTIVE] (idle — waiting for satellites)
+I (2641244) gps_gnss: GNSS: no fix | reads=20830 [ACTIVE] (idle — waiting for satellites)
+I (2671245) gps_gnss: GNSS: no fix | reads=21062 [ACTIVE] (idle — waiting for satellites)
+I (2701246) gps_gnss: GNSS: no fix | reads=21302 [ACTIVE] (idle — waiting for satellites)
+I (2713063) ram_test: ══════════════════════════════════════
+I (2713064) ram_test: PSRAM periodic health-check
+I (2713068) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (2713076) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (2713226) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (2713227) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (2713235) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (2713244) ram_test: ══════════════════════════════════════
+I (2731247) gps_gnss: GNSS: no fix | reads=21542 [ACTIVE] (idle — waiting for satellites)
+I (2761248) gps_gnss: GNSS: no fix | reads=21782 [ACTIVE] (idle — waiting for satellites)
+I (2791249) gps_gnss: GNSS: no fix | reads=22022 [ACTIVE] (idle — waiting for satellites)
+I (2821250) gps_gnss: GNSS: no fix | reads=22262 [ACTIVE] (idle — waiting for satellites)
+I (2851251) gps_gnss: GNSS: no fix | reads=22494 [ACTIVE] (idle — waiting for satellites)
+I (2881252) gps_gnss: GNSS: no fix | reads=22734 [ACTIVE] (idle — waiting for satellites)
+I (2911253) gps_gnss: GNSS: no fix | reads=22974 [ACTIVE] (idle — waiting for satellites)
+I (2941254) gps_gnss: GNSS: no fix | reads=23214 [ACTIVE] (idle — waiting for satellites)
+I (2971255) gps_gnss: GNSS: no fix | reads=23454 [ACTIVE] (idle — waiting for satellites)
+I (3001256) gps_gnss: GNSS: no fix | reads=23694 [ACTIVE] (idle — waiting for satellites)
+I (3013256) ram_test: ══════════════════════════════════════
+I (3013257) ram_test: PSRAM periodic health-check
+I (3013261) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (3013269) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (3013429) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (3013429) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (3013437) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (3013447) ram_test: ══════════════════════════════════════
+I (3031257) gps_gnss: GNSS: no fix | reads=23926 [ACTIVE] (idle — waiting for satellites)
+I (3061258) gps_gnss: GNSS: no fix | reads=24166 [ACTIVE] (idle — waiting for satellites)
+I (3091259) gps_gnss: GNSS: no fix | reads=24406 [ACTIVE] (idle — waiting for satellites)
+I (3121260) gps_gnss: GNSS: no fix | reads=24646 [ACTIVE] (idle — waiting for satellites)
+I (3151261) gps_gnss: GNSS: no fix | reads=24878 [ACTIVE] (idle — waiting for satellites)
+I (3181261) gps_gnss: GNSS: no fix | reads=25118 [ACTIVE] (idle — waiting for satellites)
+I (3211263) gps_gnss: GNSS: no fix | reads=25358 [ACTIVE] (idle — waiting for satellites)
+I (3241263) gps_gnss: GNSS: no fix | reads=25598 [ACTIVE] (idle — waiting for satellites)
+I (3271278) gps_gnss: GNSS: no fix | reads=25838 [ACTIVE] (idle — waiting for satellites)
+I (3301335) gps_gnss: GNSS: no fix | reads=26078 [ACTIVE] (idle — waiting for satellites)
+I (3313458) ram_test: ══════════════════════════════════════
+I (3313459) ram_test: PSRAM periodic health-check
+I (3313463) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (3313470) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (3313619) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (3313620) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (3313627) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (3313637) ram_test: ══════════════════════════════════════
+I (3331368) gps_gnss: GNSS: no fix | reads=26310 [ACTIVE] (idle — waiting for satellites)
+I (3361407) gps_gnss: GNSS: no fix | reads=26550 [ACTIVE] (idle — waiting for satellites)
+I (3391440) gps_gnss: GNSS: no fix | reads=26790 [ACTIVE] (idle — waiting for satellites)
+I (3421480) gps_gnss: GNSS: no fix | reads=27030 [ACTIVE] (idle — waiting for satellites)
+I (3451514) gps_gnss: GNSS: no fix | reads=27262 [ACTIVE] (idle — waiting for satellites)
+I (3481537) gps_gnss: GNSS: no fix | reads=27684 [ACTIVE] (idle — waiting for satellites)
+I (3511558) gps_gnss: GNSS: no fix | reads=28119 [ACTIVE] (idle — waiting for satellites)
+I (3541612) gps_gnss: GNSS: no fix | reads=28569 [ACTIVE] (idle — waiting for satellites)
+I (3571614) gps_gnss: GNSS: fix OK | lat=9.8253 lon=80.2313 speed=0.0km/h sats=5 hdop=4.7 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (3601621) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2313 speed=7.6km/h sats=5 hdop=4.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (3613649) ram_test: ══════════════════════════════════════
+I (3613650) ram_test: PSRAM periodic health-check
+I (3613654) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (3613662) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (3613813) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (3613814) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (3613821) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (3613831) ram_test: ══════════════════════════════════════

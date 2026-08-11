@@ -51,6 +51,7 @@
 //   gps neo6m on|off|info|start|stop|once|every ...   → NEO-6M backend (see gps_backend_neo6m.h)
 // ================================================================
 #include <stdbool.h>
+#include <stdint.h>
 #include "esp_err.h"
 
 // GPS data structure — shared by every backend and every consumer
@@ -65,6 +66,19 @@ typedef struct {
     int    satellites;   // Number of satellites used
     int    fix_quality;  // 0=no fix, 1=GPS fix, 2=DGPS fix
     bool   has_fix;      // true if valid position available
+    // doc 180 §7.1 point 3 / doc 182 10.7: when this fix was last
+    // updated (esp_timer_get_time(), microseconds — monotonic, immune to
+    // wall-clock/NTP jumps). Set by each backend every time it processes
+    // a GGA sentence, whether that sentence reported a fix or not — this
+    // is "when did we last genuinely hear from the receiver at all", the
+    // second half of the sticky-fix fix: parser-level has_fix correctness
+    // (see gps_nmea.h) catches "receiver says no fix"; this catches "the
+    // whole read pipeline went silent" (UART/task died) — a case NMEA
+    // parsing alone can never see, since no new sentences arrive to
+    // parse. gps_client_get_latest() treats a fix older than
+    // GPS_CLIENT_FIX_STALE_MS as no-fix regardless of the stored
+    // has_fix value.
+    int64_t fix_time_us;
 } gps_data_t;
 
 // Which backend's fix gps_client_get_latest() returns to callers.

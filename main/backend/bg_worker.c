@@ -14,6 +14,7 @@
 #include "esp_log.h"
 #include "bg_worker.h"
 #include "taximeter/rest_api_storage.h"
+#include "taximeter/diag.h"
 
 static const char *TAG = "bgworker";
 
@@ -68,7 +69,9 @@ void bg_worker_init(void) {
     // 8 KB — sized for the larger of the jobs (HTTPS/TLS calls, e.g. a
     // login or reference-data fetch, need real mbedTLS call-stack depth).
     // Allocated ONCE, here, as early in boot as possible — see bg_worker.h.
-    xTaskCreate(_worker_task, "bg_worker", 8192, NULL, 3, NULL);
+    TaskHandle_t h = NULL;
+    xTaskCreate(_worker_task, "bg_worker", 8192, NULL, 3, &h);
+    diag_register_task(h, "bg_worker");   // doc 184 §10.2 — see 'stacks'
     ESP_LOGI(TAG, "Background worker task started (persistent, one-time stack allocation)");
 }
 

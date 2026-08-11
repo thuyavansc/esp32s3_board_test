@@ -1,0 +1,274 @@
+I (3690) chipinfo: NTP sync: FAILED (tariff time-of-day lookups may be wrong until it syncs)
+I (3690) trips_api: ══════════════════════════════════════
+I (3699) trips_api: TRIPS REST API + JSON Storage Init
+I (3704) trips_api:   API: https://mytaxis.softclient.com.au/taxis-api/api/Trips/{id}
+I (3711) trips_api:   Default trip ID: 12772
+I (3715) trips_api:   Storage backend: 2
+I (4015) trips_api: Created storage directory: /spiffs/store
+I (4015) trips_api: SPIFFS partition: 4581 KB total | 89 KB used | 4492 KB free
+I (4016) trips_api: Storage Backend: SPIFFS (Flash, Permanent) ✓
+I (4022) trips_api: TRIPS API Storage — READY ✓
+I (4027) trips_api: Type 'api help' for available commands.
+I (4032) trips_api: ══════════════════════════════════════
+
+I (4147) refdata:   Reading /spiffs/store/ref/tariffs.json (6361 bytes) — free heap=8217 KB, largest block=8064 KB
+I (4161) refdata: Reference data module ready (call 'ref fetch' or go on-duty to load data)
+I (4162) gps: ══════════════════════════════════════
+I (4170) gps: GPS Client Init — default active source: GNSS
+I (4175) gps:   Starting GNSS backend (A7670E, UART1)...
+I (4180) gps_gnss: ══════════════════════════════════════
+I (4192) gps_gnss: GNSS (A7670E) Init
+I (4196) gps_gnss:   A-GPS: disabled (no SIM yet — see doc 140)
+I (4201) gps_gnss: ══════════════════════════════════════
+I (4214) gps_gnss: GNSS UART init: UART1 TX=GPIO18 RX=GPIO17 115200 baud
+I (4220) gps_gnss: AT handshake...
+I (4223) gps:   Starting NEO-6M backend (UART2)...
+I (4226) gps_gnss:   AT -> OK
+I (4230) gps_gnss: Modem responding ✓
+I (4233) gps_gnss: A-GPS disabled (ENABLE_AGPS=0 in config.h) — plain GNSS only.
+I (4241) gps_gnss:   Insert a data-enabled SIM, set ENABLE_AGPS=1, rebuild — see doc 140.
+I (4249) gps_neo6m: ══════════════════════════════════════
+I (4254) gps_gnss:   AT+CGNSSPWR=1 -> OK
+I (4264) gps_neo6m: GPS NEO-6M Module Init
+I (4268) gps_neo6m:   UART:       UART2
+I (4272) gps_neo6m:   TX Pin:     GPIO1
+I (4275) gps_neo6m:   RX Pin:     GPIO2
+I (4279) gps_neo6m:   Baud:       9600
+I (4283) gps_neo6m: GPS UART init: TX=GPIO1 RX=GPIO2 9600 baud ✓
+I (4288) gps_neo6m: GPS read task STARTED — UART2 @ 9600 baud
+I (4294) gps_neo6m: NEO-6M may take 1-2 minutes for first fix (cold start)
+I (4300) gps_neo6m: Use: gps neo6m info | once | start | every <sec> [cnt]
+I (4307) gps_neo6m: GPS Module — READY ✓
+I (4311) gps_neo6m: Commands: gps neo6m on|off|info|start|stop|once|every <sec> [cnt]
+I (4319) gps_neo6m: ══════════════════════════════════════
+I (4330) gps:   Injection ('gps set ...') always available regardless of the above.
+I (4338) gps: ══════════════════════════════════════
+
+I (4349) trip: Trip manager ready — fare-calc tick task started (every 2000ms)
+I (4356) sms_client: SMS client task started (modem setup runs asynchronously — see 'smsc status')
+
+
+I (4365) chipinfo: ########################################
+I (4371) chipinfo: #   ESP32-S3 CHIP / MEMORY / STORAGE REPORT  #
+I (4377) chipinfo: ########################################
+I (4382) version: ======================================
+I (4387) version: FIRMWARE VERSION
+I (4390) version: --------------------------------------
+I (4395) version:   Project:   esp32s3_board
+I (4399) version:   Version:   26.07.23 (code 1)
+I (4403) version:   Build:     v1: ESP32-S3 N16R8V board bring-up — chip/flash/SRAM/PSRAM diagnostics, OTA + remote-config present but disabled
+I (4416) version:   Running from partition: factory
+I (4421) chipinfo: ======================================
+I (4426) chipinfo: IDENTITY BANNER  (live-queried from the running chip)
+I (4429) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (4439) chipinfo: --------------------------------------
+I (4444) chipinfo:   Chip is ESP32-S3 (revision v0.2)
+I (4449) chipinfo:   Features: WiFi, BLE, Dual Core, 240MHz
+I (4454) chipinfo:   Crystal is 40 MHz
+I (4458) chipinfo:   MAC: a4:cb:8f:d6:98:f8
+I (4462) chipinfo: ======================================
+I (4467) chipinfo: CHIP INFO  (live — from esp_chip_info() / efuses)
+I (4473) chipinfo: --------------------------------------
+I (4478) chipinfo:   Model:       ESP32-S3
+I (4482) chipinfo:   Cores:       2
+I (4485) chipinfo:   Revision:    v0.2
+I (4489) chipinfo:   Features:    WiFi BLE External-Flash
+I (4494) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (4498) chipinfo:   IDF version: 5.4.0
+I (4502) chipinfo: ======================================
+I (4507) chipinfo: FLASH INFO  (live-probed)
+I (4511) chipinfo: --------------------------------------
+I (4516) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (4523) chipinfo:   JEDEC ID:        0x852018
+I (4527) chipinfo: ======================================
+I (4532) chipinfo: RAM / HEAP INFO  (live)
+I (4536) chipinfo: --------------------------------------
+I (4542) chipinfo:   Free heap now (all capabilities): 8409768 bytes | 8212.7 KB (8.02 MB)
+I (4549) chipinfo:   Minimum ever free:                8387724 bytes | 8191.1 KB (8.00 MB)
+I (4557) chipinfo:   --------------------------------------
+I (4562) chipinfo:   PSRAM initialized: YES
+I (4567) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (4568) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (4578) chipinfo:   SRAM  total:          198159 bytes | 193.5 KB (0.19 MB)
+I (4585) chipinfo:   SRAM  free now:       37807 bytes | 36.9 KB (0.04 MB)
+I (4592) chipinfo:   SRAM  min free ever:  17575 bytes | 17.2 KB (0.02 MB)
+I (4598) chipinfo:   SRAM  largest block:  22528 bytes | 22.0 KB (0.02 MB)
+I (4605) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (4613) chipinfo:   PSRAM free now:          8375048 bytes | 8178.8 KB (7.99 MB)
+I (4619) chipinfo:   PSRAM min free ever:     8373188 bytes | 8176.9 KB (7.99 MB)
+I (4626) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (4633) chipinfo: ======================================
+I (4639) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (4646) chipinfo: --------------------------------------
+I (4651) chipinfo:   Name       Type   SubType   Offset     Size
+I (4657) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (4665) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (4673) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (4681) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (4689) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (4697) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (4706) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (4715) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (4723) chipinfo: ======================================
+I (4728) chipinfo: NVS INFO  (live)
+I (4731) chipinfo: --------------------------------------
+I (4736) chipinfo:   Used entries:  214
+I (4739) chipinfo:   Free entries:  542
+I (4743) chipinfo:   Total entries: 756
+I (4747) chipinfo: ======================================
+I (4752) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (4758) chipinfo: --------------------------------------
+I (4763) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (4768) chipinfo:   Used:  91615 bytes | 89.5 KB (0.09 MB)
+I (4774) chipinfo:   Free:  4599826 bytes | 4492.0 KB (4.39 MB)
+I (4779) chipinfo: ########################################
+
+I (4785) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (4791) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (4799) display: SD_CS (TF slot) → GPIO38 HIGH (disabled)
+I (4805) display: Backlight PWM init — GPIO6, 5kHz, 10-bit
+I (4810) display: Backlight ON (GPIO6, PWM 100%)
+I (4814) display: SPI: MOSI=42 SCLK=41 CS=39 DC=40 RST=45
+I (4820) gpio: GPIO[40]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (4828) gpio: GPIO[45]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+E (4836) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (4843) esp-modem-dte: Retry 1/5 failed. Retrying in 2000 milliseconds...
+I (4884) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (4885) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (4886) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (5189) display: ST7796S init complete — 320x480 RGB565
+I (5189) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (5193) display: LVGL: 320x480 | Buf: 14 rows (8960 bytes) double-buf
+I (5196) display: DISPLAY — READY ✓
+I (5199) touch: TOUCH INIT — FT6336U via I2C
+I (5204) touch: I2C init: SDA=15 SCL=7
+I (5207) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (5276) touch: FT6336U init — addr: 0x38
+I (5276) touch: Touch input registered with LVGL ✓
+W (5276) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (5280) touch: TOUCH — READY ✓
+I (5283) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (5660) net_ui: Network screen ready
+I (5669) sms_ui: SMS screen ready
+I (5699) ui: UI — READY (4 screens | teal palette | scroll fix | test menu)
+I (5700) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (5702) additional_work: Additional work module ready (try: "sms reboot")
+I (5709) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (5715) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (5722) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (5729) chipinfo: READY — Touch UI Active ✓
+I (8715) ram_test: ══════════════════════════════════════
+I (8715) ram_test: PSRAM periodic health-check
+I (8720) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (8727) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+E (8849) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (8849) esp-modem-dte: Retry 2/5 failed. Retrying in 2000 milliseconds...
+I (8881) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (8881) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (8888) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (8897) ram_test: ══════════════════════════════════════
+E (12851) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (12851) esp-modem-dte: Retry 3/5 failed. Retrying in 2000 milliseconds...
+E (16853) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (16853) esp-modem-dte: Retry 4/5 failed. Retrying in 2000 milliseconds...
+E (20855) Modem AT: modem_at_send_command(153): command "AT" response timeout
+W (20855) esp-modem-dte: Retry 5/5 failed. Retrying in 2000 milliseconds...
+W (22857) esp-modem-dte: Operation failed.
+W (22857) esp-modem-dte: Failed to sync with modem DCE, trying to exit data mode
+I (22886) modem_board: Modem manufacturer ID: INCORPORATED
+I (22887) modem_board: Modem module ID: A7670E-FASE
+I (22888) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (22991) modem_board: Handling stage = STAGE_IDLE
+I (22991) net_mgr: Active uplink -> CELLULAR
+I (22991) bgworker: Job finished: OK
+I (23091) modem_board: Handling stage = STAGE_START_PPP
+I (23091) modem_board: Check SIM card state...
+I (23092) modem_board: Check signal quality...
+I (23096) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (23100) modem_board: Check network registration...
+W (23106) modem_board: Retry 1/5 failed. Retrying in 2000 milliseconds...
+W (25112) modem_board: Retry 2/5 failed. Retrying in 2000 milliseconds...
+W (27114) modem_board: Retry 3/5 failed. Retrying in 2000 milliseconds...
+W (29116) modem_board: Retry 4/5 failed. Retrying in 2000 milliseconds...
+I (31067) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (31081) gps_gnss: GNSS: fix OK | lat=9.8256 lon=80.2312 speed=0.0km/h sats=5 hdop=6.1 [ACTIVE] (idle — use 'gps gnss info' for full status)
+W (31117) modem_board: Retry 5/5 failed. Retrying in 2000 milliseconds...
+W (33117) modem_board: Operation failed.
+E (33117) modem_board: _modem_daemon_task(260): Modem network registration not ready!
+I (33117) modem_board: Handling stage = STAGE_ERROR
+E (33122) modem_board: Modem in error state
+W (37858) Modem AT: AT parser handle_line is NULL but receive: "
++PPPD: DISCONNECTED
+"
+I (61082) gps_gnss: GNSS: fix OK | lat=9.8254 lon=80.2311 speed=8.8km/h sats=5 hdop=6.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (61097) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (64897) sms_client: Reliability sweep: unread SMS index 22 found (missed URC?) — processing now
+I (64935) sms_client: SMS from 8<:257884: "Maasayakata dina 7 bagin maasa 3k pura NOMILE 10GB ANYTIME Data saha ONAMA JAALAYAKATA KATHA KARANNA vinadi 500 labaganna!  Rs.100 ho wadiyen reload kara"
+W (69254) Modem AT: AT parser handle_line is NULL but receive: "
++PPPD: DISCONNECTED
+
++CGEV: NW MODIFY 1,2
+"
+I (91083) gps_gnss: GNSS: fix OK | lat=9.8254 lon=80.2311 speed=0.0km/h sats=5 hdop=6.2 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (91127) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (121084) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2313 speed=0.0km/h sats=5 hdop=6.3 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (121157) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (151085) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2313 speed=6.7km/h sats=5 hdop=6.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (151187) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (181085) gps_gnss: GNSS: fix OK | lat=9.8254 lon=80.2312 speed=0.0km/h sats=5 hdop=6.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (181217) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+W (206551) Modem AT: AT parser handle_line is NULL but receive: "
++PPPD: DISCONNECTED
+
++CGEV: NW MODIFY 1,2
+
++CGEV: NW MODIFY 1,2
+"
+I (211086) gps_gnss: GNSS: fix OK | lat=9.8254 lon=80.2312 speed=0.0km/h sats=5 hdop=6.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (211247) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (241151) gps_gnss: GNSS: fix OK | lat=9.8254 lon=80.2314 speed=0.0km/h sats=5 hdop=6.5 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (241277) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (271157) gps_gnss: GNSS: fix OK | lat=9.8259 lon=80.2315 speed=0.0km/h sats=5 hdop=6.6 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (271308) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (301223) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2320 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (301338) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (308909) ram_test: ══════════════════════════════════════
+I (308910) ram_test: PSRAM periodic health-check
+I (308914) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (308921) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (309071) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (309072) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (309079) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (309089) ram_test: ══════════════════════════════════════
+I (331224) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2320 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (331368) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (361226) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2320 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (361398) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (391227) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2320 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (391428) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (421230) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2320 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (421458) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (451231) gps_gnss: GNSS: fix OK | lat=9.8257 lon=80.2320 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (451488) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (481232) gps_gnss: GNSS: fix OK | lat=9.8255 lon=80.2315 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (481518) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (511301) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2317 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (511548) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (541302) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2317 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (541578) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (571303) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2317 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (571608) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (601305) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2317 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (601638) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (609101) ram_test: ══════════════════════════════════════
+I (609102) ram_test: PSRAM periodic health-check
+I (609106) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (609113) ram_test:   Before: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (609262) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (609263) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7318048 bytes (6.98 MB)
+I (609270) ram_test:   After free: free=8366628 bytes (7.98 MB) | largest free block=8257536 bytes (7.88 MB)
+I (609280) ram_test: ══════════════════════════════════════
+I (631311) gps_gnss: GNSS: fix OK | lat=9.8258 lon=80.2317 speed=0.0km/h sats=5 hdop=100.0 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (631668) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)
+I (661380) gps_gnss: GNSS: fix OK | lat=9.8259 lon=80.2314 speed=12.9km/h sats=5 hdop=7.4 [ACTIVE] (idle — use 'gps gnss info' for full status)
+I (661698) gps_neo6m: GPS: no fix | reads=0 [not active] (idle — waiting for satellites)

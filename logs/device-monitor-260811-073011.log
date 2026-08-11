@@ -1,0 +1,169 @@
+��.2
+I (10990) chipinfo:   Features:    WiFi BLE External-Flash
+I (10996) chipinfo:   Base MAC:    A4:CB:8F:D6:98:F8
+I (11000) chipinfo:   IDF version: 5.4.0
+I (11004) chipinfo: ======================================
+I (11009) chipinfo: FLASH INFO  (live-probed)
+I (11013) chipinfo: --------------------------------------
+I (11018) chipinfo:   Detected size:   16777216 bytes | 16384.0 KB (16.00 MB)
+I (11025) chipinfo:   JEDEC ID:        0x852018
+I (11029) chipinfo: ======================================
+I (11035) chipinfo: RAM / HEAP INFO  (live)
+I (11039) chipinfo: --------------------------------------
+I (11044) chipinfo:   Free heap now (all capabilities): 8375432 bytes | 8179.1 KB (7.99 MB)
+I (11052) chipinfo:   Minimum ever free:                8131368 bytes | 7940.8 KB (7.75 MB)
+I (11060) chipinfo:   --------------------------------------
+I (11065) chipinfo:   PSRAM initialized: YES
+I (11070) chipinfo:   PSRAM total (esp_psram_get_size): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (11078) chipinfo:   SRAM  total:          247215 bytes | 241.4 KB (0.24 MB)
+I (11084) chipinfo:   SRAM  free now:       75207 bytes | 73.4 KB (0.07 MB)
+I (11091) chipinfo:   SRAM  min free ever:  32047 bytes | 31.3 KB (0.03 MB)
+I (11098) chipinfo:   SRAM  largest block:  31744 bytes | 31.0 KB (0.03 MB)
+I (11105) chipinfo:   PSRAM total (heap_caps): 8388608 bytes | 8192.0 KB (8.00 MB)
+I (11112) chipinfo:   PSRAM free now:          8332256 bytes | 8137.0 KB (7.95 MB)
+I (11119) chipinfo:   PSRAM min free ever:     8131352 bytes | 7940.8 KB (7.75 MB)
+I (11126) chipinfo:   PSRAM largest block:     8257536 bytes | 8064.0 KB (7.88 MB)
+I (11134) chipinfo: ======================================
+W (11139) Modem AT: AT parser handle_line is NULL but receive: "
++CPIN: READY
+
+SMS DONE
+
++CGEV: EPS PDN ACT 1
+"
+I (11150) chipinfo: PARTITION TABLE  (live — read from the chip, offset 0x8000)
+I (11153) gps_gnss:   AT -> OK
+I (11159) gps_gnss: Modem responding ✓
+I (11157) chipinfo: --------------------------------------
+I (11168) chipinfo:   Name       Type   SubType   Offset     Size
+I (11175) chipinfo:   nvs        data   0x02      0x009000   24576 bytes | 24.0 KB (0.02 MB)
+I (11182) chipinfo:   otadata    data   0x00      0x00f000   8192 bytes | 8.0 KB (0.01 MB)
+I (11190) chipinfo:   phy_init   data   0x01      0x011000   4096 bytes | 4.0 KB (0.00 MB)
+I (11198) chipinfo:   factory    app    0x00      0x020000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (11207) chipinfo:   ota_0      app    0x10      0x320000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (11216) chipinfo:   ota_1      app    0x11      0x620000   3145728 bytes | 3072.0 KB (3.00 MB)
+I (11224) chipinfo:   storage    data   0x82      0x920000   5111808 bytes | 4992.0 KB (4.88 MB)
+I (11233) chipinfo:   llm        data   0x82      0xe00000   2097152 bytes | 2048.0 KB (2.00 MB)
+I (11241) chipinfo: ======================================
+I (11246) chipinfo: NVS INFO  (live)
+I (11249) chipinfo: --------------------------------------
+I (11255) chipinfo:   Used entries:  216
+I (11258) chipinfo:   Free entries:  540
+I (11262) chipinfo:   Total entries: 756
+I (11266) chipinfo: ======================================
+I (11271) chipinfo: STORAGE  (SPIFFS 'storage' partition — live)
+I (11277) chipinfo: --------------------------------------
+I (11282) chipinfo:   Total: 4691441 bytes | 4581.5 KB (4.47 MB)
+I (11288) chipinfo:   Used:  96133 bytes | 93.9 KB (0.09 MB)
+I (11293) chipinfo:   Free:  4595308 bytes | 4487.6 KB (4.38 MB)
+I (11299) chipinfo: ########################################
+
+I (11304) display: ══ DISPLAY INIT — ST7796S 320x480 ══
+I (11310) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (11319) display: SD_CS (TF slot) → GPIO9 HIGH (disabled)
+I (11324) display: Backlight PWM init — GPIO5, 5kHz, 10-bit
+I (11329) display: Backlight ON (GPIO5, PWM 100%)
+I (11331) gps_gnss:   AT+CGNSSPWR=1,1 -> OK
+I (11336) sms_client: SMS runtime READY (AT+CMGF=1: ok, AT+CNMI=2,1,0,0,0: ok)
+I (11338) display: SPI: MOSI=11 SCLK=12 CS=10 DC=14 RST=21 (hardware reset)
+I (11352) gpio: GPIO[14]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (11360) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (11619) modem_board: Modem manufacturer ID: INCORPORATED
+I (11620) modem_board: Modem module ID: A7670E-FASE
+I (11621) modem_board: Modem revision ID: +CGMR: A011B05A7670M7_F
+I (11642) gps_gnss:   AT+CGNSSTST=1 -> OK
+I (11708) display: ST7796S init complete — 320x480 RGB565
+I (11708) display: Orientation: portrait | mirror_x=true | BGR | invert=true
+I (11712) display: LVGL: 320x480 | Buf: 9 rows (5760 bytes) double-buf
+I (11715) display: DISPLAY — READY ✓
+I (11719) touch: TOUCH INIT — FT6336U via I2C
+I (11723) modem_board: Handling stage = STAGE_IDLE
+I (11728) net_mgr: DNS resolver -> 8.8.8.8
+I (11728) touch: I2C init: SDA=6 SCL=4
+I (11732) hotspot_ap: NAPT enabled — hotspot clients now routed through the current uplink
+I (11743) hotspot_ap: Uplink DNS 8.8.8.8 available — prepending to hotspot DHCP
+I (11750) hotspot_ap: Hotspot DNS: 8.8.8.8 (primary), 8.8.8.8 (secondary)
+I (11757) net_mgr: Active uplink -> CELLULAR
+I (11759) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (11761) bgworker: Job finished: OK
+I (11827) modem_board: Handling stage = STAGE_START_PPP
+I (11827) modem_board: Check SIM card state...
+I (11828) modem_board: Check signal quality...
+I (11832) touch: FT6336U reset pulsed on GPIO1
+I (11832) modem_board: PDP context: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (11840) modem_board: Check network registration...
+I (11845) touch: FT6336U init — addr: 0x38
+I (11846) modem_board: Check PDP context...
+I (11852) modem_board: Set PDP context: cid=1, type=IP, apn=default
+I (11859) touch: Touch input registered with LVGL ✓
+I (11862) modem_board: PDP context after setup: "+CGDCONT: 1,"IP","default","",0,0,,,,"
+I (11871) modem_board: PPP Dial up...
+W (11875) touch: Touch probe: no touch detected (I2C OK, just not pressed)
+I (11881) touch: TOUCH — READY ✓
+I (11884) ui: ══ UI INIT — TaxiMeter 320x480 ══
+I (11950) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (11950) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (11951) gps_gnss:   AT+CGNSSPORTSWITCH attempt 1/6 failed — retrying in 2000ms (likely raced with
+W (11960) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (12277) ui: UI INIT: remembered session still valid — skipping login screen
+I (12278) ui: UI — READY (3 screens | teal palette | scroll fix | lazy test features | login gate)
+I (12282) chipinfo: Tap the screen — all taps logged to Serial Monitor
+I (12289) additional_work: Additional work module ready (try: "sms reboot")
+I (12295) ram_test: PSRAM detected — 8388608 bytes (8.00 MB) total
+I (12302) ram_test: psram_health task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (12309) chipinfo: lv_tick task: stack on PSRAM (4096 bytes, internal SRAM freed)
+I (12317) chipinfo: READY — Touch UI Active ✓
+I (12475) iot_eth: Ethernet link up
+W (12477) iot_eth: Driver does not support get_addr
+I (12490) esp-netif_lwip-ppp: Connected
+I (12490) cellular: ══════════════════════════════════════
+I (12495) cellular: PPP CONNECTED — carrier IP: 10.157.148.56
+I (12501) cellular: ══════════════════════════════════════
+
+I (12513) iot_eth.netif_glue: netif "USB PPP" Got IP Address
+I (12518) iot_eth.netif_glue: ~~~~~~~~~~~
+I (12522) iot_eth.netif_glue: ETHIP:10.157.148.56
+I (12526) iot_eth.netif_glue: ETHMASK:255.255.255.255
+I (12531) iot_eth.netif_glue: ETHGW:10.64.64.64
+I (12535) iot_eth.netif_glue: Main DNS: 10.4.4.12
+I (12540) iot_eth.netif_glue: Backup DNS: 8.8.8.8
+I (12544) iot_eth.netif_glue: ~~~~~~~~~~~
+I (12575) modem_board: Handling stage = STAGE_RUNNING
+I (12575) modem_board: Modem is running
+I (13975) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (13976) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (13977) gps_gnss:   AT+CGNSSPORTSWITCH attempt 2/6 failed — retrying in 2000ms (likely raced with
+W (13986) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (15302) ram_test: ══════════════════════════════════════
+I (15302) ram_test: PSRAM periodic health-check
+I (15307) ram_test: ── PSRAM test: requesting 1048576 bytes (1.00 MB) ──
+I (15314) ram_test:   Before: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (15475) ram_test:   Integrity: PASS — 1048576 bytes (1.00 MB) written and read back correctly
+I (15476) ram_test:   During: used_by_test=1048580 bytes (1.00 MB) | free_after_alloc=7241968 bytes (6.91 MB)
+I (15483) ram_test:   After free: free=8290548 bytes (7.91 MB) | largest free block=8257536 bytes (7.88 MB)
+I (15493) ram_test: ══════════════════════════════════════
+I (16001) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (16002) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (16003) gps_gnss:   AT+CGNSSPORTSWITCH attempt 3/6 failed — retrying in 2000ms (likely raced with
+W (16012) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (18027) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> no OK (see raw response below)
+W (18028) gps_gnss:     raw: AT+CGNSSPORTSWITCH=1,1
+ERROR
+
+W (18029) gps_gnss:   AT+CGNSSPORTSWITCH attempt 4/6 failed — retrying in 2000ms (likely raced with
+W (18038) gps_gnss:   concurrent cellular/PPP AT traffic on the same modem — see doc 161/162)
+I (20053) gps_gnss:   AT+CGNSSPORTSWITCH=1,1 -> OK
+I (20054) gps_gnss: GNSS bring-up complete — NMEA streaming should begin shortly (cold start:
+I (20055) gps_gnss:   35-90s typical outdoors, faster if A-GPS assist data was downloaded).
+I (20074) gps_gnss: A-GPS preconditions OK — SIM ready, network registered.
+I (20075) gps_gnss:   A-GPS: sending AT+CAGPS (result arrives on its own line, up to 9s later)...
+I (25527) gps_gnss:   AT+CAGPS -> +AGPS: success.
+I (25528) gps_gnss: A-GPS succeeded — assist data downloaded over the MODEM'S OWN cellular
+I (25529) gps_gnss:   connection (not WiFi — see doc 140). Cold fix should now be faster.
+I (31107) gps_gnss: GNSS: no fix | reads=40 [ACTIVE] (idle — waiting for satellites)

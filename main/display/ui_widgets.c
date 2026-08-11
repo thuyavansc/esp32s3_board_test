@@ -52,15 +52,16 @@ void ui_click_event(lv_event_t *e) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  Nav Bar — 4 buttons: DASH|TRIP|SET|TEST
-//  78px each × 4 = 312px + gaps (fits 320) — was 5 buttons (incl. GPS)
-//  in the source project this was ported from; this project has no
-//  GPS/socket hardware or code, so that tab was dropped, not disabled.
+//  Nav Bar — 3 buttons: METER|TRIP|SET (doc 179 D9/§5, 2026-08-06)
+//  104px each × 3 = 312px + gaps (fits 320). Was 4 buttons (incl. a
+//  bottom-nav TEST tab) — Test Menu no longer lives on the bottom nav;
+//  it's reached via Settings -> Test Features (test/test_menu.h),
+//  matching the "production menu only shows production screens" goal.
 //  Created on EVERY top-level screen.
 // ═══════════════════════════════════════════════════════════════
 static void _nav_btn_event(lv_event_t *e) {
     ui_screen_t s = (ui_screen_t)(uintptr_t)lv_event_get_user_data(e);
-    const char *names[] = {"DASHBOARD", "TRIPS", "SETTINGS", "TEST"};
+    const char *names[] = {"METER", "TRIPS", "SETTINGS"};
     ESP_LOGI(TAG, "NAV -> %s (%d)", names[s], (int)s);
     ui_switch_screen(s);
 }
@@ -76,8 +77,8 @@ void ui_add_nav_bar(lv_obj_t *scr, ui_screen_t active) {
     lv_obj_set_style_radius(nav, 0, 0);
     lv_obj_clear_flag(nav, LV_OBJ_FLAG_SCROLLABLE);
 
-    const char *names[] = {"DASH", "TRIP", "SET", "TEST"};
-    const int BW = 78;   // button width (78×4=312, + 3×2 gaps=6 → 318, fits 320)
+    const char *names[] = {"METER", "TRIP", "SET"};
+    const int BW = 104;   // button width (104x3=312, + 2x2 gaps=4 -> 316, fits 320)
     for (int i = 0; i < SCREEN_COUNT; i++) {
         bool is_active = (i == (int)active);
         lv_obj_t *btn = lv_btn_create(nav);
